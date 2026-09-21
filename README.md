@@ -51,6 +51,7 @@ The studio is designed so the designer does as little manual work as possible: u
 - **Export & Action Feedback**:
   - Successful PNG download shows: `PNG exported: [filename]`.
   - Failed export shows recovery advice: `Export failed. Try using a smaller PDF or fewer high-resolution images.`.
+- **Physical Paper Feel**: Newspaper sheets render with stronger contact shadows, lifted-corner shadows, subtle fold highlights, edge thickness, and paper grain. Advanced controls include **Paper Fold & Texture** for dialing the material effect up or down.
 
 ## Designer Flow
 

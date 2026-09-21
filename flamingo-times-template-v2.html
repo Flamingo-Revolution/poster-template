@@ -442,6 +442,10 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <div class="rangegrid"><input id="shadow" type="range" min="0" max="1.8" step="0.02" value="1.05"><output id="outShadow">1.05</output></div>
       </div>
       <div class="field">
+        <label>Paper Fold & Texture</label>
+        <div class="rangegrid"><input id="paperFeel" type="range" min="0" max="1.8" step="0.02" value="1.15"><output id="outPaperFeel">1.15</output></div>
+      </div>
+      <div class="field">
         <button class="btn" id="reset" style="width:100%">Start Over</button>
       </div>
       <div class="hint">"Start Over" reloads the studio and clears every edit, uploaded PDF, and custom image.</div>
@@ -524,6 +528,7 @@ const S = {
   headerStyle: 'full_masthead',
   globalScale: 1.0,
   shadow: 1.05,
+  paperFeel: 1.15,
   showBgLogo: true,
   logoScale: 1.05,
   ink: 'dark',
@@ -644,6 +649,22 @@ function directionForComposition(mode, selectedDirection) {
     ? 'editorial_stack'
     : selectedDirection;
   return selectedDirection || suggestDirectionForPageCount(pdfPages.length || 3);
+}
+
+function syncCompositionForDirection(direction) {
+  if (direction === 'hero_cover') {
+    S.pageComposition = 'one_page';
+  } else if (direction === 'two_cover_compare') {
+    S.pageComposition = 'two_pages';
+  } else if (['editorial_stack', 'campaign_fan', 'clean_feature'].includes(direction)) {
+    const current = S.pageComposition || 'auto';
+    if (current === 'auto' || current === 'one_page' || current === 'two_pages') {
+      S.pageComposition = 'three_pages';
+    }
+  }
+
+  const pageComposition = document.getElementById('pageComposition');
+  if (pageComposition) pageComposition.value = S.pageComposition || 'auto';
 }
 
 function compositionLabel(mode) {
@@ -785,6 +806,8 @@ function applySnapshot(snapStr) {
   document.getElementById('outGlobalScale').value = S.globalScale.toFixed(2);
   document.getElementById('shadow').value = S.shadow;
   document.getElementById('outShadow').value = S.shadow.toFixed(2);
+  document.getElementById('paperFeel').value = S.paperFeel;
+  document.getElementById('outPaperFeel').value = S.paperFeel.toFixed(2);
 
   canvas.width = 1080;
   canvas.height = S.format === 'portrait' ? 1350 : 1080;
@@ -995,11 +1018,42 @@ function fillTextFit(c, text, x, y, maxWidth, basePx, minPx, weight, family) {
   return size;
 }
 
-// Crisp physical paper path with subtle 2.5px corner radius
-function drawPaperPath(c, w, h, r = 2.5) {
+function getTentPath(c, w, h, foldY) {
   c.beginPath();
-  c.roundRect(-w / 2, -h / 2, w, h, r);
+  c.moveTo(-w/2, -h/2);
+  c.lineTo(0, -h/2 - foldY);
+  c.lineTo(w/2, -h/2);
+  c.lineTo(w/2, h/2);
+  c.lineTo(0, h/2 - foldY);
+  c.lineTo(-w/2, h/2);
   c.closePath();
+}
+
+let cachedPaperGrain = null;
+
+function getPaperGrainPattern() {
+  if (cachedPaperGrain) return cachedPaperGrain;
+  const grain = document.createElement('canvas');
+  grain.width = 96;
+  grain.height = 96;
+  const gctx = grain.getContext('2d');
+  const img = gctx.createImageData(grain.width, grain.height);
+
+  for (let y = 0; y < grain.height; y++) {
+    for (let x = 0; x < grain.width; x++) {
+      const i = (y * grain.width + x) * 4;
+      const n = (Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
+      const value = n > 0.5 ? 255 : 0;
+      img.data[i] = value;
+      img.data[i + 1] = value;
+      img.data[i + 2] = value;
+      img.data[i + 3] = 9;
+    }
+  }
+
+  gctx.putImageData(img, 0, 0);
+  cachedPaperGrain = ctx.createPattern(grain, 'repeat');
+  return cachedPaperGrain;
 }
 
 function drawPaper(paper, img) {
@@ -1009,8 +1063,6 @@ function drawPaper(paper, img) {
   const portrait = S.format === 'portrait';
 
   const ratio = imageRatio(img);
-  
-  // Proportional base width: calibrated to span exactly 96% of canvas in photo reference mode
   const baseW = W * (portrait ? 0.388 : 0.380) * S.globalScale * paper.scale;
   const baseH = baseW * ratio;
 
@@ -1020,66 +1072,129 @@ function drawPaper(paper, img) {
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate((paper.rot * Math.PI) / 180);
+  
+  const paperFeel = Math.max(0, S.paperFeel || 0);
+  const shadowStrength = Math.min(2.0, S.shadow || 0);
+  
+  // Softer Tent fold parameters 
+  const foldY = baseH * 0.010 * paperFeel; // center lifts up much less
+  const compress = 1.0 - (0.010 * paperFeel); // slightly narrower
+  const effW = baseW * compress;
 
-  // 1. Realistic Multi-stage Drop Shadows
-  if (S.shadow > 0) {
+  // 1. Shadows
+  if (shadowStrength > 0) {
     ctx.save();
-    // Ambient soft drop shadow (casts on background and provides broad depth)
-    ctx.shadowColor = `rgba(14, 4, 12, ${0.28 * S.shadow})`;
-    ctx.shadowBlur = 42 * S.shadow;
-    ctx.shadowOffsetY = 24 * S.shadow;
-    ctx.shadowOffsetX = 8 * S.shadow;
+    
+    // Ambient deep shadow
+    ctx.shadowColor = `rgba(12, 5, 12, ${0.30 * shadowStrength})`;
+    ctx.shadowBlur = 45 * shadowStrength;
+    ctx.shadowOffsetY = 24 * shadowStrength;
+    ctx.shadowOffsetX = 8 * shadowStrength;
     ctx.fillStyle = '#faf9f6';
-    drawPaperPath(ctx, baseW, baseH, 2.5);
+    getTentPath(ctx, effW, baseH, foldY);
     ctx.fill();
 
-    // Contact drop shadow (darker, tighter, gives crisp definition where papers overlap)
-    ctx.shadowColor = `rgba(10, 3, 10, ${0.18 * S.shadow})`;
-    ctx.shadowBlur = 12 * S.shadow;
-    ctx.shadowOffsetY = 8 * S.shadow;
-    ctx.shadowOffsetX = 3 * S.shadow;
+    // Tight contact shadow
+    ctx.shadowColor = `rgba(10, 3, 10, ${0.28 * shadowStrength})`;
+    ctx.shadowBlur = 14 * shadowStrength;
+    ctx.shadowOffsetY = 8 * shadowStrength;
+    ctx.shadowOffsetX = 2 * shadowStrength;
     ctx.fill();
     ctx.restore();
   }
 
-  // 2. Paper Surface & Image
-  drawPaperPath(ctx, baseW, baseH, 2.5);
-  ctx.clip();
-  ctx.fillStyle = '#faf9f6';
-  ctx.fillRect(-baseW / 2 - 2, -baseH / 2 - 2, baseW + 4, baseH + 4);
-  
+  const imgW = img.naturalWidth || img.videoWidth || img.width;
+  const imgH = img.naturalHeight || img.videoHeight || img.height;
+
+  // 2. Draw Left and Right Halves
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, -baseW / 2, -baseH / 2, baseW, baseH);
 
-  // 3. Subtle Lighting & Paper Thickness definition
-  let g = ctx.createLinearGradient(-baseW / 2, 0, baseW / 2, 0);
-  g.addColorStop(0, 'rgba(0,0,0,0.035)');
-  g.addColorStop(0.18, 'rgba(255,255,255,0.06)');
-  g.addColorStop(0.55, 'rgba(255,255,255,0)');
-  g.addColorStop(1, 'rgba(0,0,0,0.045)');
-  ctx.fillStyle = g;
-  ctx.fillRect(-baseW / 2, -baseH / 2, baseW, baseH);
+  const drawHalf = (isLeft) => {
+    ctx.save();
+    
+    if (isLeft) {
+      // Left half
+      ctx.translate(-effW/2, 0);
+      ctx.transform(compress, -foldY / (baseW/2), 0, 1, 0, 0);
+      
+      ctx.fillStyle = '#faf9f6';
+      ctx.fillRect(0, -baseH/2, baseW/2, baseH);
+      ctx.drawImage(img, 0, 0, imgW/2, imgH, 0, -baseH/2, baseW/2, baseH);
+      
+      // Softer Lighting
+      if (paperFeel > 0) {
+        let g = ctx.createLinearGradient(0, 0, baseW/2, 0);
+        g.addColorStop(0, `rgba(0,0,0,${0.06 * paperFeel})`);
+        g.addColorStop(0.8, `rgba(255,255,255,${0.02 * paperFeel})`);
+        g.addColorStop(1, `rgba(255,255,255,${0.08 * paperFeel})`); // subtle bright at crease
+        ctx.fillStyle = g;
+        ctx.fillRect(0, -baseH/2, baseW/2, baseH);
+      }
+    } else {
+      // Right half
+      ctx.translate(effW/2, 0);
+      ctx.transform(compress, foldY / (baseW/2), 0, 1, 0, 0);
+      
+      ctx.fillStyle = '#faf9f6';
+      ctx.fillRect(-baseW/2, -baseH/2, baseW/2, baseH);
+      ctx.drawImage(img, imgW/2, 0, imgW/2, imgH, -baseW/2, -baseH/2, baseW/2, baseH);
+      
+      // Softer Lighting
+      if (paperFeel > 0) {
+        let g = ctx.createLinearGradient(-baseW/2, 0, 0, 0);
+        g.addColorStop(0, `rgba(0,0,0,${0.12 * paperFeel})`); // much softer shadow at crease
+        g.addColorStop(0.2, `rgba(0,0,0,${0.04 * paperFeel})`);
+        g.addColorStop(1, `rgba(0,0,0,${0.08 * paperFeel})`);
+        ctx.fillStyle = g;
+        ctx.fillRect(-baseW/2, -baseH/2, baseW/2, baseH);
+      }
+    }
+    
+    ctx.restore();
+  };
 
-  // Subtle 1px paper edge border (essential for realistic paper overlap separation)
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.09)';
-  ctx.lineWidth = 1;
-  drawPaperPath(ctx, baseW, baseH, 2.5);
+  drawHalf(true);
+  drawHalf(false);
+
+  // 3. Paper Texture & Finishes
+  if (paperFeel > 0) {
+    const grain = getPaperGrainPattern();
+    if (grain) {
+      ctx.save();
+      ctx.globalAlpha = 0.22 * Math.min(1.5, paperFeel);
+      ctx.fillStyle = grain;
+      getTentPath(ctx, effW, baseH, foldY);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // 4. Paper Edge Border
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
+  ctx.lineWidth = 1.25;
+  getTentPath(ctx, effW, baseH, foldY);
   ctx.stroke();
 
-  // 4. Interactive Selection Outline on Canvas (Only in live preview, NOT in PNG export)
+  // 5. Interactive Selection Outline
   if (!isExporting && papers[activePaperIdx] && papers[activePaperIdx].id === paper.id) {
     ctx.save();
     ctx.strokeStyle = '#d85aa9';
     ctx.lineWidth = 2.5;
     ctx.setLineDash([6, 4]);
-    ctx.strokeRect(-baseW / 2 - 4, -baseH / 2 - 4, baseW + 8, baseH + 8);
+    getTentPath(ctx, effW + 8, baseH + 8, foldY);
+    ctx.stroke();
     
     // Corner handles
     ctx.fillStyle = '#ffffff';
     ctx.setLineDash([]);
     const hw = 7;
-    [[-baseW/2-4, -baseH/2-4], [baseW/2+4, -baseH/2-4], [baseW/2+4, baseH/2+4], [-baseW/2-4, baseH/2+4]].forEach(([hx, hy]) => {
+    [
+      [-effW/2-4, -baseH/2-4], 
+      [effW/2+4, -baseH/2-4], 
+      [effW/2+4, baseH/2+4], 
+      [-effW/2-4, baseH/2+4]
+    ].forEach(([hx, hy]) => {
       ctx.fillRect(hx - hw/2, hy - hw/2, hw, hw);
       ctx.strokeRect(hx - hw/2, hy - hw/2, hw, hw);
     });
@@ -1675,7 +1790,8 @@ async function loadPdf(source, filename) {
       S.pageComposition = suggestedComposition;
       document.getElementById('pageComposition').value = suggestedComposition;
     }
-    const directionKey = directionForComposition(getEffectiveComposition(), suggestDirectionForPageCount(pdfDoc.numPages));
+    const selectedDirection = (document.getElementById('visualDirection') || {}).value || suggestDirectionForPageCount(pdfDoc.numPages);
+    const directionKey = directionForComposition(getEffectiveComposition(), selectedDirection);
     composePoster(directionKey, `✅ <strong>${escapeHtml(name)}</strong> — ${pdfDoc.numPages} page${pdfDoc.numPages === 1 ? '' : 's'} — Poster ready`);
   } catch (e) {
     console.error(e);
@@ -1894,7 +2010,14 @@ function initControls() {
 
   document.getElementById('btnMakePoster').addEventListener('click', () => {
     const direction = document.getElementById('visualDirection').value;
+    syncCompositionForDirection(direction);
     composePoster(direction, 'Poster composed');
+  });
+
+  document.getElementById('visualDirection').addEventListener('change', e => {
+    const direction = e.target.value;
+    syncCompositionForDirection(direction);
+    composePoster(direction, `Poster composed — ${VISUAL_DIRECTIONS[direction].label}`);
   });
 
   document.getElementById('pageComposition').addEventListener('change', e => {
@@ -2006,6 +2129,13 @@ function initControls() {
     render();
   });
   document.getElementById('shadow').addEventListener('change', pushHistory);
+
+  document.getElementById('paperFeel').addEventListener('input', e => {
+    S.paperFeel = parseFloat(e.target.value);
+    document.getElementById('outPaperFeel').value = S.paperFeel.toFixed(2);
+    render();
+  });
+  document.getElementById('paperFeel').addEventListener('change', pushHistory);
 
   document.getElementById('format').addEventListener('change', e => setFormat(e.target.value));
   document.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => applyLayout(b.dataset.layout)));

@@ -31,6 +31,16 @@ test('auto-composes from the sample PDF, supports Make Poster, and exports PNG',
   await expect(page.locator('#pageComposition')).toContainText('Custom 4+');
   await expect(page.locator('#themePresets .preset')).toHaveCount(18);
 
+  // Visual Direction applies immediately and keeps Featured Pages in sync.
+  await page.locator('#visualDirection').selectOption('campaign_fan');
+  await expect(page.locator('#pdfStatus')).toContainText(/Campaign Fan/);
+  await expect(page.locator('#readyMeta')).toContainText(/Campaign Fan/);
+  await expect(page.locator('#pageComposition')).toHaveValue('three_pages');
+  await page.locator('#visualDirection').selectOption('hero_cover');
+  await expect(page.locator('#readyMeta')).toContainText(/Hero Cover/);
+  await expect(page.locator('#pageComposition')).toHaveValue('one_page');
+  await page.locator('#pageComposition').selectOption('auto');
+
   // Color combinations are first-class art-direction controls.
   const cornerPixel = () => canvas.evaluate(node => {
     const sample = node.getContext('2d').getImageData(20, 20, 1, 1).data;
