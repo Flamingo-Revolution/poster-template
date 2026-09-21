@@ -100,13 +100,14 @@ poster-template/
 2. Run `npm run prepare:vendor`.
 3. Run `npx playwright install chromium` if the deployment/CI machine does not already have Playwright browsers installed.
 4. Run `npm test && npm run audit`.
-5. Deploy `flamingo-times-template-v2.html`, `assets/`, `vendor/`, and `.nojekyll` to GitHub Pages or another static host.
+5. Deploy `index.html`, `flamingo-times-template-v2.html`, `assets/`, `vendor/`, and `.nojekyll` to GitHub Pages or another static host.
 
 For a GitHub Pages project site such as `https://USER.github.io/REPO/`, keep this repo layout at the published root:
 
 ```text
 REPO/
 ├── .nojekyll
+├── index.html
 ├── flamingo-times-template-v2.html
 ├── assets/
 └── vendor/

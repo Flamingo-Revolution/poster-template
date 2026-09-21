@@ -7,7 +7,7 @@ test('loads, renders, imports sample PDF, and exports PNG', async ({ page }) => 
   });
   page.on('pageerror', error => consoleErrors.push(error.message));
 
-  await page.goto('/flamingo-times-template-v2.html');
+  await page.goto('/');
   await expect(page.getByRole('heading', { name: /Flamingo Times/i })).toBeVisible();
 
   const canvas = page.locator('#poster');

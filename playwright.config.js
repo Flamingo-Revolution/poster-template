@@ -12,7 +12,7 @@ module.exports = defineConfig({
   },
   webServer: {
     command: 'node scripts/serve.js',
-    url: 'http://127.0.0.1:8085/flamingo-times-template-v2.html',
+    url: 'http://127.0.0.1:8085/',
     reuseExistingServer: true,
     timeout: 15000
   }

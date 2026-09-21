@@ -33,6 +33,7 @@ for (const pattern of forbiddenPatterns) {
 }
 
 const requiredFiles = [
+  'index.html',
   'assets/cover.jpg',
   'assets/page-zvernec-back.svg',
   'assets/page-zvernec-front.svg',
@@ -62,6 +63,11 @@ for (const relative of new Set(assetRefs)) {
 
 if (!html.includes("new URL('vendor/pdfjs/pdf.min.mjs', APP_BASE_URL)")) {
   fail('PDF.js module URL should resolve from document.baseURI for GitHub Pages subpaths.');
+}
+
+const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+if (!indexHtml.includes('flamingo-times-template-v2.html')) {
+  fail('index.html should link or redirect to the main studio HTML file.');
 }
 
 if (failures.length) {
