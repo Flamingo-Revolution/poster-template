@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1414" width="1000" height="1414">
+  <rect width="1000" height="1414" fill="#faf9f6"/>
+  
+  <!-- Masthead top bar -->
+  <g transform="translate(50, 45)">
+    <text x="0" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#555">Shpërndaje këtë fletëpalosje me miqtë e tu!</text>
+    <text x="900" y="20" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#555">Tiranë, Korrik 2026 | Botimi I</text>
+    <line x1="0" y1="30" x2="900" y2="30" stroke="#111" stroke-width="1.5"/>
+    
+    <text x="450" y="72" text-anchor="middle" font-family="'Times New Roman', Times, Georgia, serif" font-size="46" font-weight="900" letter-spacing="2" fill="#111">FLAMINGO TIMES</text>
+    <line x1="0" y1="88" x2="900" y2="88" stroke="#111" stroke-width="1"/>
+  </g>
+
+  <!-- Subhead question -->
+  <g transform="translate(50, 160)">
+    <text x="0" y="0" font-family="'Times New Roman', Times, Georgia, serif" font-size="23" font-weight="700" fill="#111">Çfarë po ndodh me vendin tonë?</text>
+    <text x="0" y="26" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="400" fill="#333">
+      <tspan x="0" dy="0"><tspan font-weight="800">Paradoksi:</tspan> Euro hyjnë, por shqiptarët ikin. Që nga viti 2013, investimet e huaja u dyfishuan, NË TË NJËJTËN</tspan>
+      <tspan x="0" dy="22">KOHË plot <tspan font-weight="800">600,000 shqiptarë</tspan> u larguan nga vendi. Dhe vazhdojnë të ikin çdo vit.</tspan>
+    </text>
+  </g>
+
+  <!-- Big Banner: SI E MARRIN TOKËN - HAP PAS HAPI -->
+  <g transform="translate(50, 240)">
+    <rect x="0" y="0" width="900" height="48" fill="#111" rx="3"/>
+    <text x="450" y="34" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-size="26" font-weight="900" letter-spacing="1" fill="#faf9f6">SI E MARRIN TOKËN — HAP PAS HAPI</text>
+  </g>
+
+  <!-- Content 2 columns -->
+  <g transform="translate(50, 315)">
+    <!-- Column 1 & 2: Steps (width 540) -->
+    <g>
+      <!-- Hapi 1 -->
+      <rect x="0" y="0" width="80" height="28" fill="#111" rx="4"/>
+      <text x="40" y="19" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="#fff">Hapi 1</text>
+      <text x="95" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">Investitori paraqet projekt me vlerë 5</text>
+      <text x="0" y="50" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" fill="#222">
+        <tspan x="0" dy="0">milionë euro. Qeveria e shpall "strategjike" pa votim publik,</tspan>
+        <tspan x="0" dy="20">pa sqarim qytetar dhe pa referendum vendor.</tspan>
+      </text>
+
+      <line x1="0" y1="88" x2="530" y2="88" stroke="#e0ded6" stroke-width="1"/>
+
+      <!-- Hapi 2 -->
+      <g transform="translate(0, 102)">
+        <rect x="0" y="0" width="80" height="28" fill="#111" rx="4"/>
+        <text x="40" y="19" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="#fff">Hapi 2</text>
+        <text x="95" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">TI DUHET me nënshkru shitjen.</text>
+        <text x="0" y="50" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" fill="#222">
+          <tspan x="0" dy="0">Nëse pronari nuk bie dakord me çmimin qesharak – shteti</tspan>
+          <tspan x="0" dy="20">ia merr me shpronësim të detyruar administrativ.</tspan>
+        </text>
+      </g>
+
+      <line x1="0" y1="190" x2="530" y2="190" stroke="#e0ded6" stroke-width="1"/>
+
+      <!-- Hapi 3 -->
+      <g transform="translate(0, 204)">
+        <rect x="0" y="0" width="80" height="28" fill="#111" rx="4"/>
+        <text x="40" y="19" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="800" fill="#fff">Hapi 3</text>
+        <text x="95" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">Toka i kalohet investitorit privat.</text>
+        <text x="0" y="50" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" fill="#222">
+          <tspan x="0" dy="0">Firmat sekrete sipas reformave të qeverisë,</tspan>
+          <tspan x="0" dy="20">me vlerë simbolike prej vetëm <tspan font-weight="800">200 lekë/m²!</tspan></tspan>
+        </text>
+      </g>
+
+      <!-- Stat Box -->
+      <g transform="translate(0, 305)">
+        <rect x="0" y="0" width="530" height="128" fill="#f3eee5" stroke="#111" stroke-width="1.5" rx="5"/>
+        <text x="22" y="32" font-family="'Times New Roman', Times, Georgia, serif" font-size="19" font-weight="700" fill="#111">Investitori ndërton vila me 4,000 - 10,000€/m²</text>
+        <text x="22" y="60" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#333">
+          <tspan x="22" dy="0">dhe fiton 100-fish vlerën e tokës pa paguar taksë reale,</tspan>
+          <tspan x="22" dy="22">duke tjetërsuar bregdetin e Zvërnecit dhe ishullit të Sazanit</tspan>
+          <tspan x="22" dy="22">për oligarkët privatë dhe pushtetarët e korruptuar.</tspan>
+        </text>
+      </g>
+
+      <!-- Shqipëria për veten -->
+      <g transform="translate(0, 460)">
+        <text x="0" y="0" font-family="'Times New Roman', Times, Georgia, serif" font-size="19" font-weight="700" fill="#111">Shqipëria për veten?</text>
+        <text x="0" y="24" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#333">
+          <tspan x="0" dy="0">20% e GDP-së sot vjen nga turizmi, por fitimet</tspan>
+          <tspan x="0" dy="20">përqendrohen në duart e disave. Qytetarët shqiptarë</tspan>
+          <tspan x="0" dy="20">marrin vetëm çmime të papërballueshme dhe dëbim.</tspan>
+        </text>
+      </g>
+    </g>
+
+    <!-- Column 3: Right side with Action & QR Code (width 330) -->
+    <g transform="translate(570, 0)">
+      <line x1="-20" y1="0" x2="-20" y2="550" stroke="#111" stroke-width="1"/>
+
+      <text x="0" y="20" font-family="'Times New Roman', Times, Georgia, serif" font-size="21" font-weight="700" fill="#111">Çfarë mund të bëni ju?</text>
+      <text x="0" y="48" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#222">
+        <tspan x="0" dy="0"><tspan font-weight="800">Dilni në protestë</tspan> – çdo zë ka rëndësi</tspan>
+        <tspan x="0" dy="20">të jashtëzakonshme për vendin tonë.</tspan>
+        <tspan x="0" dy="20">Pranë tyre ka peshë: JU, qytetarët,</tspan>
+        <tspan x="0" dy="20">jeni forca e vërtetë e ndryshimit!</tspan>
+        <tspan x="0" dy="26"><tspan font-weight="800">Nënshkruani peticionin</tspan> 50,000 firma</tspan>
+        <tspan x="0" dy="20">nevojiten sipas nenit 150 të Kushtetutës</tspan>
+        <tspan x="0" dy="20">për shpalljen e referendumit kombëtar.</tspan>
+      </text>
+
+      <!-- Flamingo Revolution QR Code Box -->
+      <g transform="translate(0, 215)">
+        <rect x="0" y="0" width="330" height="335" fill="#fff" stroke="#111" stroke-width="2.5" rx="8"/>
+        
+        <!-- Flamingo Text + Head in box -->
+        <text x="165" y="40" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-size="23" font-weight="900" fill="#111">Flamingo</text>
+        <text x="165" y="60" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="800" letter-spacing="2" fill="#d85aa9">REVOLUTION</text>
+
+        <!-- Web link badge -->
+        <rect x="25" y="74" width="280" height="28" fill="#111" rx="4"/>
+        <text x="165" y="93" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff">flamingorevolution.eu</text>
+
+        <!-- QR Code Graphic Mock -->
+        <g transform="translate(85, 118)">
+          <rect x="0" y="0" width="160" height="160" fill="#fff" stroke="#000" stroke-width="2.5"/>
+          <rect x="10" y="10" width="40" height="40" fill="#000"/>
+          <rect x="18" y="18" width="24" height="24" fill="#fff"/>
+          <rect x="24" y="24" width="12" height="12" fill="#000"/>
+
+          <rect x="110" y="10" width="40" height="40" fill="#000"/>
+          <rect x="118" y="18" width="24" height="24" fill="#fff"/>
+          <rect x="124" y="24" width="12" height="12" fill="#000"/>
+
+          <rect x="10" y="110" width="40" height="40" fill="#000"/>
+          <rect x="18" y="118" width="24" height="24" fill="#fff"/>
+          <rect x="24" y="124" width="12" height="12" fill="#000"/>
+
+          <rect x="60" y="15" width="14" height="14" fill="#000"/>
+          <rect x="82" y="24" width="16" height="12" fill="#000"/>
+          <rect x="60" y="36" width="26" height="14" fill="#000"/>
+          <rect x="18" y="65" width="26" height="14" fill="#000"/>
+          <rect x="30" y="86" width="16" height="16" fill="#000"/>
+          <rect x="64" y="60" width="36" height="36" fill="#000"/>
+          <rect x="71" y="67" width="22" height="22" fill="#fff"/>
+          <rect x="76" y="72" width="12" height="12" fill="#000"/>
+          <rect x="115" y="65" width="22" height="16" fill="#000"/>
+          <rect x="125" y="86" width="26" height="14" fill="#000"/>
+          <rect x="60" y="115" width="22" height="22" fill="#000"/>
+          <rect x="85" y="110" width="16" height="32" fill="#000"/>
+          <rect x="115" y="115" width="32" height="16" fill="#000"/>
+          <rect x="120" y="136" width="16" height="16" fill="#000"/>
+        </g>
+
+        <text x="165" y="308" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" font-weight="800" fill="#111">SKANO DHE BASHKOHU</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Big 5 KËRKESAT TONA Box at bottom -->
+  <g transform="translate(50, 930)">
+    <rect x="0" y="0" width="900" height="425" fill="#fff" stroke="#111" stroke-width="2.5" rx="6"/>
+    
+    <!-- Big Number 5 + Title -->
+    <text x="35" y="90" font-family="'Arial Black', Impact, sans-serif" font-size="96" font-weight="900" fill="#111">5</text>
+    <text x="115" y="65" font-family="'Times New Roman', Times, Georgia, serif" font-size="40" font-weight="900" fill="#111">Kërkesat tona</text>
+    <line x1="115" y1="80" x2="860" y2="80" stroke="#111" stroke-width="2"/>
+
+    <!-- 5 Demands list -->
+    <g transform="translate(35, 130)">
+      <text x="0" y="0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17.5" font-weight="700" fill="#111">1. Ligji për referendumet <tspan font-weight="400">të bëhet i zbatueshëm – vullneti i popullit të vendosë.</tspan></text>
+      <text x="0" y="48" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17.5" font-weight="700" fill="#111">2. Ndalim me ligj <tspan font-weight="400">të pastrimit të parave në Zvërnec dhe në Sazan.</tspan></text>
+      <text x="0" y="96" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17.5" font-weight="700" fill="#111">3. Publikim të plotë <tspan font-weight="400">të kontratave, të mos fshihen pas kompanive offshore.</tspan></text>
+      <text x="0" y="144" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17.5" font-weight="700" fill="#111">4. Studim mjedisor <tspan font-weight="400">të pavarur ndërkombëtar para çdo leje ndërtimi.</tspan></text>
+      <text x="0" y="192" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17.5" font-weight="700" fill="#111">5. Shfuqizim <tspan font-weight="400">të ndryshimeve ligjore 2024–2026 për Zonat e Mbrojtura.</tspan></text>
+    </g>
+
+    <!-- Constitution footer quote -->
+    <rect x="0" y="375" width="900" height="50" fill="#111" rx="0 0 5 5"/>
+    <text x="450" y="406" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#fff">
+      Neni 46 i Kushtetutës Shqiptare: Prona nuk mund të merret pa shpërblim të drejtë dhe interes publik të vërtetë.
+    </text>
+  </g>
+</svg>

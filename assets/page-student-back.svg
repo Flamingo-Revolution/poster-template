@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1414" width="1000" height="1414">
+  <rect width="1000" height="1414" fill="#faf9f6"/>
+  
+  <!-- Masthead top bar -->
+  <g transform="translate(50, 45)">
+    <text x="0" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#555">Shtypur për lirinë e mendimit dhe rezistencën studentore</text>
+    <text x="900" y="20" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#555">Tiranë, Dhjetor 2026 | Botimi II</text>
+    <line x1="0" y1="30" x2="900" y2="30" stroke="#111" stroke-width="1.5"/>
+    
+    <text x="450" y="75" text-anchor="middle" font-family="'Times New Roman', Times, Georgia, serif" font-size="50" font-weight="900" letter-spacing="2" fill="#111">FLAMINGO TIMES</text>
+    <line x1="0" y1="92" x2="900" y2="92" stroke="#111" stroke-width="1"/>
+  </g>
+
+  <!-- Manifesto Header -->
+  <g transform="translate(50, 165)">
+    <text x="0" y="0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="1.5" fill="#d85aa9">MANIFESTI I STUDENTËVE TË DHJETORIT</text>
+    <text x="0" y="45" font-family="'Times New Roman', Times, Georgia, serif" font-size="40" font-weight="900" fill="#111">
+      <tspan x="0" dy="0">Nuk ka liri pa dije, nuk ka ndryshim</tspan>
+      <tspan x="0" dy="48">pa rininë që ngre zërin!</tspan>
+    </text>
+    <line x1="0" y1="125" x2="900" y2="125" stroke="#111" stroke-width="1.5"/>
+  </g>
+
+  <!-- 2 Columns: Demands & Action -->
+  <g transform="translate(50, 320)">
+    <!-- Col 1: The 4 pillars -->
+    <g transform="translate(0, 0)">
+      <text x="0" y="20" font-family="'Times New Roman', Times, Georgia, serif" font-size="22" font-weight="700" fill="#111">Katër Shtyllat e Rezistencës</text>
+      
+      <g transform="translate(0, 45)">
+        <rect x="0" y="0" width="36" height="26" fill="#111" rx="3"/>
+        <text x="18" y="18" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="14" fill="#fff">1</text>
+        <text x="50" y="18" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">Tarifa Zero për Arsimin Publik</text>
+        <text x="0" y="44" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#333">
+          Arsimi universitar është e drejtë themelore, jo mall biznesi.
+        </text>
+      </g>
+
+      <g transform="translate(0, 130)">
+        <rect x="0" y="0" width="36" height="26" fill="#111" rx="3"/>
+        <text x="18" y="18" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="14" fill="#fff">2</text>
+        <text x="50" y="18" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">Kushte Dinjitoze në Konvikte</text>
+        <text x="0" y="44" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#333">
+          Ngrohje, ujë të ngrohtë dhe biblioteka funksionale 24/7.
+        </text>
+      </g>
+
+      <g transform="translate(0, 215)">
+        <rect x="0" y="0" width="36" height="26" fill="#111" rx="3"/>
+        <text x="18" y="18" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="14" fill="#fff">3</text>
+        <text x="50" y="18" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">Vetting Akademik për Plagjiaturat</text>
+        <text x="0" y="44" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#333">
+          Largimi i menjëhershëm i profesorëve dhe politikanëve mashtrues.
+        </text>
+      </g>
+
+      <g transform="translate(0, 300)">
+        <rect x="0" y="0" width="36" height="26" fill="#111" rx="3"/>
+        <text x="18" y="18" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="14" fill="#fff">4</text>
+        <text x="50" y="18" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#111">Përfaqësim 50% në Senat</text>
+        <text x="0" y="44" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" fill="#333">
+          Studentët duhet të vendosin mbi buxhetin dhe drejtimin e universitetit.
+        </text>
+      </g>
+    </g>
+
+    <!-- Col 2: Big Action & QR Code Box -->
+    <g transform="translate(540, 0)">
+      <line x1="-30" y1="0" x2="-30" y2="400" stroke="#ddd" stroke-width="1"/>
+
+      <!-- QR Code Box -->
+      <rect x="0" y="0" width="360" height="390" fill="#fff" stroke="#111" stroke-width="2.5" rx="8"/>
+      <text x="180" y="42" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-size="24" font-weight="900" fill="#111">BËHU EDHE TI STUDENT!</text>
+      <text x="180" y="66" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1" fill="#d85aa9">REVOLUCIONI I DIJES</text>
+
+      <!-- Web link badge -->
+      <rect x="35" y="82" width="290" height="28" fill="#111" rx="4"/>
+      <text x="180" y="101" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff">flamingorevolution.eu</text>
+
+      <!-- QR Code Graphic Mock -->
+      <g transform="translate(100, 126)">
+        <rect x="0" y="0" width="160" height="160" fill="#fff" stroke="#000" stroke-width="2.5"/>
+        <rect x="10" y="10" width="40" height="40" fill="#000"/>
+        <rect x="18" y="18" width="24" height="24" fill="#fff"/>
+        <rect x="24" y="24" width="12" height="12" fill="#000"/>
+
+        <rect x="110" y="10" width="40" height="40" fill="#000"/>
+        <rect x="118" y="18" width="24" height="24" fill="#fff"/>
+        <rect x="124" y="24" width="12" height="12" fill="#000"/>
+
+        <rect x="10" y="110" width="40" height="40" fill="#000"/>
+        <rect x="18" y="118" width="24" height="24" fill="#fff"/>
+        <rect x="24" y="124" width="12" height="12" fill="#000"/>
+
+        <rect x="60" y="15" width="14" height="14" fill="#000"/>
+        <rect x="82" y="24" width="16" height="12" fill="#000"/>
+        <rect x="60" y="36" width="26" height="14" fill="#000"/>
+        <rect x="18" y="65" width="26" height="14" fill="#000"/>
+        <rect x="30" y="86" width="16" height="16" fill="#000"/>
+        <rect x="64" y="60" width="36" height="36" fill="#000"/>
+        <rect x="71" y="67" width="22" height="22" fill="#fff"/>
+        <rect x="76" y="72" width="12" height="12" fill="#000"/>
+        <rect x="115" y="65" width="22" height="16" fill="#000"/>
+        <rect x="125" y="86" width="26" height="14" fill="#000"/>
+        <rect x="60" y="115" width="22" height="22" fill="#000"/>
+        <rect x="85" y="110" width="16" height="32" fill="#000"/>
+        <rect x="115" y="115" width="32" height="16" fill="#000"/>
+        <rect x="120" y="136" width="16" height="16" fill="#000"/>
+      </g>
+
+      <text x="180" y="318" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="800" fill="#111">BASHKOHU ME REZISTENCËN</text>
+      <text x="180" y="338" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#666">Skano kodin për t'u bërë pjesë e rrjetit</text>
+    </g>
+  </g>
+
+  <!-- Big Banner Box at bottom -->
+  <g transform="translate(50, 770)">
+    <rect x="0" y="0" width="900" height="580" fill="#111" rx="8"/>
+    
+    <text x="450" y="70" text-anchor="middle" font-family="'Arial Black', Impact, sans-serif" font-size="34" font-weight="900" fill="#faf9f6">BËHU EDHE TI STUDENT!</text>
+    <text x="450" y="105" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#aaa">HISTORINË NUK E SHKRUAJNË PUSHTETARËT, POR ATA QË REZISTOJNË.</text>
+    <line x1="50" y1="125" x2="850" y2="125" stroke="#333" stroke-width="1.5"/>
+
+    <g transform="translate(60, 160)">
+      <text x="0" y="30" font-family="'Times New Roman', Times, Georgia, serif" font-size="30" font-weight="700" fill="#fff">
+        "E duam Shqipërinë si gjithë Evropa!"
+      </text>
+      <text x="0" y="65" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" fill="#ccc">
+        Kjo thirrje e Dhjetorit 1990 nuk ishte thjesht një parullë – ishte betimi i një brezi që rrëzoi diktaturën.
+      </text>
+      <text x="0" y="95" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" fill="#ccc">
+        Sot, në vitin 2026, pasardhësit e tyre përballen me një tjetër armik: zbrazjen e vendit, korrupsionin
+      </text>
+      <text x="0" y="125" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" fill="#ccc">
+        dhe shitjen e pasurive publike për oligarkët e pushtetit.
+      </text>
+
+      <rect x="0" y="170" width="780" height="120" fill="#1e1e24" stroke="#d85aa9" stroke-width="1.5" rx="6"/>
+      <text x="390" y="215" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="20" font-weight="900" fill="#fff">
+        MOS RRI SPECTATOR I JETËS TËNDE.
+      </text>
+      <text x="390" y="245" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#d85aa9">
+        Eja në shesh, bashkohu me studentët në çdo fakultet!
+      </text>
+      <text x="390" y="270" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#888">
+        flamingorevolution.eu • Telegram: @flamingorevolution • Instagram: @flamingorevolution
+      </text>
+    </g>
+
+    <text x="450" y="540" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#666">
+      FLAMINGO TIMES • BOTIMI II • DHJETOR 2026 • TIRANË, SHQIPËRI
+    </text>
+  </g>
+</svg>

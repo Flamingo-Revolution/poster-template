@@ -1,0 +1,1752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flamingo Times — Cover Studio</title>
+<style>
+:root{
+  color-scheme:dark;
+  --accent:#d85aa9;
+  --bg-dark:#0e1015;
+  --panel-bg:#161920;
+  --border:#272b35;
+  --text-main:#eef1f6;
+  --text-sub:#939aa8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg-dark);color:var(--text-main)}
+body{min-height:100vh}
+.app{display:grid;grid-template-columns:390px minmax(0,1fr);min-height:100vh}
+
+/* Sidebar */
+.panel{background:var(--panel-bg);border-right:1px solid var(--border);padding:22px 20px 32px;overflow:auto;max-height:100vh;position:sticky;top:0}
+h1{font-size:19px;margin:0 0 4px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.badge{font-size:10px;font-weight:800;background:#d85aa926;color:var(--accent);border:1px solid #d85aa94d;padding:2px 7px;border-radius:20px;text-transform:uppercase}
+.sub{font-size:12px;color:var(--text-sub);line-height:1.45;margin-bottom:18px}
+
+.section{border-top:1px solid var(--border);padding-top:16px;margin-top:16px}
+.section:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.section-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9ca3af;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+
+label{display:block;font-size:12px;color:#c9d0db;margin:0 0 5px;font-weight:600}
+.field{margin-top:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+
+input[type=text],input[type=number],select{width:100%;height:38px;background:#20242d;border:1px solid #343946;color:#f3f5f8;border-radius:8px;padding:0 10px;outline:none;font-size:13px}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #d85aa926}
+input[type=color]{width:52px;height:38px;background:#20242d;border:1px solid #343946;border-radius:8px;padding:2px;cursor:pointer}
+.colorline{display:grid;grid-template-columns:52px 1fr;gap:8px}
+
+.rangegrid{display:grid;grid-template-columns:1fr 48px;gap:8px;align-items:center}
+.rangegrid output{text-align:right;font:12px ui-monospace,monospace;color:#9aa2b0;background:#20242d;padding:3px 6px;border-radius:5px;border:1px solid #343946}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+
+/* Presets */
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.preset{height:50px;border:1px solid #ffffff1a;border-radius:8px;overflow:hidden;position:relative;background:var(--c);cursor:pointer;transition:transform .12s,outline .12s}
+.preset:hover{transform:translateY(-1px)}
+.preset span{position:absolute;left:6px;bottom:5px;font-size:10px;font-weight:800;color:var(--t);text-shadow:0 1px 4px #000a}
+.preset.active{outline:2px solid #fff;outline-offset:1px}
+
+/* Chips & Tabs */
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.chip{height:35px;background:#21252e;border:1px solid #343946;border-radius:7px;color:#eceef2;font-weight:700;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.chip:hover{background:#2a2f3b;border-color:#484f60}
+.chip.active{border-color:#d85aa9;background:#d85aa926;color:#fff}
+
+/* Paper Selector Tabs */
+.paper-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.paper-tab{padding:8px 4px;font-size:11px;font-weight:800;border-radius:8px;background:#20242d;border:1px solid #343946;color:#9da4b2;cursor:pointer;text-align:center;transition:all .15s}
+.paper-tab.active{background:#d85aa924;border-color:var(--accent);color:#fff}
+.paper-card{background:#1d2028;border:1px solid #2d3340;border-radius:10px;padding:12px;margin-top:8px}
+
+.filebox{border:1px dashed #434958;border-radius:10px;padding:12px;background:#1b1e26}
+.file-btn{height:40px;display:flex;align-items:center;justify-content:center;background:#eef1f6;color:#121419;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer;transition:filter .15s;text-align:center}
+.file-btn:hover{filter:brightness(1.08)}
+.file-btn input{display:none}
+.status{font-size:11px;color:var(--text-sub);margin-top:8px;line-height:1.4}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{height:42px;border:1px solid #3a3f4e;background:#232732;color:#f3f4f7;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;transition:all .15s}
+.btn.primary{background:#f3f5f8;color:#14171d;border-color:#f3f5f8}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:hover{background:#2c3240}
+.hint{font-size:11px;color:#858d9b;line-height:1.45;margin-top:8px}
+.sub-hint{font-size:11px;color:var(--accent);margin-top:4px;font-weight:600}
+
+/* Workspace */
+.workspace{min-width:0;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 20%,#191c24 0,#0b0c10 70%);overflow:auto;min-height:100vh;position:relative}
+.stage-shell{width:min(85vh,calc(100vw - 440px));max-width:920px;min-width:400px;position:relative}
+.stage-shell.portrait{width:min(70vh,calc(100vw - 440px))}
+
+/* Canvas Top Toolbar (Undo / Redo / Reset) */
+.canvas-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;background:#181b22d9;backdrop-filter:blur(14px);border:1px solid #2e3442;padding:6px 10px;border-radius:10px;box-shadow:0 8px 24px #00000055}
+.canvas-bar-group{display:flex;align-items:center;gap:6px}
+.bar-btn{height:30px;padding:0 11px;display:inline-flex;align-items:center;gap:6px;background:#222631;border:1px solid #363d4e;color:#e1e5ee;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;user-select:none}
+.bar-btn:hover:not(:disabled){background:#2f3544;color:#fff;border-color:var(--accent)}
+.bar-btn:active:not(:disabled){transform:scale(0.97)}
+.bar-btn:disabled{opacity:.35;cursor:not-allowed;border-color:#2a2e3a;background:#1a1d25;color:#6b7280}
+.bar-btn svg{flex-shrink:0}
+
+canvas{display:block;width:100%;height:auto;background:#985885;box-shadow:0 35px 120px #000000bd;border-radius:2px;cursor:crosshair}
+.canvas-tip{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:11px;color:#8f96a4;white-space:nowrap;pointer-events:none}
+
+.toggle-line{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.toggle-line label{margin:0;cursor:pointer}
+.toggle-line input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+
+/* Drag & Drop Overlay */
+.drop-overlay{position:absolute;inset:0;background:rgba(14,16,21,0.88);backdrop-filter:blur(10px);border:2px dashed var(--accent);border-radius:10px;display:none;align-items:center;justify-content:center;z-index:90;pointer-events:none;transition:opacity .2s}
+.drop-overlay.active{display:flex}
+.drop-box{text-align:center;padding:24px 30px;background:#181c25;border-radius:12px;border:1px solid #353d4e;box-shadow:0 18px 48px #000000bb}
+.drop-title{font-size:16px;font-weight:800;color:#fff;margin-top:6px}
+.drop-sub{font-size:12px;color:var(--text-sub);margin-top:4px}
+.app-error{margin-top:10px;border:1px solid #7f1d1d;background:#2a1518;color:#fecaca;border-radius:8px;padding:10px;font-size:12px;line-height:1.45}
+
+/* PDF Pages Strip in Sidebar */
+.pdf-strip{background:#151820;border:1px solid #2b303c;border-radius:8px;padding:10px;margin-top:10px}
+.pdf-strip-title{font-size:10px;text-transform:uppercase;color:#8f96a4;font-weight:800;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pdf-chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pdf-chip{background:#202530;border:1px solid #333a49;border-radius:6px;padding:6px 8px;font-size:11px;color:#d7dbe5;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:all .15s}
+.pdf-chip:hover{background:#2a3140;border-color:var(--accent)}
+.pdf-chip.active{background:#d85aa926;border-color:var(--accent);color:#fff}
+.pdf-chip-tag{font-size:9px;font-weight:800;color:var(--accent);text-transform:uppercase}
+
+@media(max-width:950px){
+  .app{display:block}
+  .panel{position:relative;max-height:none;border-right:0}
+  .workspace{padding:18px 18px 45px;min-height:unset}
+  .stage-shell,.stage-shell.portrait{width:min(94vw,760px);min-width:0}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="panel">
+  <h1>Flamingo Times <span class="badge">Studio</span></h1>
+  <div class="sub">Cover studio with top masthead, 3 overlapping hero newspapers in the center, and .eu logo at the bottom.</div>
+
+  <!-- Section: Issue & Pages -->
+  <div class="section">
+    <div class="section-title">Issue & Pages</div>
+    <div class="field">
+      <label>Select Issue Preset</label>
+      <select id="issuePreset">
+        <option value="zvernec" selected>Issue I — Zvërnec & Sazan (Reference Photo)</option>
+        <option value="student">Issue II — Student Movement (Dec 2026)</option>
+        <option value="custom">Custom Issue (PDF / Uploads)</option>
+      </select>
+    </div>
+    <div class="filebox" style="margin-top:10px">
+      <label class="file-btn">📄 Upload New Issue (PDF)<input id="pdfInput" type="file" accept="application/pdf,.pdf"></label>
+      <button class="chip" id="btnLoadSamplePdf" style="margin-top:6px;width:100%;height:32px;font-size:11px;background:#202633;border-color:#384155" title="Test with 4-page sample PDF">⚡ Test with Sample 4-Page PDF</button>
+      <div id="pdfStatus" class="status" aria-live="polite">Issue I (Zvërnec) is active with 3 full pages: Back (Step-by-Step + QR), Front Cover, and Inside Spread.</div>
+      
+      <!-- Interactive PDF Pages Strip -->
+      <div id="pdfStrip" class="pdf-strip" style="display:none">
+        <div class="pdf-strip-title">
+          <span>Detected PDF Pages</span>
+          <span id="pdfPageBadge" style="color:var(--accent);font-weight:800">0 pages</span>
+        </div>
+        <div class="pdf-chips" id="pdfChipsList"></div>
+        <div style="font-size:10px;color:#808898;margin-top:6px;line-height:1.35">Click any page chip above to set it on the active selected newspaper tab.</div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="chip active" id="btnPresetRefPages" title="Center: Back Cover, Left: Front Cover, Right: Inside Spread">Reference Pages</button>
+        <button class="chip" id="btnAutoPages">1 / 2 / 3</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Adjust Newspapers (Freeform & Individual) -->
+  <div class="section">
+    <div class="section-title">
+      <span>Adjust Newspapers</span>
+      <span class="sub-hint">Drag & move on Canvas</span>
+    </div>
+
+    <!-- Paper selector tabs -->
+    <div class="paper-tabs" id="paperTabs">
+      <button class="paper-tab active" data-paper="0">Paper 1 (Center)</button>
+      <button class="paper-tab" data-paper="1">Paper 2 (Left)</button>
+      <button class="paper-tab" data-paper="2">Paper 3 (Right)</button>
+    </div>
+
+    <!-- Individual paper editor card -->
+    <div class="paper-card" id="paperEditor">
+      <div class="field">
+        <label>Displayed Page</label>
+        <select id="curPaperPage"></select>
+      </div>
+      <div class="field">
+        <label class="file-btn" style="height:32px;font-size:11px;background:#252934;color:#e1e4ea;border:1px solid #373e4f">
+          🖼️ Upload image for this paper<input id="curPaperCustomFile" type="file" accept="image/*">
+        </label>
+        <button class="chip" id="btnClearCustomImage" style="display:none;width:100%;margin-top:5px;height:28px">Remove custom image</button>
+      </div>
+      <div class="field">
+        <label>Horizontal Position (X)</label>
+        <div class="rangegrid">
+          <input id="curPaperX" type="range" min="0.05" max="0.95" step="0.005" value="0.50">
+          <output id="outPaperX">0.50</output>
+        </div>
+      </div>
+      <div class="field">
+        <label>Vertical Position (Y)</label>
+        <div class="rangegrid">
+          <input id="curPaperY" type="range" min="0.10" max="0.90" step="0.005" value="0.435">
+          <output id="outPaperY">0.44</output>
+        </div>
+      </div>
+      <div class="field">
+        <label>Rotation Angle (°)</label>
+        <div class="rangegrid">
+          <input id="curPaperRot" type="range" min="-45" max="45" step="0.5" value="-5.5">
+          <output id="outPaperRot">-5.5°</output>
+        </div>
+      </div>
+      <div class="field">
+        <label>Paper Scale</label>
+        <div class="rangegrid">
+          <input id="curPaperScale" type="range" min="0.60" max="1.40" step="0.01" value="1.00">
+          <output id="outPaperScale">1.00</output>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="chip" id="btnBringFront" title="Place above other newspapers">⬆ Bring to Front</button>
+        <button class="chip" id="btnSendBack" title="Place behind other newspapers">⬇ Send to Back</button>
+      </div>
+      <div class="toggle-line">
+        <label for="curPaperVisible">Show this newspaper</label>
+        <input id="curPaperVisible" type="checkbox" checked>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Layout Presets & Format -->
+  <div class="section">
+    <div class="section-title">Layout & Format</div>
+    <div class="field">
+      <label>Canvas Format</label>
+      <select id="format">
+        <option value="portrait" selected>Instagram 4:5 — 1080×1350 (Portrait - Reference)</option>
+        <option value="square">Instagram 1:1 — 1080×1080 (Square)</option>
+      </select>
+    </div>
+    <div class="chips field" style="grid-template-columns:repeat(3,1fr);margin-top:10px">
+      <button class="chip active" data-layout="photo_reference" title="Exact layout matching reference photo">Like Reference</button>
+      <button class="chip" data-layout="fan">Spread Fan</button>
+      <button class="chip" data-layout="clean">Classic Clean</button>
+    </div>
+    <div class="chips field" style="grid-template-columns:1fr 1fr;margin-top:6px">
+      <button class="chip" data-layout="two_papers">2 Papers</button>
+      <button class="chip" data-layout="single">1 Paper Solo</button>
+    </div>
+
+    <div class="field">
+      <label>Global Newspaper Scale</label>
+      <div class="rangegrid"><input id="globalScale" type="range" min="0.75" max="1.30" step="0.01" value="1.00"><output id="outGlobalScale">1.00</output></div>
+    </div>
+    <div class="field">
+      <label>Shadow Depth & Softness</label>
+      <div class="rangegrid"><input id="shadow" type="range" min="0" max="1.8" step="0.02" value="1.05"><output id="outShadow">1.05</output></div>
+    </div>
+  </div>
+
+  <!-- Section: Typography & Masthead -->
+  <div class="section">
+    <div class="section-title">Typography & Masthead</div>
+    <div class="field">
+      <label>Masthead Style</label>
+      <select id="headerStyle">
+        <option value="full_masthead" selected>Full Masthead FLAMINGO TIMES + Issue Date</option>
+        <option value="photo_ref">Date / Issue Only (Top Right)</option>
+        <option value="none">No Text on Background</option>
+      </select>
+    </div>
+    <div class="field"><label>Main Title</label><input id="title" type="text" value="FLAMINGO TIMES"></div>
+    <div class="row">
+      <div><label>City</label><input id="city" type="text" value="Tiranë"></div>
+      <div><label>Month / Year</label><input id="date" type="text" value="Korrik 2026"></div>
+    </div>
+    <div class="field"><label>Issue</label><input id="issue" type="text" value="Botimi I"></div>
+  </div>
+
+  <!-- Section: Colors & Logo -->
+  <div class="section">
+    <div class="section-title">Colors & Logo (.eu)</div>
+    <div class="presets" id="themePresets"></div>
+    <div class="field">
+      <label>Background Color</label>
+      <div class="colorline"><input id="bg" type="color" value="#985885"><input id="bgHex" type="text" value="#985885"></div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Text Ink Color</label>
+        <select id="ink">
+          <option value="auto">Auto</option>
+          <option value="dark" selected>Dark</option>
+          <option value="light">Light (White)</option>
+          <option value="pink">Pink</option>
+        </select>
+      </div>
+      <div>
+        <label>Logo (.eu)</label>
+        <select id="logoMode">
+          <option value="auto">Auto</option>
+          <option value="white_black" selected>White + Black (Reference)</option>
+          <option value="pink_cream">Pink + Cream</option>
+          <option value="red_black">Red + Black</option>
+          <option value="black_red">Black + Red</option>
+          <option value="white">All White</option>
+          <option value="pink_black">Pink + Black</option>
+          <option value="pink">All Pink</option>
+          <option value="black">All Black</option>
+          <option value="red">All Red</option>
+          <option value="cream">All Cream</option>
+          <option value="red_white">Red + White</option>
+          <option value="white_red">White + Red</option>
+          <option value="white_pink">White + Pink</option>
+          <option value="pink_white">Pink + White</option>
+          <option value="black_pink">Black + Pink</option>
+          <option value="black_white">Black + White</option>
+          <option value="cream_pink">Cream + Pink</option>
+        </select>
+      </div>
+    </div>
+    <div class="toggle-line">
+      <label for="showBgLogo">Show logo at bottom of background</label>
+      <input id="showBgLogo" type="checkbox" checked>
+    </div>
+    <div class="field" id="logoScaleField">
+      <label>Logo Scale</label>
+      <div class="rangegrid"><input id="logoScale" type="range" min="0.65" max="1.45" step="0.01" value="1.05"><output id="outLogoScale">1.05</output></div>
+    </div>
+  </div>
+
+  <!-- Section: Export -->
+  <div class="section">
+    <div class="section-title">Export</div>
+    <div class="actions">
+      <button class="btn primary" id="download">Download PNG</button>
+      <button class="btn" id="reset">Reset</button>
+    </div>
+    <div class="hint">Full high-resolution PNG export (1080×1350). Visual selection outlines and handles are hidden during export.</div>
+  </div>
+</aside>
+
+<main class="workspace">
+  <div class="stage-shell portrait" id="shell">
+    <!-- Sleek Glassmorphic Floating Canvas Toolbar (Undo, Redo, Reset Layout) -->
+    <div class="canvas-bar">
+      <div class="canvas-bar-group">
+        <button id="btnUndo" class="bar-btn" title="Undo (Ctrl+Z)" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
+          <span>Undo</span>
+        </button>
+        <button id="btnRedo" class="bar-btn" title="Redo (Ctrl+Y or Ctrl+Shift+Z)" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5v0A5.5 5.5 0 0 0 9.5 20H13"/></svg>
+          <span>Redo</span>
+        </button>
+      </div>
+      <div class="canvas-bar-group">
+        <button id="btnQuickReset" class="bar-btn" title="Reset layout to reference">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Reset Layout</span>
+        </button>
+      </div>
+    </div>
+
+    <canvas id="poster" width="1080" height="1350" role="img" aria-label="Editable Flamingo Times poster preview"></canvas>
+    <div id="dropOverlay" class="drop-overlay">
+      <div class="drop-box">
+        <div style="font-size:36px;line-height:1">📄</div>
+        <div class="drop-title">Drop PDF to Load Pages</div>
+        <div class="drop-sub">Pages will be rendered and distributed automatically across the 3 newspapers</div>
+      </div>
+    </div>
+    <div class="canvas-tip">💡 Drag any newspaper to move • Scroll mouse wheel over a newspaper to rotate • Drop PDF anywhere to import</div>
+  </div>
+</main>
+</div>
+
+<script>
+// --- Asset Library (Vector SVGs with .eu mark & high-res pages) ---
+const ASSETS = {
+  cover: 'assets/cover.jpg',
+  page_zvernec_back: 'assets/page-zvernec-back.svg',
+  page_zvernec_front: 'assets/page-zvernec-front.svg',
+  page_zvernec_inside: 'assets/page-zvernec-inside.svg',
+  page_student_back: 'assets/page-student-back.svg',
+  logo_white_black: 'assets/logo-eu-white-black.svg',
+  logo_pink_cream: 'assets/logo-eu-pink-cream.svg',
+  logo_red_black: 'assets/logo-eu-red-black.svg',
+  logo_black_red: 'assets/logo-eu-black-red.svg',
+  logo_red_white: 'assets/logo-eu-red-white.svg',
+  logo_white_red: 'assets/logo-eu-white-red.svg',
+  logo_red: 'assets/logo-eu-red.svg',
+  logo_white: 'assets/logo-eu-white.svg',
+  logo_black: 'assets/logo-eu-black.svg',
+  logo_pink: 'assets/logo-eu-pink.svg',
+  logo_cream: 'assets/logo-eu-cream.svg',
+  logo_pink_black: 'assets/logo-eu-pink-black.svg',
+  logo_black_pink: 'assets/logo-eu-black-pink.svg',
+  logo_white_pink: 'assets/logo-eu-white-pink.svg',
+  logo_pink_white: 'assets/logo-eu-pink-white.svg',
+  logo_black_white: 'assets/logo-eu-black-white.svg',
+  logo_cream_pink: 'assets/logo-eu-cream-pink.svg'
+};
+
+const canvas = document.getElementById('poster');
+const ctx = canvas.getContext('2d', { alpha: false });
+const shell = document.getElementById('shell');
+
+// Global State (Exact defaults matching reference photo)
+const S = {
+  bg: '#985885',
+  format: 'portrait',
+  layout: 'photo_reference',
+  headerStyle: 'full_masthead',
+  globalScale: 1.0,
+  shadow: 1.05,
+  showBgLogo: true,
+  logoScale: 1.05,
+  ink: 'dark',
+  logoMode: 'white_black',
+  title: 'FLAMINGO TIMES',
+  city: 'Tiranë',
+  date: 'Korrik 2026',
+  issue: 'Botimi I'
+};
+
+// 3 Independent Configurable Papers matching reference layout:
+// Center paper in back (rot -5.5°), Left paper in front (rot -17.5°), Right paper in front (rot 19.0°)
+const papers = [
+  { id: 0, name: 'Paper 1 (Center)', x: 0.50, y: 0.435, rot: -5.5, scale: 1.00, pageKey: 'zvernec_back', customImage: null, visible: true },
+  { id: 1, name: 'Paper 2 (Left)', x: 0.290, y: 0.575, rot: -17.5, scale: 1.00, pageKey: 'zvernec_front', customImage: null, visible: true },
+  { id: 2, name: 'Paper 3 (Right)', x: 0.715, y: 0.575, rot: 19.0, scale: 1.00, pageKey: 'zvernec_inside', customImage: null, visible: true }
+];
+let paperOrder = [0, 1, 2]; // 0 is drawn first (in the back), 1 and 2 in front
+let activePaperIdx = 0;
+
+// Built-in pages catalog
+const PAGE_CATALOG = [
+  { id: 'zvernec_back', name: 'Zvërnec — Back Cover (Step-by-Step + QR)', asset: 'page_zvernec_back' },
+  { id: 'zvernec_front', name: 'Zvërnec — Front Cover (Strategic Investor)', asset: 'page_zvernec_front' },
+  { id: 'zvernec_inside', name: 'Zvërnec — Inside Spread (Coastline Photo & Analysis)', asset: 'page_zvernec_inside' },
+  { id: 'student_front', name: 'Students — Front Cover (Dec 2026)', asset: 'cover' },
+  { id: 'student_back', name: 'Students — Back Cover (Manifesto + QR)', asset: 'page_student_back' }
+];
+
+// Theme presets
+const themePresets = [
+  { name: 'Mauve (Ref)', bg: '#985885', t: '#171217', logo: 'white_black' },
+  { name: 'Flamingo', bg: '#BF6A9C', t: '#171217', logo: 'white' },
+  { name: 'Ivory', bg: '#EFE8DE', t: '#171217', logo: 'pink_black' },
+  { name: 'Black', bg: '#17171B', t: '#F7F2EA', logo: 'pink_cream' },
+  { name: 'Wine', bg: '#6C273D', t: '#FFF6ED', logo: 'white' },
+  { name: 'Navy', bg: '#25354A', t: '#F8F3EB', logo: 'pink_cream' },
+  { name: 'Stone', bg: '#AAA198', t: '#171217', logo: 'white_black' },
+  { name: 'Forest', bg: '#29483E', t: '#F6F1E9', logo: 'white' },
+  { name: 'Red', bg: '#9D2739', t: '#FFF7F0', logo: 'white' },
+  { name: 'Cream/Pink', bg: '#F0E3D2', t: '#D5459B', logo: 'pink' }
+];
+
+const images = {};
+const pdfPages = [];
+let pdfDoc = null;
+let pdfjsLibModule = null;
+let pdfJsLoadError = '';
+let renderToken = 0;
+let isExporting = false;
+
+const APP_BASE_URL = new URL('.', document.baseURI);
+const PDFJS_MODULE_URL = new URL('vendor/pdfjs/pdf.min.mjs', APP_BASE_URL).href;
+const PDFJS_WORKER_URL = new URL('vendor/pdfjs/pdf.worker.min.mjs', APP_BASE_URL).href;
+const MAX_PDF_BYTES = 25 * 1024 * 1024;
+const MAX_PDF_PAGES = 24;
+const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
+const MAX_IMAGE_DIMENSION = 6000;
+
+// --- Undo / Redo History Stack Management ---
+const historyStack = [];
+const redoStack = [];
+const MAX_HISTORY = 60;
+let isRestoringHistory = false;
+let wheelHistoryTimer = null;
+
+function getSnapshot() {
+  return JSON.stringify({
+    papers: papers.map(p => ({
+      id: p.id,
+      name: p.name,
+      x: p.x,
+      y: p.y,
+      rot: p.rot,
+      scale: p.scale,
+      pageKey: p.pageKey,
+      visible: p.visible
+    })),
+    paperOrder: [...paperOrder],
+    S: { ...S },
+    activePaperIdx
+  });
+}
+
+function pushHistory() {
+  if (isRestoringHistory) return;
+  const snap = getSnapshot();
+  if (historyStack.length > 0 && historyStack[historyStack.length - 1] === snap) return;
+  historyStack.push(snap);
+  if (historyStack.length > MAX_HISTORY) historyStack.shift();
+  redoStack.length = 0;
+  updateUndoRedoButtons();
+}
+
+function applySnapshot(snapStr) {
+  if (!snapStr) return;
+  const state = JSON.parse(snapStr);
+  isRestoringHistory = true;
+
+  Object.assign(S, state.S);
+  document.getElementById('bg').value = S.bg;
+  document.getElementById('bgHex').value = S.bg;
+  document.getElementById('format').value = S.format;
+  document.getElementById('headerStyle').value = S.headerStyle;
+  document.getElementById('title').value = S.title;
+  document.getElementById('city').value = S.city;
+  document.getElementById('date').value = S.date;
+  document.getElementById('issue').value = S.issue;
+  document.getElementById('ink').value = S.ink;
+  document.getElementById('logoMode').value = S.logoMode;
+  document.getElementById('showBgLogo').checked = S.showBgLogo;
+  document.getElementById('logoScaleField').style.display = S.showBgLogo ? 'block' : 'none';
+  document.getElementById('logoScale').value = S.logoScale;
+  document.getElementById('outLogoScale').value = S.logoScale.toFixed(2);
+  document.getElementById('globalScale').value = S.globalScale;
+  document.getElementById('outGlobalScale').value = S.globalScale.toFixed(2);
+  document.getElementById('shadow').value = S.shadow;
+  document.getElementById('outShadow').value = S.shadow.toFixed(2);
+
+  canvas.width = 1080;
+  canvas.height = S.format === 'portrait' ? 1350 : 1080;
+  shell.classList.toggle('portrait', S.format === 'portrait');
+
+  paperOrder = [...state.paperOrder];
+  state.papers.forEach((sp, i) => {
+    if (papers[i]) {
+      const custom = papers[i].customImage;
+      Object.assign(papers[i], sp);
+      papers[i].customImage = custom;
+    }
+  });
+
+  activePaperIdx = state.activePaperIdx ?? 0;
+  document.querySelectorAll('.paper-tab').forEach((t, i) => t.classList.toggle('active', i === activePaperIdx));
+  syncPaperForm();
+  render();
+
+  isRestoringHistory = false;
+  updateUndoRedoButtons();
+}
+
+function undo() {
+  if (historyStack.length <= 1) return;
+  const current = historyStack.pop();
+  redoStack.push(current);
+  const prev = historyStack[historyStack.length - 1];
+  applySnapshot(prev);
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  const next = redoStack.pop();
+  historyStack.push(next);
+  applySnapshot(next);
+}
+
+function updateUndoRedoButtons() {
+  const btnUndo = document.getElementById('btnUndo');
+  const btnRedo = document.getElementById('btnRedo');
+  if (btnUndo) btnUndo.disabled = historyStack.length <= 1;
+  if (btnRedo) btnRedo.disabled = redoStack.length === 0;
+}
+
+function loadImage(src) {
+  return new Promise((res, rej) => {
+    const im = new Image();
+    im.onload = () => res(im);
+    im.onerror = rej;
+    im.src = src;
+  });
+}
+
+function readableBytes(bytes) {
+  if (!Number.isFinite(bytes)) return 'unknown size';
+  const units = ['bytes', 'KB', 'MB', 'GB'];
+  let value = bytes;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit++;
+  }
+  return `${value.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`;
+}
+
+function imageRatio(img) {
+  const w = img && (img.naturalWidth || img.videoWidth || img.width);
+  const h = img && (img.naturalHeight || img.videoHeight || img.height);
+  return w && h ? h / w : 1.414;
+}
+
+function sanitizeFilename(name) {
+  return String(name || 'poster')
+    .trim()
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'poster';
+}
+
+async function loadUserImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) {
+    throw new Error('Please choose a valid image file.');
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    throw new Error(`Image is ${readableBytes(file.size)}. The maximum is ${readableBytes(MAX_IMAGE_BYTES)}.`);
+  }
+
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await loadImage(url);
+    const maxSide = Math.max(img.naturalWidth || 0, img.naturalHeight || 0);
+    if (maxSide > MAX_IMAGE_DIMENSION) {
+      throw new Error(`Image is too large (${img.naturalWidth}×${img.naturalHeight}). Maximum side is ${MAX_IMAGE_DIMENSION}px.`);
+    }
+    return img;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function setStatusText(message, isError = false) {
+  const status = document.getElementById('pdfStatus');
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle('app-error', isError);
+}
+
+function hexRgb(h) {
+  h = h.replace('#', '');
+  if (h.length === 3) h = h.split('').map(x => x + x).join('');
+  return {
+    r: parseInt(h.slice(0, 2), 16),
+    g: parseInt(h.slice(2, 4), 16),
+    b: parseInt(h.slice(4, 6), 16)
+  };
+}
+
+function luminance(h) {
+  const c = hexRgb(h);
+  const f = v => {
+    v /= 255;
+    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  };
+  return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b);
+}
+
+function inkColor() {
+  if (S.ink === 'dark') return '#171217';
+  if (S.ink === 'light') return '#F8F3EC';
+  if (S.ink === 'pink') return '#E153A6';
+  return luminance(S.bg) > 0.22 ? '#171217' : '#F8F3EC';
+}
+
+function logoKey() {
+  if (S.logoMode !== 'auto') return S.logoMode;
+  const l = luminance(S.bg);
+  if (l > 0.65) return 'pink_black';
+  if (l < 0.18) return 'pink_cream';
+  return 'white_black';
+}
+
+// Crisp physical paper path with subtle 2.5px corner radius
+function drawPaperPath(c, w, h, r = 2.5) {
+  c.beginPath();
+  c.roundRect(-w / 2, -h / 2, w, h, r);
+  c.closePath();
+}
+
+function drawPaper(paper, img) {
+  if (!paper.visible || !img) return;
+  const W = canvas.width;
+  const H = canvas.height;
+  const portrait = S.format === 'portrait';
+
+  const ratio = imageRatio(img);
+  
+  // Proportional base width: calibrated to span exactly 96% of canvas in photo reference mode
+  const baseW = W * (portrait ? 0.388 : 0.380) * S.globalScale * paper.scale;
+  const baseH = baseW * ratio;
+
+  const cx = W * paper.x;
+  const cy = H * paper.y;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate((paper.rot * Math.PI) / 180);
+
+  // 1. Realistic Multi-stage Drop Shadows
+  if (S.shadow > 0) {
+    ctx.save();
+    // Ambient soft drop shadow (casts on background and provides broad depth)
+    ctx.shadowColor = `rgba(14, 4, 12, ${0.28 * S.shadow})`;
+    ctx.shadowBlur = 42 * S.shadow;
+    ctx.shadowOffsetY = 24 * S.shadow;
+    ctx.shadowOffsetX = 8 * S.shadow;
+    ctx.fillStyle = '#faf9f6';
+    drawPaperPath(ctx, baseW, baseH, 2.5);
+    ctx.fill();
+
+    // Contact drop shadow (darker, tighter, gives crisp definition where papers overlap)
+    ctx.shadowColor = `rgba(10, 3, 10, ${0.18 * S.shadow})`;
+    ctx.shadowBlur = 12 * S.shadow;
+    ctx.shadowOffsetY = 8 * S.shadow;
+    ctx.shadowOffsetX = 3 * S.shadow;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // 2. Paper Surface & Image
+  drawPaperPath(ctx, baseW, baseH, 2.5);
+  ctx.clip();
+  ctx.fillStyle = '#faf9f6';
+  ctx.fillRect(-baseW / 2 - 2, -baseH / 2 - 2, baseW + 4, baseH + 4);
+  
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, -baseW / 2, -baseH / 2, baseW, baseH);
+
+  // 3. Subtle Lighting & Paper Thickness definition
+  let g = ctx.createLinearGradient(-baseW / 2, 0, baseW / 2, 0);
+  g.addColorStop(0, 'rgba(0,0,0,0.035)');
+  g.addColorStop(0.18, 'rgba(255,255,255,0.06)');
+  g.addColorStop(0.55, 'rgba(255,255,255,0)');
+  g.addColorStop(1, 'rgba(0,0,0,0.045)');
+  ctx.fillStyle = g;
+  ctx.fillRect(-baseW / 2, -baseH / 2, baseW, baseH);
+
+  // Subtle 1px paper edge border (essential for realistic paper overlap separation)
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.09)';
+  ctx.lineWidth = 1;
+  drawPaperPath(ctx, baseW, baseH, 2.5);
+  ctx.stroke();
+
+  // 4. Interactive Selection Outline on Canvas (Only in live preview, NOT in PNG export)
+  if (!isExporting && papers[activePaperIdx] && papers[activePaperIdx].id === paper.id) {
+    ctx.save();
+    ctx.strokeStyle = '#d85aa9';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(-baseW / 2 - 4, -baseH / 2 - 4, baseW + 8, baseH + 8);
+    
+    // Corner handles
+    ctx.fillStyle = '#ffffff';
+    ctx.setLineDash([]);
+    const hw = 7;
+    [[-baseW/2-4, -baseH/2-4], [baseW/2+4, -baseH/2-4], [baseW/2+4, baseH/2+4], [-baseW/2-4, baseH/2+4]].forEach(([hx, hy]) => {
+      ctx.fillRect(hx - hw/2, hy - hw/2, hw, hw);
+      ctx.strokeRect(hx - hw/2, hy - hw/2, hw, hw);
+    });
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+function fillBackground() {
+  const W = canvas.width;
+  const H = canvas.height;
+  ctx.fillStyle = S.bg;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Ambient radial vignette
+  let rg = ctx.createRadialGradient(W * 0.5, H * 0.18, 0, W * 0.5, H * 0.18, W * 0.95);
+  rg.addColorStop(0, 'rgba(255,255,255,0.075)');
+  rg.addColorStop(0.55, 'rgba(255,255,255,0)');
+  rg.addColorStop(1, 'rgba(0,0,0,0.045)');
+  ctx.fillStyle = rg;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function render() {
+  const W = canvas.width;
+  const H = canvas.height;
+  const portrait = S.format === 'portrait';
+  fillBackground();
+  const ink = inkColor();
+
+  // 1. Header / Typography Rendering (Large BOLD Masthead + Subtitle)
+  if (S.headerStyle === 'full_masthead') {
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = `900 ${Math.round(W * 0.088)}px "Times New Roman", Times, Georgia, serif`;
+    ctx.fillText(S.title, W * 0.5, H * (portrait ? 0.085 : 0.118));
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.globalAlpha = 0.95;
+    ctx.textAlign = 'right';
+    ctx.font = `700 ${Math.round(W * 0.0165)}px "Times New Roman", Times, Georgia, serif`;
+    ctx.fillText(`${S.city}, ${S.date} | ${S.issue}`, W * 0.93, H * (portrait ? 0.118 : 0.152));
+    ctx.restore();
+  } else if (S.headerStyle === 'photo_ref') {
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.globalAlpha = 0.95;
+    ctx.textAlign = 'right';
+    ctx.font = `700 ${Math.round(W * 0.020)}px "Times New Roman", Times, Georgia, serif`;
+    ctx.fillText(`${S.city}, ${S.date} | ${S.issue}`, W * 0.93, H * (portrait ? 0.055 : 0.065));
+    ctx.restore();
+  }
+
+  // 2. Draw Papers in Layer Stacking Order (Center in back, Left/Right in front)
+  for (const paperId of paperOrder) {
+    const p = papers.find(x => x.id === paperId);
+    if (p && p.visible) {
+      const img = getPaperImage(p);
+      drawPaper(p, img);
+    }
+  }
+
+  // 3. Logo at Bottom Center (.eu)
+  if (S.showBgLogo) {
+    const lKey = logoKey();
+    const logo = images[lKey] || images.white_black || images.white || images.pink_cream;
+    if (logo && (logo.naturalWidth || logo.width)) {
+      const logoW = logo.naturalWidth || logo.width;
+      const logoH = logo.naturalHeight || logo.height;
+      const maxW = W * (portrait ? 0.42 : 0.42) * S.logoScale;
+      const maxH = H * (portrait ? 0.12 : 0.14) * S.logoScale;
+      const scale = Math.min(maxW / logoW, maxH / logoH);
+      const w = logoW * scale;
+      const h = logoH * scale;
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.12)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetY = 8;
+      ctx.drawImage(logo, (W - w) / 2, H * (portrait ? 0.865 : 0.84), w, h);
+      ctx.restore();
+    }
+  }
+}
+
+function getPaperImage(paper) {
+  if (paper.customImage) return paper.customImage;
+
+  // If PDF pages are loaded and paper has numeric page index
+  if (pdfPages.length > 0) {
+    const num = Number(paper.pageKey);
+    if (!isNaN(num) && Number.isInteger(num)) {
+      const idx = Math.max(0, Math.min(pdfPages.length - 1, num));
+      return pdfPages[idx];
+    }
+  }
+
+  // Otherwise check PAGE_CATALOG
+  const found = PAGE_CATALOG.find(p => p.id === paper.pageKey);
+  if (found) {
+    return images[found.asset] || images.cover;
+  }
+
+  // Fallback to first PDF page if PDF is active, otherwise default image
+  if (pdfPages.length > 0) {
+    return pdfPages[0];
+  }
+
+  return images.zvernec_back || images.cover;
+}
+
+function setFormat(v) {
+  S.format = v;
+  canvas.width = 1080;
+  canvas.height = v === 'portrait' ? 1350 : 1080;
+  shell.classList.toggle('portrait', v === 'portrait');
+  
+  // Proportional adjustments for square vs portrait
+  if (v === 'square') {
+    papers[0].y = 0.415;
+    papers[1].y = 0.550;
+    papers[2].y = 0.550;
+  } else {
+    papers[0].y = 0.435;
+    papers[1].y = 0.575;
+    papers[2].y = 0.575;
+  }
+  syncPaperForm();
+  render();
+  pushHistory();
+}
+
+// Preset Layouts
+function applyLayout(name) {
+  S.layout = name;
+  document.querySelectorAll('[data-layout]').forEach(b => b.classList.toggle('active', b.dataset.layout === name));
+
+  const portrait = S.format === 'portrait';
+  if (name === 'photo_reference') {
+    // Exact Reference Match: Center paper in BACK, Left & Right in FRONT, Header ON, Logo ON
+    paperOrder = [0, 1, 2];
+    papers[0] = { ...papers[0], x: 0.50, y: portrait ? 0.435 : 0.415, rot: -5.5, scale: 1.00, visible: true };
+    papers[1] = { ...papers[1], x: 0.290, y: portrait ? 0.575 : 0.550, rot: -17.5, scale: 1.00, visible: true };
+    papers[2] = { ...papers[2], x: 0.715, y: portrait ? 0.575 : 0.550, rot: 19.0, scale: 1.00, visible: true };
+    S.headerStyle = 'full_masthead';
+    document.getElementById('headerStyle').value = 'full_masthead';
+    S.showBgLogo = true;
+    document.getElementById('showBgLogo').checked = true;
+    document.getElementById('logoScaleField').style.display = 'block';
+    S.globalScale = 1.0;
+    S.shadow = 1.05;
+  } else if (name === 'fan') {
+    paperOrder = [1, 2, 0];
+    papers[0] = { ...papers[0], x: 0.50, y: portrait ? 0.48 : 0.46, rot: 0, scale: 1.00, visible: true };
+    papers[1] = { ...papers[1], x: 0.25, y: portrait ? 0.53 : 0.50, rot: -20.0, scale: 0.95, visible: true };
+    papers[2] = { ...papers[2], x: 0.75, y: portrait ? 0.53 : 0.50, rot: 20.0, scale: 0.95, visible: true };
+    S.globalScale = 1.0;
+  } else if (name === 'clean') {
+    paperOrder = [1, 2, 0];
+    papers[0] = { ...papers[0], x: 0.50, y: portrait ? 0.47 : 0.45, rot: -4.0, scale: 0.98, visible: true };
+    papers[1] = { ...papers[1], x: 0.29, y: portrait ? 0.54 : 0.52, rot: -14.0, scale: 0.95, visible: true };
+    papers[2] = { ...papers[2], x: 0.71, y: portrait ? 0.54 : 0.52, rot: 14.0, scale: 0.95, visible: true };
+    S.globalScale = 0.96;
+  } else if (name === 'two_papers') {
+    paperOrder = [0, 1];
+    papers[0] = { ...papers[0], x: 0.35, y: portrait ? 0.52 : 0.50, rot: -10.0, scale: 1.02, visible: true };
+    papers[1] = { ...papers[1], x: 0.65, y: portrait ? 0.52 : 0.50, rot: 12.0, scale: 1.02, visible: true };
+    papers[2].visible = false;
+  } else if (name === 'single') {
+    paperOrder = [0];
+    papers[0] = { ...papers[0], x: 0.50, y: portrait ? 0.52 : 0.50, rot: -3.0, scale: 1.15, visible: true };
+    papers[1].visible = false;
+    papers[2].visible = false;
+  }
+
+  syncPaperForm();
+  render();
+  pushHistory();
+}
+
+// Update Active Paper UI Form
+function selectPaperTab(idx) {
+  activePaperIdx = idx;
+  document.querySelectorAll('.paper-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  syncPaperForm();
+  renderPdfPageStrip();
+  render();
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[m]);
+}
+
+function populatePageSelect() {
+  const sel = document.getElementById('curPaperPage');
+  sel.innerHTML = '';
+
+  if (pdfPages.length > 0) {
+    pdfPages.forEach((_, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `PDF: Page ${i + 1}`;
+      sel.appendChild(opt);
+    });
+  } else {
+    PAGE_CATALOG.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function renderPdfPageStrip() {
+  const strip = document.getElementById('pdfStrip');
+  const list = document.getElementById('pdfChipsList');
+  const badge = document.getElementById('pdfPageBadge');
+  if (!strip || !list) return;
+
+  if (pdfPages.length === 0) {
+    strip.style.display = 'none';
+    return;
+  }
+
+  strip.style.display = 'block';
+  badge.textContent = `${pdfPages.length} ${pdfPages.length === 1 ? 'page' : 'pages'}`;
+  list.innerHTML = '';
+
+  pdfPages.forEach((_, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'pdf-chip';
+    
+    // Check which papers are showing this page
+    const matchingPapers = papers.filter(p => p.visible && Number(p.pageKey) === i);
+    const isCurActive = Number(papers[activePaperIdx].pageKey) === i;
+    if (isCurActive) chip.classList.add('active');
+
+    let tagText = '';
+    if (matchingPapers.length > 0) {
+      tagText = matchingPapers.map(p => {
+        if (p.id === 0) return 'Center';
+        if (p.id === 1) return 'Left';
+        if (p.id === 2) return 'Right';
+        return `P${p.id + 1}`;
+      }).join(', ');
+    }
+
+    chip.innerHTML = `
+      <div style="font-weight:700">Page ${i + 1}</div>
+      ${tagText ? `<div class="pdf-chip-tag">▶ on ${tagText}</div>` : '<div style="font-size:9px;color:#747c8c">Click to assign</div>'}
+    `;
+
+    chip.onclick = () => {
+      papers[activePaperIdx].pageKey = i;
+      papers[activePaperIdx].customImage = null;
+      syncPaperForm();
+      renderPdfPageStrip();
+      render();
+      pushHistory();
+    };
+
+    list.appendChild(chip);
+  });
+}
+
+function syncPaperForm() {
+  const p = papers[activePaperIdx];
+  if (!p) return;
+  
+  const pageSel = document.getElementById('curPaperPage');
+  pageSel.value = p.pageKey;
+
+  const btnClear = document.getElementById('btnClearCustomImage');
+  btnClear.style.display = p.customImage ? 'block' : 'none';
+
+  document.getElementById('curPaperX').value = p.x;
+  document.getElementById('outPaperX').value = (+p.x).toFixed(2);
+  document.getElementById('curPaperY').value = p.y;
+  document.getElementById('outPaperY').value = (+p.y).toFixed(2);
+  document.getElementById('curPaperRot').value = p.rot;
+  document.getElementById('outPaperRot').value = (+p.rot).toFixed(1) + '°';
+  document.getElementById('curPaperScale').value = p.scale;
+  document.getElementById('outPaperScale').value = (+p.scale).toFixed(2);
+  document.getElementById('curPaperVisible').checked = p.visible;
+}
+
+// Automatic distribution of PDF pages across the 3 newspapers
+function applyAutoPdfPages() {
+  if (!pdfPages || pdfPages.length === 0) return;
+
+  // Clear any per-paper custom images so PDF takes immediate effect
+  papers.forEach(p => p.customImage = null);
+
+  // Layout distribution across the 3 hero newspapers:
+  // papers[0]: Center paper (placed behind in reference photo)
+  // papers[1]: Left paper (front layer)
+  // papers[2]: Right paper (front layer)
+  if (pdfPages.length >= 4) {
+    // 4-page newspaper: Left = Front Cover (Page 1), Right = Inside Spread (Page 2), Center = Back Page (Page 4, matching reference layout!)
+    papers[1].pageKey = 0; // Page 1 (Front)
+    papers[2].pageKey = 1; // Page 2 (Inside)
+    papers[0].pageKey = 3; // Page 4 (Back Cover)
+  } else if (pdfPages.length === 3) {
+    papers[1].pageKey = 0; // Page 1
+    papers[2].pageKey = 1; // Page 2
+    papers[0].pageKey = 2; // Page 3 (Back)
+  } else if (pdfPages.length === 2) {
+    papers[1].pageKey = 0; // Page 1
+    papers[0].pageKey = 1; // Page 2
+    papers[2].pageKey = 0; // Page 1
+  } else {
+    // 1 page
+    papers[0].pageKey = 0;
+    papers[1].pageKey = 0;
+    papers[2].pageKey = 0;
+  }
+
+  // Ensure papers are visible
+  papers[0].visible = true;
+  papers[1].visible = true;
+  papers[2].visible = (pdfPages.length > 1);
+
+  // Set reference overlap order: Center in back, Left and Right in front
+  paperOrder = [0, 1, 2];
+
+  populatePageSelect();
+  renderPdfPageStrip();
+  syncPaperForm();
+  render();
+  pushHistory();
+}
+
+// Apply Reference Page assignment
+function applyPhotoReferencePages() {
+  if (pdfPages.length > 0) {
+    applyAutoPdfPages();
+    return;
+  }
+  papers[0].pageKey = 'zvernec_back';
+  papers[1].pageKey = 'zvernec_front';
+  papers[2].pageKey = 'zvernec_inside';
+  papers.forEach(p => p.customImage = null);
+  renderPdfPageStrip();
+  syncPaperForm();
+  render();
+  pushHistory();
+}
+
+function applyIssuePreset(issue) {
+  if (issue === 'zvernec') {
+    papers[0].pageKey = 'zvernec_back';
+    papers[1].pageKey = 'zvernec_front';
+    papers[2].pageKey = 'zvernec_inside';
+    papers.forEach(p => p.customImage = null);
+    S.title = 'FLAMINGO TIMES';
+    S.city = 'Tiranë';
+    S.date = 'Korrik 2026';
+    S.issue = 'Botimi I';
+    document.getElementById('title').value = S.title;
+    document.getElementById('city').value = S.city;
+    document.getElementById('date').value = S.date;
+    document.getElementById('issue').value = S.issue;
+  } else if (issue === 'student') {
+    papers[0].pageKey = 'student_back';
+    papers[1].pageKey = 'student_front';
+    papers[2].pageKey = 'student_front';
+    papers.forEach(p => p.customImage = null);
+    S.title = 'FLAMINGO TIMES';
+    S.city = 'Tiranë';
+    S.date = 'Dhjetor 2026';
+    S.issue = 'Botimi II';
+    document.getElementById('title').value = S.title;
+    document.getElementById('city').value = S.city;
+    document.getElementById('date').value = S.date;
+    document.getElementById('issue').value = S.issue;
+  }
+  applyLayout('photo_reference');
+  syncPaperForm();
+  render();
+  pushHistory();
+}
+
+// PDF.js Loader & Ingestion
+async function ensurePdfJs() {
+  if (pdfjsLibModule) return true;
+  try {
+    pdfJsLoadError = '';
+    pdfjsLibModule = await import(PDFJS_MODULE_URL);
+    pdfjsLibModule.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+    return true;
+  } catch (e) {
+    console.error('PDF.js failed to load from vendor bundle:', e);
+    pdfJsLoadError = e && e.message ? e.message : String(e);
+    pdfjsLibModule = null;
+    return false;
+  }
+}
+
+async function renderPdfPage(num, token) {
+  const page = await pdfDoc.getPage(num);
+  const base = page.getViewport({ scale: 1 });
+  const targetW = 1400;
+  const vp = page.getViewport({ scale: targetW / base.width });
+  const c = document.createElement('canvas');
+  c.width = Math.round(vp.width);
+  c.height = Math.round(vp.height);
+  await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+  if (token !== renderToken) return null;
+  return c;
+}
+
+async function loadPdf(source, filename) {
+  const status = document.getElementById('pdfStatus');
+  const name = filename || source.name || 'document.pdf';
+  status.classList.remove('app-error');
+  status.textContent = 'Loading PDF engine...';
+  if (source.size && source.size > MAX_PDF_BYTES) {
+    setStatusText(`PDF is ${readableBytes(source.size)}. The maximum is ${readableBytes(MAX_PDF_BYTES)}.`, true);
+    return;
+  }
+  const ok = await ensurePdfJs();
+  if (!ok) {
+    setStatusText(`Failed to load the PDF engine from ${PDFJS_MODULE_URL}. Make sure vendor/pdfjs/pdf.min.mjs and vendor/pdfjs/pdf.worker.min.mjs are committed and deployed with the GitHub Pages site.${pdfJsLoadError ? ` Browser error: ${pdfJsLoadError}` : ''}`, true);
+    return;
+  }
+  try {
+    const arrayBuffer = (source instanceof ArrayBuffer) ? source : await source.arrayBuffer();
+    const data = new Uint8Array(arrayBuffer);
+    renderToken++;
+    const token = renderToken;
+    pdfDoc = await pdfjsLibModule.getDocument({
+      data,
+      enableScripting: false,
+      isEvalSupported: false,
+      stopAtErrors: true
+    }).promise;
+    if (pdfDoc.numPages > MAX_PDF_PAGES) {
+      const pageCount = pdfDoc.numPages;
+      await pdfDoc.destroy();
+      pdfDoc = null;
+      throw new Error(`PDF has ${pageCount} pages. The maximum is ${MAX_PDF_PAGES}.`);
+    }
+    status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> (${pdfDoc.numPages} pages) — Rendering…`;
+    pdfPages.length = 0;
+    
+    // Clear any previous custom images so PDF takes immediate effect
+    papers.forEach(p => p.customImage = null);
+
+    for (let i = 1; i <= pdfDoc.numPages; i++) {
+      const im = await renderPdfPage(i, token);
+      if (!im) return;
+      pdfPages.push(im);
+      
+      // As soon as page 1 is ready, immediately show it on the canvas!
+      if (i === 1) {
+        papers[0].pageKey = 0;
+        papers[1].pageKey = 0;
+        papers[2].pageKey = 0;
+        populatePageSelect();
+        render();
+      }
+      status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> · ${i}/${pdfDoc.numPages} pages ready`;
+    }
+
+    // Now automatically distribute pages across the 3 hero newspapers
+    applyAutoPdfPages();
+    document.getElementById('issuePreset').value = 'custom';
+    status.innerHTML = `✅ <strong>${escapeHtml(name)}</strong> — All ${pdfDoc.numPages} pages loaded & displayed automatically!`;
+    pushHistory();
+  } catch (e) {
+    console.error(e);
+    setStatusText(e.message || 'Could not read PDF file. Please try another PDF.', true);
+  }
+}
+
+// Background Theme Presets
+function setBg(v) {
+  if (!/^#[0-9a-f]{6}$/i.test(v)) return;
+  S.bg = v.toUpperCase();
+  document.getElementById('bg').value = S.bg;
+  document.getElementById('bgHex').value = S.bg;
+  render();
+}
+
+function applyTheme(p, btn) {
+  setBg(p.bg);
+  document.getElementById('ink').value = p.t === '#171217' ? 'dark' : 'light';
+  if (p.t === '#D5459B') document.getElementById('ink').value = 'pink';
+  document.getElementById('logoMode').value = p.logo;
+  S.ink = document.getElementById('ink').value;
+  S.logoMode = p.logo;
+  document.querySelectorAll('.preset').forEach(x => x.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  render();
+  pushHistory();
+}
+
+// Interactive Canvas Drag, Selection & Rotation
+let isDragging = false;
+let dragPaperIdx = -1;
+let dragStartX = 0;
+let dragStartY = 0;
+let paperStartPos = { x: 0, y: 0 };
+let hasMovedDuringDrag = false;
+
+function getCanvasPoint(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
+
+function hitTestPaper(px, py) {
+  const W = canvas.width;
+  const H = canvas.height;
+  const portrait = S.format === 'portrait';
+
+  for (let i = paperOrder.length - 1; i >= 0; i--) {
+    const pId = paperOrder[i];
+    const p = papers.find(x => x.id === pId);
+    if (!p || !p.visible) continue;
+
+    const img = getPaperImage(p);
+    const ratio = imageRatio(img);
+    const baseW = W * (portrait ? 0.388 : 0.380) * S.globalScale * p.scale;
+    const baseH = baseW * ratio;
+    const cx = W * p.x;
+    const cy = H * p.y;
+
+    const dx = px - cx;
+    const dy = py - cy;
+    const rad = (-p.rot * Math.PI) / 180;
+    const localX = dx * Math.cos(rad) - dy * Math.sin(rad);
+    const localY = dx * Math.sin(rad) + dy * Math.cos(rad);
+
+    if (Math.abs(localX) <= baseW / 2 + 10 && Math.abs(localY) <= baseH / 2 + 10) {
+      return p.id;
+    }
+  }
+  return -1;
+}
+
+canvas.addEventListener('mousedown', e => {
+  const pt = getCanvasPoint(e);
+  const hitId = hitTestPaper(pt.x, pt.y);
+  if (hitId !== -1) {
+    isDragging = true;
+    hasMovedDuringDrag = false;
+    dragPaperIdx = hitId;
+    selectPaperTab(hitId);
+    const p = papers[hitId];
+    dragStartX = pt.x;
+    dragStartY = pt.y;
+    paperStartPos = { x: p.x, y: p.y };
+    canvas.style.cursor = 'grabbing';
+  }
+});
+
+window.addEventListener('mousemove', e => {
+  if (!isDragging || dragPaperIdx === -1) {
+    const pt = getCanvasPoint(e);
+    const hitId = hitTestPaper(pt.x, pt.y);
+    canvas.style.cursor = hitId !== -1 ? 'grab' : 'crosshair';
+    return;
+  }
+  const pt = getCanvasPoint(e);
+  const dx = (pt.x - dragStartX) / canvas.width;
+  const dy = (pt.y - dragStartY) / canvas.height;
+  if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) hasMovedDuringDrag = true;
+  const p = papers[dragPaperIdx];
+  p.x = Math.max(0.05, Math.min(0.95, paperStartPos.x + dx));
+  p.y = Math.max(0.05, Math.min(0.95, paperStartPos.y + dy));
+  syncPaperForm();
+  render();
+});
+
+window.addEventListener('mouseup', () => {
+  if (isDragging) {
+    if (hasMovedDuringDrag) pushHistory();
+    isDragging = false;
+    dragPaperIdx = -1;
+    canvas.style.cursor = 'grab';
+  }
+});
+
+canvas.addEventListener('wheel', e => {
+  const pt = getCanvasPoint(e);
+  const hitId = hitTestPaper(pt.x, pt.y);
+  const targetId = hitId !== -1 ? hitId : activePaperIdx;
+  const p = papers[targetId];
+  if (p) {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 1.5 : -1.5;
+    p.rot = Math.max(-60, Math.min(60, p.rot + delta));
+    syncPaperForm();
+    render();
+    
+    // Debounce history snapshot during continuous scroll
+    clearTimeout(wheelHistoryTimer);
+    wheelHistoryTimer = setTimeout(pushHistory, 250);
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchstart', e => {
+  const pt = getCanvasPoint(e);
+  const hitId = hitTestPaper(pt.x, pt.y);
+  if (hitId !== -1) {
+    isDragging = true;
+    hasMovedDuringDrag = false;
+    dragPaperIdx = hitId;
+    selectPaperTab(hitId);
+    const p = papers[hitId];
+    dragStartX = pt.x;
+    dragStartY = pt.y;
+    paperStartPos = { x: p.x, y: p.y };
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  if (!isDragging || dragPaperIdx === -1) return;
+  e.preventDefault();
+  const pt = getCanvasPoint(e);
+  const dx = (pt.x - dragStartX) / canvas.width;
+  const dy = (pt.y - dragStartY) / canvas.height;
+  if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) hasMovedDuringDrag = true;
+  const p = papers[dragPaperIdx];
+  p.x = Math.max(0.05, Math.min(0.95, paperStartPos.x + dx));
+  p.y = Math.max(0.05, Math.min(0.95, paperStartPos.y + dy));
+  syncPaperForm();
+  render();
+}, { passive: false });
+
+window.addEventListener('touchend', () => {
+  if (isDragging && hasMovedDuringDrag) pushHistory();
+  isDragging = false;
+  dragPaperIdx = -1;
+});
+
+// Keyboard Shortcuts: Ctrl+Z (Undo), Ctrl+Y or Ctrl+Shift+Z (Redo)
+window.addEventListener('keydown', e => {
+  const isTextInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName) && 
+                       document.activeElement.type !== 'range' && 
+                       document.activeElement.type !== 'checkbox';
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    if (!isTextInput) {
+      e.preventDefault();
+      if (e.shiftKey) redo();
+      else undo();
+    }
+  } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+    if (!isTextInput) {
+      e.preventDefault();
+      redo();
+    }
+  }
+});
+
+// Bind UI Inputs
+function initControls() {
+  document.getElementById('btnUndo').addEventListener('click', undo);
+  document.getElementById('btnRedo').addEventListener('click', redo);
+  document.getElementById('btnQuickReset').addEventListener('click', () => applyLayout('photo_reference'));
+
+  document.querySelectorAll('.paper-tab').forEach(btn => {
+    btn.addEventListener('click', () => selectPaperTab(parseInt(btn.dataset.paper)));
+  });
+
+  document.getElementById('issuePreset').addEventListener('change', e => {
+    applyIssuePreset(e.target.value);
+  });
+
+  document.getElementById('curPaperPage').addEventListener('change', e => {
+    papers[activePaperIdx].pageKey = isNaN(e.target.value) ? e.target.value : parseInt(e.target.value);
+    papers[activePaperIdx].customImage = null;
+    document.getElementById('btnClearCustomImage').style.display = 'none';
+    render();
+    pushHistory();
+  });
+
+  document.getElementById('curPaperCustomFile').addEventListener('change', async e => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      try {
+        papers[activePaperIdx].customImage = await loadUserImageFile(file);
+        syncPaperForm();
+        render();
+        pushHistory();
+        setStatusText(`Loaded image for ${papers[activePaperIdx].name}.`);
+      } catch (err) {
+        console.error(err);
+        e.target.value = '';
+        setStatusText(err.message || 'Could not load image.', true);
+      }
+    }
+  });
+
+  document.getElementById('btnClearCustomImage').addEventListener('click', () => {
+    papers[activePaperIdx].customImage = null;
+    document.getElementById('curPaperCustomFile').value = '';
+    syncPaperForm();
+    render();
+    pushHistory();
+  });
+
+  document.getElementById('curPaperX').addEventListener('input', e => {
+    papers[activePaperIdx].x = parseFloat(e.target.value);
+    document.getElementById('outPaperX').value = papers[activePaperIdx].x.toFixed(2);
+    render();
+  });
+  document.getElementById('curPaperX').addEventListener('change', pushHistory);
+
+  document.getElementById('curPaperY').addEventListener('input', e => {
+    papers[activePaperIdx].y = parseFloat(e.target.value);
+    document.getElementById('outPaperY').value = papers[activePaperIdx].y.toFixed(2);
+    render();
+  });
+  document.getElementById('curPaperY').addEventListener('change', pushHistory);
+
+  document.getElementById('curPaperRot').addEventListener('input', e => {
+    papers[activePaperIdx].rot = parseFloat(e.target.value);
+    document.getElementById('outPaperRot').value = papers[activePaperIdx].rot.toFixed(1) + '°';
+    render();
+  });
+  document.getElementById('curPaperRot').addEventListener('change', pushHistory);
+
+  document.getElementById('curPaperScale').addEventListener('input', e => {
+    papers[activePaperIdx].scale = parseFloat(e.target.value);
+    document.getElementById('outPaperScale').value = papers[activePaperIdx].scale.toFixed(2);
+    render();
+  });
+  document.getElementById('curPaperScale').addEventListener('change', pushHistory);
+
+  document.getElementById('curPaperVisible').addEventListener('change', e => {
+    papers[activePaperIdx].visible = e.target.checked;
+    render();
+    pushHistory();
+  });
+
+  document.getElementById('btnBringFront').addEventListener('click', () => {
+    const id = papers[activePaperIdx].id;
+    paperOrder = paperOrder.filter(x => x !== id);
+    paperOrder.push(id);
+    render();
+    pushHistory();
+  });
+  document.getElementById('btnSendBack').addEventListener('click', () => {
+    const id = papers[activePaperIdx].id;
+    paperOrder = paperOrder.filter(x => x !== id);
+    paperOrder.unshift(id);
+    render();
+    pushHistory();
+  });
+
+  document.getElementById('globalScale').addEventListener('input', e => {
+    S.globalScale = parseFloat(e.target.value);
+    document.getElementById('outGlobalScale').value = S.globalScale.toFixed(2);
+    render();
+  });
+  document.getElementById('globalScale').addEventListener('change', pushHistory);
+
+  document.getElementById('shadow').addEventListener('input', e => {
+    S.shadow = parseFloat(e.target.value);
+    document.getElementById('outShadow').value = S.shadow.toFixed(2);
+    render();
+  });
+  document.getElementById('shadow').addEventListener('change', pushHistory);
+
+  document.getElementById('format').addEventListener('change', e => setFormat(e.target.value));
+  document.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => applyLayout(b.dataset.layout)));
+
+  ['title', 'city', 'date', 'issue', 'ink', 'headerStyle'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener(id === 'ink' || id === 'headerStyle' ? 'change' : 'input', () => {
+      S[id] = el.value;
+      render();
+    });
+    el.addEventListener('change', pushHistory);
+  });
+
+  document.getElementById('bg').addEventListener('input', e => setBg(e.target.value));
+  document.getElementById('bg').addEventListener('change', pushHistory);
+  document.getElementById('bgHex').addEventListener('change', e => { setBg(e.target.value); pushHistory(); });
+  
+  document.getElementById('logoMode').addEventListener('change', e => {
+    S.logoMode = e.target.value;
+    render();
+    pushHistory();
+  });
+  document.getElementById('showBgLogo').addEventListener('change', e => {
+    S.showBgLogo = e.target.checked;
+    document.getElementById('logoScaleField').style.display = S.showBgLogo ? 'block' : 'none';
+    render();
+    pushHistory();
+  });
+  document.getElementById('logoScale').addEventListener('input', e => {
+    S.logoScale = parseFloat(e.target.value);
+    document.getElementById('outLogoScale').value = S.logoScale.toFixed(2);
+    render();
+  });
+  document.getElementById('logoScale').addEventListener('change', pushHistory);
+
+  document.getElementById('pdfInput').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if (f) loadPdf(f);
+  });
+
+  // Sample PDF demo button
+  document.getElementById('btnLoadSamplePdf').addEventListener('click', async () => {
+    const status = document.getElementById('pdfStatus');
+    status.innerHTML = '⏳ Fetching sample 4-page PDF edition…';
+    try {
+      const res = await fetch('assets/sample-edition.pdf');
+      if (!res.ok) throw new Error('Could not fetch sample PDF');
+      const blob = await res.blob();
+      await loadPdf(blob, 'sample-edition.pdf');
+    } catch (e) {
+      console.error(e);
+      status.innerHTML = '❌ Failed to load sample PDF from assets/sample-edition.pdf';
+    }
+  });
+
+  // Drag and Drop support
+  const dropOverlay = document.getElementById('dropOverlay');
+  let dragCounter = 0;
+
+  ['dragenter', 'dragover'].forEach(evtName => {
+    window.addEventListener(evtName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+        dragCounter++;
+        if (dropOverlay) dropOverlay.classList.add('active');
+      }
+    });
+  });
+
+  ['dragleave', 'dragend'].forEach(evtName => {
+    window.addEventListener(evtName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dragCounter = Math.max(0, dragCounter - 1);
+      if (dragCounter === 0 && dropOverlay) {
+        dropOverlay.classList.remove('active');
+      }
+    });
+  });
+
+  window.addEventListener('drop', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter = 0;
+    if (dropOverlay) dropOverlay.classList.remove('active');
+
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (!files || files.length === 0) return;
+    const f = files[0];
+    if (f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')) {
+      loadPdf(f);
+    } else if (f.type.startsWith('image/')) {
+      loadUserImageFile(f).then(img => {
+        papers[activePaperIdx].customImage = img;
+        syncPaperForm();
+        render();
+        pushHistory();
+        setStatusText(`Loaded image for ${papers[activePaperIdx].name}.`);
+      }).catch(err => {
+        console.error(err);
+        setStatusText(err.message || 'Could not load image.', true);
+      });
+    }
+  });
+
+  document.getElementById('btnPresetRefPages').addEventListener('click', applyPhotoReferencePages);
+  document.getElementById('btnAutoPages').addEventListener('click', () => {
+    if (pdfPages.length > 0) {
+      applyAutoPdfPages();
+    } else {
+      papers[0].pageKey = 'zvernec_back';
+      papers[1].pageKey = 'zvernec_front';
+      papers[2].pageKey = 'zvernec_inside';
+      syncPaperForm();
+      render();
+      pushHistory();
+    }
+  });
+
+  document.getElementById('download').addEventListener('click', () => {
+    isExporting = true;
+    render();
+    canvas.toBlob(blob => {
+      isExporting = false;
+      render();
+      if (!blob) {
+        setStatusText('PNG export failed. Try reducing image/PDF complexity and export again.', true);
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.download = `flamingo-times-${sanitizeFilename(S.issue)}.png`;
+      a.href = url;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }, 'image/png');
+  });
+  document.getElementById('reset').addEventListener('click', () => location.reload());
+}
+
+function showStartupError(err) {
+  console.error(err);
+  setStatusText('Startup failed because a required asset could not load. Verify the assets folder and serve the project over HTTP.', true);
+  ctx.fillStyle = '#985885';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#F8F3EC';
+  ctx.font = '700 32px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Flamingo Times could not load assets', canvas.width / 2, canvas.height / 2);
+}
+
+async function init() {
+  try {
+    // Load core assets in parallel so missing files fail fast and visibly.
+    const [cover, zvernecBack, zvernecFront, zvernecInside, studentBack] = await Promise.all([
+      loadImage(ASSETS.cover),
+      loadImage(ASSETS.page_zvernec_back),
+      loadImage(ASSETS.page_zvernec_front),
+      loadImage(ASSETS.page_zvernec_inside),
+      loadImage(ASSETS.page_student_back)
+    ]);
+    images.cover = cover;
+    images.zvernec_back = zvernecBack;
+    images.zvernec_front = zvernecFront;
+    images.zvernec_inside = zvernecInside;
+    images.student_back = studentBack;
+
+    const logoEntries = Object.entries(ASSETS).filter(([k]) => k.startsWith('logo_'));
+    const logoResults = await Promise.allSettled(logoEntries.map(([, url]) => loadImage(url)));
+    logoResults.forEach((result, i) => {
+      if (result.status === 'fulfilled') {
+        const key = logoEntries[i][0].replace('logo_', '');
+        images[key] = result.value;
+      } else {
+        console.warn('Logo failed to load:', logoEntries[i][1], result.reason);
+      }
+    });
+
+    populatePageSelect();
+
+    const wrap = document.getElementById('themePresets');
+    themePresets.forEach((p, i) => {
+      const b = document.createElement('button');
+      const label = document.createElement('span');
+      b.className = 'preset' + (i === 0 ? ' active' : '');
+      b.style.setProperty('--c', p.bg);
+      b.style.setProperty('--t', p.t);
+      label.textContent = p.name;
+      b.appendChild(label);
+      b.addEventListener('click', () => applyTheme(p, b));
+      wrap.appendChild(b);
+    });
+
+    initControls();
+    applyLayout('photo_reference');
+    
+    // Initialize baseline snapshot for Undo/Redo
+    pushHistory();
+  } catch (err) {
+    showStartupError(err);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

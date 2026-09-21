@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1414" width="1000" height="1414">
+  <rect width="1000" height="1414" fill="#faf9f6"/>
+  
+  <!-- Masthead -->
+  <g transform="translate(50, 45)">
+    <text x="0" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#555">Shtypur në zemër të shtetit nga njerëz me ndërgjegje</text>
+    <text x="900" y="20" text-anchor="end" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#555">Tiranë, Korrik 2026 | Botimi I</text>
+    <line x1="0" y1="30" x2="900" y2="30" stroke="#111" stroke-width="1.5"/>
+    
+    <text x="450" y="86" text-anchor="middle" font-family="'Times New Roman', Times, Georgia, serif" font-size="64" font-weight="900" letter-spacing="3" fill="#111">FLAMINGO TIMES</text>
+    <line x1="0" y1="104" x2="900" y2="104" stroke="#111" stroke-width="1"/>
+  </g>
+
+  <!-- Red Alert Banner -->
+  <g transform="translate(50, 175)">
+    <text x="0" y="0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="1.5" fill="#888">LIGJ KRIMINAL I INVESTIMEVE STRATEGJIKE</text>
+    
+    <!-- Main Headline -->
+    <text x="0" y="55" font-family="'Times New Roman', Times, Georgia, serif" font-size="52" font-weight="900" fill="#111" line-height="1.1">
+      <tspan x="0" dy="0">Shteti ta merr tokën dhe ja jep</tspan>
+      <tspan x="0" dy="58">investitorit "strategjik"</tspan>
+    </text>
+
+    <text x="0" y="195" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#666">
+      Nga toka bujqësore te vila luksoze... te resorte private
+    </text>
+    <line x1="0" y1="215" x2="900" y2="215" stroke="#111" stroke-width="1.5"/>
+  </g>
+
+  <!-- 3 Columns Layout -->
+  <g transform="translate(50, 415)">
+    <!-- Col 1: Cfare thote ligji -->
+    <g transform="translate(0, 0)">
+      <text x="0" y="20" font-family="'Times New Roman', Times, Georgia, serif" font-size="22" font-weight="700" fill="#111">Çfarë thotë ligji?</text>
+      <text x="0" y="50" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" fill="#222">
+        <tspan x="0" dy="0">Ligji Nr. 55/2015 "Për investimet</tspan>
+        <tspan x="0" dy="21">strategjike" u miratua si një formë</tspan>
+        <tspan x="0" dy="21">zhvillimi, por sot po përdoret si</tspan>
+        <tspan x="0" dy="21">armë shtetërore kundër pronarëve</tspan>
+        <tspan x="0" dy="21">vendas. Kushdo që ka tokë buzë</tspan>
+        <tspan x="0" dy="21">detit rrezikon ta humbasë.</tspan>
+        <tspan x="0" dy="32"><tspan font-weight="800">"Ky ligj i jep qeverisë të</tspan></tspan>
+        <tspan x="0" dy="21"><tspan font-weight="800">drejtën të shpronësojë pronën</tspan></tspan>
+        <tspan x="0" dy="21"><tspan font-weight="800">private dhe t'ia kalojë biznesit</tspan></tspan>
+        <tspan x="0" dy="21"><tspan font-weight="800">privat për resort luksoz."</tspan></tspan>
+      </text>
+    </g>
+
+    <!-- Divider 1 -->
+    <line x1="280" y1="0" x2="280" y2="450" stroke="#ddd" stroke-width="1"/>
+
+    <!-- Col 2: Cfare ndodhi ne Zvernec -->
+    <g transform="translate(305, 0)">
+      <text x="0" y="20" font-family="'Times New Roman', Times, Georgia, serif" font-size="22" font-weight="700" fill="#111">Çfarë ndodhi në Zvërnec?</text>
+      <text x="0" y="50" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14.5" fill="#222">
+        <tspan x="0" dy="0">Banorët e fshatit kishin tokë të</tspan>
+        <tspan x="0" dy="21">trashëguar brez pas brezi. Në vitet</tspan>
+        <tspan x="0" dy="21">2016–2020 hipotekat u bllokuan</tspan>
+        <tspan x="0" dy="21">qëllimisht. Në vitin 2023 zona u</tspan>
+        <tspan x="0" dy="21">shpall projekt strategjik për oligarkët.</tspan>
+        <tspan x="0" dy="32">Ndërtimet parashikohen mbi laguna</tspan>
+        <tspan x="0" dy="21">të mbrojtura dhe pyje shekullore,</tspan>
+        <tspan x="0" dy="21">pa asnjë dëgjesë reale me komunitetin.</tspan>
+      </text>
+    </g>
+
+    <!-- Divider 2 -->
+    <line x1="590" y1="0" x2="590" y2="450" stroke="#ddd" stroke-width="1"/>
+
+    <!-- Col 3: Price comparison highlight boxes -->
+    <g transform="translate(615, 0)">
+      <!-- Box 1 -->
+      <rect x="0" y="10" width="285" height="110" fill="#fff" stroke="#111" stroke-width="2" rx="6"/>
+      <text x="20" y="42" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#444">Toka u ble me:</text>
+      <text x="20" y="92" font-family="'Arial Black', Impact, sans-serif" font-size="44" font-weight="900" fill="#111">63€/m²</text>
+
+      <!-- Box 2 -->
+      <rect x="0" y="140" width="285" height="135" fill="#111" stroke="#111" stroke-width="2" rx="6"/>
+      <text x="20" y="172" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#aaa">dhe me pas u shit me:</text>
+      <text x="20" y="235" font-family="'Arial Black', Impact, sans-serif" font-size="38" font-weight="900" fill="#faf9f6">10.000€/m²</text>
+
+      <text x="0" y="305" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" fill="#444">
+        <tspan x="0" dy="0">Klientët: Kompania private e lidhur</tspan>
+        <tspan x="0" dy="18">me biznesmenë ndërkombëtarë dhe</tspan>
+        <tspan x="0" dy="18">fondet offshore të pushtetarëve.</tspan>
+      </text>
+    </g>
+  </g>
+
+  <!-- 5 Kërkesat tona banner at bottom of front page -->
+  <g transform="translate(50, 910)">
+    <rect x="0" y="0" width="900" height="440" fill="#fff" stroke="#111" stroke-width="2.5" rx="6"/>
+    <text x="35" y="85" font-family="'Arial Black', Impact, sans-serif" font-size="90" font-weight="900" fill="#111">5</text>
+    <text x="110" y="60" font-family="'Times New Roman', Times, Georgia, serif" font-size="38" font-weight="900" fill="#111">Kërkesat tona</text>
+    <line x1="110" y1="75" x2="860" y2="75" stroke="#111" stroke-width="2"/>
+
+    <g transform="translate(35, 125)">
+      <text x="0" y="0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#111">1. Ligji për referendumet <tspan font-weight="400">të bëhet i zbatueshëm – produkti i popullit të zbatohet.</tspan></text>
+      <text x="0" y="48" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#111">2. Ndalim me ligj <tspan font-weight="400">të pastrimit të parave në Zvërnec dhe në Sazan.</tspan></text>
+      <text x="0" y="96" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#111">3. Publikim të plotë <tspan font-weight="400">të kontratave, të mos fshihen në offshore.</tspan></text>
+      <text x="0" y="144" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#111">4. Studim mjedisor <tspan font-weight="400">të pavarur ndërkombëtar para çdo vendimi.</tspan></text>
+      <text x="0" y="192" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#111">5. Shfuqizim <tspan font-weight="400">të ndryshimeve ligjore 2024–2026.</tspan></text>
+    </g>
+
+    <rect x="0" y="390" width="900" height="50" fill="#111" rx="0 0 5 5"/>
+    <text x="450" y="422" text-anchor="middle" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#fff">
+      FLAMINGO TIMES • flamigorrevolution.eu • BOTIMI I • KORRIK 2026
+    </text>
+  </g>
+</svg>
