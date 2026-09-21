@@ -43,11 +43,15 @@ input[type=color]{width:52px;height:38px;background:#20242d;border:1px solid #34
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 
 /* Presets */
-.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.preset{height:50px;border:1px solid #ffffff1a;border-radius:8px;overflow:hidden;position:relative;background:var(--c);cursor:pointer;transition:transform .12s,outline .12s}
-.preset:hover{transform:translateY(-1px)}
-.preset span{position:absolute;left:6px;bottom:5px;font-size:10px;font-weight:800;color:var(--t);text-shadow:0 1px 4px #000a}
+.presets{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.preset{min-height:62px;border:1px solid #ffffff1a;border-radius:8px;overflow:hidden;position:relative;background:var(--c);cursor:pointer;transition:transform .12s,outline .12s,border-color .12s;padding:7px;text-align:left;color:var(--t)}
+.preset:hover{transform:translateY(-1px);border-color:#ffffff55}
 .preset.active{outline:2px solid #fff;outline-offset:1px}
+.preset-sample{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.preset-aa{font-family:"Times New Roman",Times,Georgia,serif;font-size:22px;font-weight:900;line-height:1;color:var(--t)}
+.preset-logo{font-size:9px;font-weight:900;letter-spacing:.06em;border:1px solid currentColor;border-radius:4px;padding:2px 4px;color:var(--t);background:#ffffff12}
+.preset-name{display:block;margin-top:8px;font-size:10px;font-weight:900;color:var(--t);text-shadow:0 1px 4px #0007}
+.preset-mood{display:block;margin-top:2px;font-size:9px;color:color-mix(in srgb,var(--t),transparent 28%);text-shadow:0 1px 4px #0007}
 
 /* Chips & Tabs */
 .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -104,6 +108,22 @@ canvas{display:block;width:100%;height:auto;background:#985885;box-shadow:0 35px
 .drop-sub{font-size:12px;color:var(--text-sub);margin-top:4px}
 .app-error{margin-top:10px;border:1px solid #7f1d1d;background:#2a1518;color:#fecaca;border-radius:8px;padding:10px;font-size:12px;line-height:1.45}
 
+/* First-Run Workflow Guide */
+.workflow-guide{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 12px;padding:8px;background:#14171f;border:1px solid #272d3b;border-radius:8px}
+.workflow-step{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);line-height:1.2;min-width:0}
+.workflow-step span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.workflow-num{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#202633;border:1px solid #363e52;color:var(--accent);font-weight:800;font-size:10px;flex-shrink:0}
+
+/* Disabled & Loading States */
+.file-btn.disabled{opacity:.45;pointer-events:none;cursor:not-allowed}
+button:disabled{opacity:.45;cursor:not-allowed}
+
+/* Technical Details for Error Diagnostics */
+.status-details{margin-top:8px;font-size:11px;color:#9aa2b0}
+.status-details summary{cursor:pointer;color:#c9d1df;font-weight:600;user-select:none}
+.status-details summary:hover{color:#fff}
+.status-details pre{margin:6px 0 0;padding:6px 8px;background:#151820;border-radius:6px;border:1px solid #363d4e;white-space:pre-wrap;word-break:break-all;font:10px/1.4 ui-monospace,monospace;color:#fca5a5}
+
 /* PDF Pages Strip in Sidebar */
 .pdf-strip{background:#151820;border:1px solid #2b303c;border-radius:8px;padding:10px;margin-top:10px}
 .pdf-strip-title{font-size:10px;text-transform:uppercase;color:#8f96a4;font-weight:800;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -112,6 +132,27 @@ canvas{display:block;width:100%;height:auto;background:#985885;box-shadow:0 35px
 .pdf-chip:hover{background:#2a3140;border-color:var(--accent)}
 .pdf-chip.active{background:#d85aa926;border-color:var(--accent);color:#fff}
 .pdf-chip-tag{font-size:9px;font-weight:800;color:var(--accent);text-transform:uppercase}
+
+/* Quick Compose (primary panel) */
+.quick-compose{background:linear-gradient(180deg,#211427,#181a22);border:1px solid #3c2748;border-radius:12px;padding:16px;margin-bottom:6px}
+.quick-compose .section-title{color:var(--accent)}
+.btn.compose{height:44px}
+#btnMakePoster{width:100%;margin-top:14px;height:48px;font-size:14px}
+
+/* Ready / Export confirmation panel */
+.ready-panel{margin-top:14px;padding:12px;background:#1d2028;border:1px solid #2d3340;border-radius:10px}
+.ready-panel-meta{font-size:11px;color:var(--text-sub);margin:6px 0 10px;font-weight:700;letter-spacing:.02em}
+.ready-panel #download{width:100%}
+
+/* Fine Tune (secondary, collapsible) sections */
+details.fine-tune{border-top:1px solid var(--border);padding-top:14px;margin-top:16px}
+details.fine-tune > summary{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9ca3af;font-weight:800;cursor:pointer;list-style:none;display:flex;align-items:center;gap:7px;user-select:none}
+details.fine-tune > summary::-webkit-details-marker{display:none}
+details.fine-tune > summary::before{content:'▸';color:var(--accent);font-size:10px;transition:transform .15s;flex-shrink:0}
+details.fine-tune[open] > summary::before{transform:rotate(90deg)}
+details.fine-tune > summary:hover{color:#d5dae3}
+details.fine-tune > .fine-tune-body{margin-top:12px}
+details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
 
 @media(max-width:950px){
   .app{display:block}
@@ -125,178 +166,65 @@ canvas{display:block;width:100%;height:auto;background:#985885;box-shadow:0 35px
 <div class="app">
 <aside class="panel">
   <h1>Flamingo Times <span class="badge">Studio</span></h1>
-  <div class="sub">Cover studio with top masthead, 3 overlapping hero newspapers in the center, and .eu logo at the bottom.</div>
+  <div class="sub">Upload a newspaper PDF and Flamingo Times composes a ready-to-export poster automatically. Fine-tune anytime — nothing below is required.</div>
 
-  <!-- Section: Issue & Pages -->
-  <div class="section">
-    <div class="section-title">Issue & Pages</div>
+  <!-- Section: Quick Compose (primary control area) -->
+  <div class="section quick-compose">
+    <div class="section-title">Quick Compose</div>
+
+    <!-- Compact workflow guide -->
+    <div class="workflow-guide" aria-label="Quick compose workflow guide">
+      <div class="workflow-step"><span class="workflow-num">1</span><span>Upload or use sample</span></div>
+      <div class="workflow-step"><span class="workflow-num">2</span><span>Pick a direction</span></div>
+      <div class="workflow-step"><span class="workflow-num">3</span><span>Make Poster</span></div>
+    </div>
+
+    <div class="row">
+      <label class="file-btn" id="pdfInputLabel">📄 Upload PDF<input id="pdfInput" type="file" accept="application/pdf,.pdf"></label>
+      <button class="btn compose" id="btnUseSample" type="button" title="Load the built-in 4-page sample edition">⚡ Use Sample</button>
+    </div>
+
     <div class="field">
-      <label>Select Issue Preset</label>
-      <select id="issuePreset">
-        <option value="zvernec" selected>Issue I — Zvërnec & Sazan (Reference Photo)</option>
-        <option value="student">Issue II — Student Movement (Dec 2026)</option>
-        <option value="custom">Custom Issue (PDF / Uploads)</option>
-      </select>
-    </div>
-    <div class="filebox" style="margin-top:10px">
-      <label class="file-btn">📄 Upload New Issue (PDF)<input id="pdfInput" type="file" accept="application/pdf,.pdf"></label>
-      <button class="chip" id="btnLoadSamplePdf" style="margin-top:6px;width:100%;height:32px;font-size:11px;background:#202633;border-color:#384155" title="Test with 4-page sample PDF">⚡ Test with Sample 4-Page PDF</button>
-      <div id="pdfStatus" class="status" aria-live="polite">Issue I (Zvërnec) is active with 3 full pages: Back (Step-by-Step + QR), Front Cover, and Inside Spread.</div>
-      
-      <!-- Interactive PDF Pages Strip -->
-      <div id="pdfStrip" class="pdf-strip" style="display:none">
-        <div class="pdf-strip-title">
-          <span>Detected PDF Pages</span>
-          <span id="pdfPageBadge" style="color:var(--accent);font-weight:800">0 pages</span>
-        </div>
-        <div class="pdf-chips" id="pdfChipsList"></div>
-        <div style="font-size:10px;color:#808898;margin-top:6px;line-height:1.35">Click any page chip above to set it on the active selected newspaper tab.</div>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <button class="chip active" id="btnPresetRefPages" title="Center: Back Cover, Left: Front Cover, Right: Inside Spread">Reference Pages</button>
-        <button class="chip" id="btnAutoPages">1 / 2 / 3</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Section: Adjust Newspapers (Freeform & Individual) -->
-  <div class="section">
-    <div class="section-title">
-      <span>Adjust Newspapers</span>
-      <span class="sub-hint">Drag & move on Canvas</span>
-    </div>
-
-    <!-- Paper selector tabs -->
-    <div class="paper-tabs" id="paperTabs">
-      <button class="paper-tab active" data-paper="0">Paper 1 (Center)</button>
-      <button class="paper-tab" data-paper="1">Paper 2 (Left)</button>
-      <button class="paper-tab" data-paper="2">Paper 3 (Right)</button>
-    </div>
-
-    <!-- Individual paper editor card -->
-    <div class="paper-card" id="paperEditor">
-      <div class="field">
-        <label>Displayed Page</label>
-        <select id="curPaperPage"></select>
-      </div>
-      <div class="field">
-        <label class="file-btn" style="height:32px;font-size:11px;background:#252934;color:#e1e4ea;border:1px solid #373e4f">
-          🖼️ Upload image for this paper<input id="curPaperCustomFile" type="file" accept="image/*">
-        </label>
-        <button class="chip" id="btnClearCustomImage" style="display:none;width:100%;margin-top:5px;height:28px">Remove custom image</button>
-      </div>
-      <div class="field">
-        <label>Horizontal Position (X)</label>
-        <div class="rangegrid">
-          <input id="curPaperX" type="range" min="0.05" max="0.95" step="0.005" value="0.50">
-          <output id="outPaperX">0.50</output>
-        </div>
-      </div>
-      <div class="field">
-        <label>Vertical Position (Y)</label>
-        <div class="rangegrid">
-          <input id="curPaperY" type="range" min="0.10" max="0.90" step="0.005" value="0.435">
-          <output id="outPaperY">0.44</output>
-        </div>
-      </div>
-      <div class="field">
-        <label>Rotation Angle (°)</label>
-        <div class="rangegrid">
-          <input id="curPaperRot" type="range" min="-45" max="45" step="0.5" value="-5.5">
-          <output id="outPaperRot">-5.5°</output>
-        </div>
-      </div>
-      <div class="field">
-        <label>Paper Scale</label>
-        <div class="rangegrid">
-          <input id="curPaperScale" type="range" min="0.60" max="1.40" step="0.01" value="1.00">
-          <output id="outPaperScale">1.00</output>
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px">
-        <button class="chip" id="btnBringFront" title="Place above other newspapers">⬆ Bring to Front</button>
-        <button class="chip" id="btnSendBack" title="Place behind other newspapers">⬇ Send to Back</button>
-      </div>
-      <div class="toggle-line">
-        <label for="curPaperVisible">Show this newspaper</label>
-        <input id="curPaperVisible" type="checkbox" checked>
-      </div>
-    </div>
-  </div>
-
-  <!-- Section: Layout Presets & Format -->
-  <div class="section">
-    <div class="section-title">Layout & Format</div>
-    <div class="field">
-      <label>Canvas Format</label>
+      <label>Format</label>
       <select id="format">
-        <option value="portrait" selected>Instagram 4:5 — 1080×1350 (Portrait - Reference)</option>
+        <option value="portrait" selected>Instagram 4:5 — 1080×1350 (Portrait)</option>
         <option value="square">Instagram 1:1 — 1080×1080 (Square)</option>
       </select>
     </div>
-    <div class="chips field" style="grid-template-columns:repeat(3,1fr);margin-top:10px">
-      <button class="chip active" data-layout="photo_reference" title="Exact layout matching reference photo">Like Reference</button>
-      <button class="chip" data-layout="fan">Spread Fan</button>
-      <button class="chip" data-layout="clean">Classic Clean</button>
-    </div>
-    <div class="chips field" style="grid-template-columns:1fr 1fr;margin-top:6px">
-      <button class="chip" data-layout="two_papers">2 Papers</button>
-      <button class="chip" data-layout="single">1 Paper Solo</button>
-    </div>
 
     <div class="field">
-      <label>Global Newspaper Scale</label>
-      <div class="rangegrid"><input id="globalScale" type="range" min="0.75" max="1.30" step="0.01" value="1.00"><output id="outGlobalScale">1.00</output></div>
-    </div>
-    <div class="field">
-      <label>Shadow Depth & Softness</label>
-      <div class="rangegrid"><input id="shadow" type="range" min="0" max="1.8" step="0.02" value="1.05"><output id="outShadow">1.05</output></div>
-    </div>
-  </div>
-
-  <!-- Section: Typography & Masthead -->
-  <div class="section">
-    <div class="section-title">Typography & Masthead</div>
-    <div class="field">
-      <label>Masthead Style</label>
-      <select id="headerStyle">
-        <option value="full_masthead" selected>Full Masthead FLAMINGO TIMES + Issue Date</option>
-        <option value="photo_ref">Date / Issue Only (Top Right)</option>
-        <option value="none">No Text on Background</option>
+      <label>Visual Direction</label>
+      <select id="visualDirection">
+        <option value="editorial_stack" selected>Editorial Stack — 3-paper reference layout</option>
+        <option value="campaign_fan">Campaign Fan — symmetrical spread</option>
+        <option value="clean_feature">Clean Feature — minimal, tight rotation</option>
+        <option value="hero_cover">Hero Cover — single featured paper</option>
+        <option value="two_cover_compare">Two-Cover Compare — dual paper layout</option>
       </select>
     </div>
-    <div class="field"><label>Main Title</label><input id="title" type="text" value="FLAMINGO TIMES"></div>
-    <div class="row">
-      <div><label>City</label><input id="city" type="text" value="Tiranë"></div>
-      <div><label>Month / Year</label><input id="date" type="text" value="Korrik 2026"></div>
-    </div>
-    <div class="field"><label>Issue</label><input id="issue" type="text" value="Botimi I"></div>
-  </div>
 
-  <!-- Section: Colors & Logo -->
-  <div class="section">
-    <div class="section-title">Colors & Logo (.eu)</div>
-    <div class="presets" id="themePresets"></div>
     <div class="field">
-      <label>Background Color</label>
-      <div class="colorline"><input id="bg" type="color" value="#985885"><input id="bgHex" type="text" value="#985885"></div>
+      <label>Featured Pages</label>
+      <select id="pageComposition">
+        <option value="auto" selected>Auto from PDF</option>
+        <option value="one_page">1 Page — hero cover</option>
+        <option value="two_pages">2 Pages — compare covers</option>
+        <option value="three_pages">3 Pages — full poster stack</option>
+        <option value="custom_many">Custom 4+ — choose pages manually</option>
+      </select>
     </div>
+
+    <div class="field">
+      <label>Color Combination</label>
+      <div class="presets" id="themePresets"></div>
+    </div>
+
     <div class="row">
       <div>
-        <label>Text Ink Color</label>
-        <select id="ink">
-          <option value="auto">Auto</option>
-          <option value="dark" selected>Dark</option>
-          <option value="light">Light (White)</option>
-          <option value="pink">Pink</option>
-        </select>
-      </div>
-      <div>
-        <label>Logo (.eu)</label>
+        <label>Logo Pairing</label>
         <select id="logoMode">
-          <option value="auto">Auto</option>
-          <option value="white_black" selected>White + Black (Reference)</option>
+          <option value="auto">Auto Best Pairing</option>
+          <option value="white_black" selected>White + Black</option>
           <option value="pink_cream">Pink + Cream</option>
           <option value="red_black">Red + Black</option>
           <option value="black_red">Black + Red</option>
@@ -315,26 +243,210 @@ canvas{display:block;width:100%;height:auto;background:#985885;box-shadow:0 35px
           <option value="cream_pink">Cream + Pink</option>
         </select>
       </div>
+      <div>
+        <label>Masthead Font</label>
+        <select id="titleFont">
+          <option value="classic_serif" selected>Classic Serif</option>
+          <option value="blackletter">Blackletter</option>
+        </select>
+      </div>
     </div>
-    <div class="toggle-line">
-      <label for="showBgLogo">Show logo at bottom of background</label>
-      <input id="showBgLogo" type="checkbox" checked>
+
+    <div class="row">
+      <div>
+        <label>Masthead Size</label>
+        <div class="rangegrid">
+          <input id="titleFontSize" type="range" min="0.055" max="0.13" step="0.001" value="0.088">
+          <output id="outTitleFontSize">8.8%</output>
+        </div>
+      </div>
+      <div>
+        <label>Metadata Size</label>
+        <div class="rangegrid">
+          <input id="metaFontSize" type="range" min="0.012" max="0.03" step="0.0005" value="0.0165">
+          <output id="outMetaFontSize">1.7%</output>
+        </div>
+      </div>
     </div>
-    <div class="field" id="logoScaleField">
-      <label>Logo Scale</label>
-      <div class="rangegrid"><input id="logoScale" type="range" min="0.65" max="1.45" step="0.01" value="1.05"><output id="outLogoScale">1.05</output></div>
+
+    <button class="chip" id="btnAutoPairLogo" type="button" style="width:100%;margin-top:8px">Apply Best Contrast</button>
+
+    <button class="btn primary" id="btnMakePoster" type="button">✨ Make Poster</button>
+
+    <div class="ready-panel" id="readyPanel">
+      <div id="pdfStatus" class="status" aria-live="polite">Poster ready — Issue I (Zvërnec) is active with 3 full pages.</div>
+      <div class="ready-panel-meta" id="readyMeta">1080×1350 · Editorial Stack</div>
+      <button class="btn primary" id="download">⬇ Download PNG</button>
     </div>
   </div>
 
-  <!-- Section: Export -->
-  <div class="section">
-    <div class="section-title">Export</div>
-    <div class="actions">
-      <button class="btn primary" id="download">Download PNG</button>
-      <button class="btn" id="reset">Reset</button>
+  <!-- Fine Tune: Selected Paper -->
+  <details class="fine-tune" id="fineTuneSelectedPaper">
+    <summary>Fine Tune — Selected Paper</summary>
+    <div class="fine-tune-body">
+      <div class="field" style="margin-top:0">
+        <label>Select Issue Preset</label>
+        <select id="issuePreset">
+          <option value="zvernec" selected>Issue I — Zvërnec & Sazan (Reference Photo)</option>
+          <option value="student">Issue II — Student Movement (Dec 2026)</option>
+          <option value="custom">Custom Issue (PDF / Uploads)</option>
+        </select>
+      </div>
+
+      <!-- Interactive PDF Pages Strip -->
+      <div id="pdfStrip" class="pdf-strip" style="display:none">
+        <div class="pdf-strip-title">
+          <span>Detected PDF Pages</span>
+          <span id="pdfPageBadge" style="color:var(--accent);font-weight:800">0 pages</span>
+        </div>
+        <div class="pdf-chips" id="pdfChipsList"></div>
+        <div style="font-size:10px;color:#808898;margin-top:6px;line-height:1.35">Click any page chip above to set it on the active selected newspaper tab.</div>
+      </div>
+
+      <div class="row">
+        <button class="chip active" id="btnPresetRefPages" title="Back / Center: Back Cover, Front / Left: Front Cover, Front / Right: Inside Spread">Reference Pages</button>
+        <button class="chip" id="btnAutoPages">1 / 2 / 3</button>
+      </div>
+
+      <div class="toggle-line" style="margin-top:14px">
+        <span class="sub-hint" style="margin:0">Drag & move on Canvas</span>
+      </div>
+
+      <!-- Paper selector tabs -->
+      <div class="paper-tabs" id="paperTabs" style="margin-top:8px">
+        <button class="paper-tab active" data-paper="0">Back / Center</button>
+        <button class="paper-tab" data-paper="1">Front / Left</button>
+        <button class="paper-tab" data-paper="2">Front / Right</button>
+      </div>
+
+      <!-- Individual paper editor card -->
+      <div class="paper-card" id="paperEditor">
+        <div class="field" style="margin-top:0">
+          <label>Displayed Page</label>
+          <select id="curPaperPage"></select>
+        </div>
+        <div class="field">
+          <label class="file-btn" style="height:32px;font-size:11px;background:#252934;color:#e1e4ea;border:1px solid #373e4f">
+            🖼️ Upload image for this paper<input id="curPaperCustomFile" type="file" accept="image/*">
+          </label>
+          <button class="chip" id="btnClearCustomImage" style="display:none;width:100%;margin-top:5px;height:28px">Remove custom image</button>
+        </div>
+        <div class="field">
+          <label>Horizontal Position (X)</label>
+          <div class="rangegrid">
+            <input id="curPaperX" type="range" min="0.05" max="0.95" step="0.005" value="0.50">
+            <output id="outPaperX">0.50</output>
+          </div>
+        </div>
+        <div class="field">
+          <label>Vertical Position (Y)</label>
+          <div class="rangegrid">
+            <input id="curPaperY" type="range" min="0.10" max="0.90" step="0.005" value="0.435">
+            <output id="outPaperY">0.44</output>
+          </div>
+        </div>
+        <div class="field">
+          <label>Rotation Angle (°)</label>
+          <div class="rangegrid">
+            <input id="curPaperRot" type="range" min="-45" max="45" step="0.5" value="-5.5">
+            <output id="outPaperRot">-5.5°</output>
+          </div>
+        </div>
+        <div class="field">
+          <label>Paper Scale</label>
+          <div class="rangegrid">
+            <input id="curPaperScale" type="range" min="0.60" max="1.40" step="0.01" value="1.00">
+            <output id="outPaperScale">1.00</output>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="chip" id="btnBringFront" title="Place above other newspapers">⬆ Bring to Front</button>
+          <button class="chip" id="btnSendBack" title="Place behind other newspapers">⬇ Send to Back</button>
+        </div>
+        <div class="toggle-line">
+          <label for="curPaperVisible">Show this newspaper</label>
+          <input id="curPaperVisible" type="checkbox" checked>
+        </div>
+      </div>
     </div>
-    <div class="hint">Full high-resolution PNG export (1080×1350). Visual selection outlines and handles are hidden during export.</div>
-  </div>
+  </details>
+
+  <!-- Fine Tune: Text & Masthead -->
+  <details class="fine-tune" id="fineTuneText">
+    <summary>Fine Tune — Text & Masthead</summary>
+    <div class="fine-tune-body">
+      <div class="field" style="margin-top:0">
+        <label>Masthead Style</label>
+        <select id="headerStyle">
+          <option value="full_masthead" selected>Full Masthead FLAMINGO TIMES + Issue Date</option>
+          <option value="photo_ref">Date / Issue Only (Top Right)</option>
+          <option value="none">No Text on Background</option>
+        </select>
+      </div>
+      <div class="field"><label>Main Title</label><input id="title" type="text" value="FLAMINGO TIMES"></div>
+      <div class="row">
+        <div><label>City</label><input id="city" type="text" value="Tiranë"></div>
+        <div><label>Month / Year</label><input id="date" type="text" value="Korrik 2026"></div>
+      </div>
+      <div class="field"><label>Issue</label><input id="issue" type="text" value="Botimi I"></div>
+      <div class="field">
+        <label>Text Ink Color</label>
+        <select id="ink">
+          <option value="auto">Auto</option>
+          <option value="dark" selected>Dark</option>
+          <option value="light">Light (White)</option>
+          <option value="pink">Pink</option>
+        </select>
+      </div>
+    </div>
+  </details>
+
+  <!-- Fine Tune: Colors & Logo -->
+  <details class="fine-tune" id="fineTuneColors">
+    <summary>Fine Tune — Colors & Logo</summary>
+    <div class="fine-tune-body">
+      <div class="field">
+        <label>Background Color</label>
+        <div class="colorline"><input id="bg" type="color" value="#985885"><input id="bgHex" type="text" value="#985885"></div>
+      </div>
+      <div class="toggle-line">
+        <label for="showBgLogo">Show logo at bottom of background</label>
+        <input id="showBgLogo" type="checkbox" checked>
+      </div>
+      <div class="field" id="logoScaleField">
+        <label>Logo Scale</label>
+        <div class="rangegrid"><input id="logoScale" type="range" min="0.65" max="1.45" step="0.01" value="1.05"><output id="outLogoScale">1.05</output></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Fine Tune: Advanced -->
+  <details class="fine-tune" id="fineTuneAdvanced">
+    <summary>Fine Tune — Advanced</summary>
+    <div class="fine-tune-body">
+      <div class="chips field" style="grid-template-columns:repeat(3,1fr);margin-top:0">
+        <button class="chip active" data-layout="photo_reference" title="Exact layout matching reference photo">Like Reference</button>
+        <button class="chip" data-layout="fan">Spread Fan</button>
+        <button class="chip" data-layout="clean">Classic Clean</button>
+      </div>
+      <div class="chips field" style="grid-template-columns:1fr 1fr;margin-top:6px">
+        <button class="chip" data-layout="two_papers">2 Papers</button>
+        <button class="chip" data-layout="single">1 Paper Solo</button>
+      </div>
+      <div class="field">
+        <label>Global Newspaper Scale</label>
+        <div class="rangegrid"><input id="globalScale" type="range" min="0.75" max="1.30" step="0.01" value="1.00"><output id="outGlobalScale">1.00</output></div>
+      </div>
+      <div class="field">
+        <label>Shadow Depth & Softness</label>
+        <div class="rangegrid"><input id="shadow" type="range" min="0" max="1.8" step="0.02" value="1.05"><output id="outShadow">1.05</output></div>
+      </div>
+      <div class="field">
+        <button class="btn" id="reset" style="width:100%">Start Over</button>
+      </div>
+      <div class="hint">"Start Over" reloads the studio and clears every edit, uploaded PDF, and custom image.</div>
+    </div>
+  </details>
 </aside>
 
 <main class="workspace">
@@ -408,6 +520,7 @@ const S = {
   bg: '#985885',
   format: 'portrait',
   layout: 'photo_reference',
+  pageComposition: 'auto',
   headerStyle: 'full_masthead',
   globalScale: 1.0,
   shadow: 1.05,
@@ -415,6 +528,9 @@ const S = {
   logoScale: 1.05,
   ink: 'dark',
   logoMode: 'white_black',
+  titleFont: 'classic_serif',
+  titleFontSize: 0.088,
+  metaFontSize: 0.0165,
   title: 'FLAMINGO TIMES',
   city: 'Tiranë',
   date: 'Korrik 2026',
@@ -424,9 +540,9 @@ const S = {
 // 3 Independent Configurable Papers matching reference layout:
 // Center paper in back (rot -5.5°), Left paper in front (rot -17.5°), Right paper in front (rot 19.0°)
 const papers = [
-  { id: 0, name: 'Paper 1 (Center)', x: 0.50, y: 0.435, rot: -5.5, scale: 1.00, pageKey: 'zvernec_back', customImage: null, visible: true },
-  { id: 1, name: 'Paper 2 (Left)', x: 0.290, y: 0.575, rot: -17.5, scale: 1.00, pageKey: 'zvernec_front', customImage: null, visible: true },
-  { id: 2, name: 'Paper 3 (Right)', x: 0.715, y: 0.575, rot: 19.0, scale: 1.00, pageKey: 'zvernec_inside', customImage: null, visible: true }
+  { id: 0, name: 'Back / Center', x: 0.50, y: 0.435, rot: -5.5, scale: 1.00, pageKey: 'zvernec_back', customImage: null, visible: true },
+  { id: 1, name: 'Front / Left', x: 0.290, y: 0.575, rot: -17.5, scale: 1.00, pageKey: 'zvernec_front', customImage: null, visible: true },
+  { id: 2, name: 'Front / Right', x: 0.715, y: 0.575, rot: 19.0, scale: 1.00, pageKey: 'zvernec_inside', customImage: null, visible: true }
 ];
 let paperOrder = [0, 1, 2]; // 0 is drawn first (in the back), 1 and 2 in front
 let activePaperIdx = 0;
@@ -442,17 +558,137 @@ const PAGE_CATALOG = [
 
 // Theme presets
 const themePresets = [
-  { name: 'Mauve (Ref)', bg: '#985885', t: '#171217', logo: 'white_black' },
-  { name: 'Flamingo', bg: '#BF6A9C', t: '#171217', logo: 'white' },
-  { name: 'Ivory', bg: '#EFE8DE', t: '#171217', logo: 'pink_black' },
-  { name: 'Black', bg: '#17171B', t: '#F7F2EA', logo: 'pink_cream' },
-  { name: 'Wine', bg: '#6C273D', t: '#FFF6ED', logo: 'white' },
-  { name: 'Navy', bg: '#25354A', t: '#F8F3EB', logo: 'pink_cream' },
-  { name: 'Stone', bg: '#AAA198', t: '#171217', logo: 'white_black' },
-  { name: 'Forest', bg: '#29483E', t: '#F6F1E9', logo: 'white' },
-  { name: 'Red', bg: '#9D2739', t: '#FFF7F0', logo: 'white' },
-  { name: 'Cream/Pink', bg: '#F0E3D2', t: '#D5459B', logo: 'pink' }
+  { name: 'Flamingo Mauve', mood: 'reference', bg: '#985885', ink: 'dark', t: '#171217', logo: 'white_black' },
+  { name: 'Protest Red', mood: 'urgent', bg: '#9D2739', ink: 'light', t: '#FFF7F0', logo: 'white' },
+  { name: 'Paper Cream', mood: 'editorial', bg: '#EFE8DE', ink: 'dark', t: '#171217', logo: 'pink_black' },
+  { name: 'Night Edition', mood: 'dramatic', bg: '#17171B', ink: 'light', t: '#F7F2EA', logo: 'pink_cream' },
+  { name: 'Coastal Blue', mood: 'public', bg: '#25354A', ink: 'light', t: '#F8F3EB', logo: 'pink_cream' },
+  { name: 'Forest Green', mood: 'civic', bg: '#29483E', ink: 'light', t: '#F6F1E9', logo: 'white' },
+  { name: 'Archive Stone', mood: 'archival', bg: '#AAA198', ink: 'dark', t: '#171217', logo: 'white_black' },
+  { name: 'Campaign Pink', mood: 'bold', bg: '#BF6A9C', ink: 'dark', t: '#171217', logo: 'white' },
+  { name: 'Cream on Pink', mood: 'brand', bg: '#D5459B', ink: 'light', t: '#FFF6ED', logo: 'cream' },
+  { name: 'Black & Red', mood: 'sharp', bg: '#111113', ink: 'light', t: '#F8F3EC', logo: 'red_white' },
+  { name: 'Rose Paper', mood: 'soft', bg: '#F4CEDD', ink: 'dark', t: '#171217', logo: 'red_black' },
+  { name: 'Ink Blue', mood: 'formal', bg: '#192A3D', ink: 'light', t: '#F4F0E8', logo: 'white_red' },
+  { name: 'Civic Teal', mood: 'fresh', bg: '#1F5954', ink: 'light', t: '#F7F2EA', logo: 'pink_white' },
+  { name: 'Newsprint Grey', mood: 'quiet', bg: '#D8D3CC', ink: 'dark', t: '#151517', logo: 'black_red' },
+  { name: 'Deep Plum', mood: 'night', bg: '#3B183C', ink: 'light', t: '#FFF4EA', logo: 'cream_pink' },
+  { name: 'Signal Yellow', mood: 'alert', bg: '#F3C743', ink: 'dark', t: '#171217', logo: 'black_red' },
+  { name: 'White Space', mood: 'minimal', bg: '#F8F5EF', ink: 'dark', t: '#111113', logo: 'pink_black' },
+  { name: 'Burnt Coral', mood: 'warm', bg: '#C45145', ink: 'light', t: '#FFF5EA', logo: 'white_black' }
 ];
+
+const LOGO_LABELS = {
+  auto: 'Auto Best Pairing',
+  white_black: 'White + Black',
+  pink_cream: 'Pink + Cream',
+  red_black: 'Red + Black',
+  black_red: 'Black + Red',
+  white: 'All White',
+  pink_black: 'Pink + Black',
+  pink: 'All Pink',
+  black: 'All Black',
+  red: 'All Red',
+  cream: 'All Cream',
+  red_white: 'Red + White',
+  white_red: 'White + Red',
+  white_pink: 'White + Pink',
+  pink_white: 'Pink + White',
+  black_pink: 'Black + Pink',
+  black_white: 'Black + White',
+  cream_pink: 'Cream + Pink'
+};
+
+// Visual Direction: designer-friendly names mapped to the underlying layout presets.
+const VISUAL_DIRECTIONS = {
+  editorial_stack: { label: 'Editorial Stack', layout: 'photo_reference' },
+  campaign_fan: { label: 'Campaign Fan', layout: 'fan' },
+  clean_feature: { label: 'Clean Feature', layout: 'clean' },
+  hero_cover: { label: 'Hero Cover', layout: 'single' },
+  two_cover_compare: { label: 'Two-Cover Compare', layout: 'two_papers' }
+};
+const LAYOUT_TO_DIRECTION = {
+  photo_reference: 'editorial_stack',
+  fan: 'campaign_fan',
+  clean: 'clean_feature',
+  single: 'hero_cover',
+  two_papers: 'two_cover_compare'
+};
+
+function suggestDirectionForPageCount(count) {
+  if (count <= 1) return 'hero_cover';
+  if (count === 2) return 'two_cover_compare';
+  return 'editorial_stack';
+}
+
+function suggestCompositionForPageCount(count) {
+  if (count <= 1) return 'one_page';
+  if (count === 2) return 'two_pages';
+  if (count === 3) return 'three_pages';
+  return 'custom_many';
+}
+
+function getEffectiveComposition() {
+  const mode = S.pageComposition || 'auto';
+  if (mode !== 'auto') return mode;
+  return suggestCompositionForPageCount(pdfPages.length || 3);
+}
+
+function directionForComposition(mode, selectedDirection) {
+  if (mode === 'one_page') return 'hero_cover';
+  if (mode === 'two_pages') return 'two_cover_compare';
+  if (mode === 'three_pages') return selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare'
+    ? 'editorial_stack'
+    : selectedDirection;
+  if (mode === 'custom_many') return selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare'
+    ? 'editorial_stack'
+    : selectedDirection;
+  return selectedDirection || suggestDirectionForPageCount(pdfPages.length || 3);
+}
+
+function compositionLabel(mode) {
+  return ({
+    auto: 'Auto',
+    one_page: '1 Page',
+    two_pages: '2 Pages',
+    three_pages: '3 Pages',
+    custom_many: 'Custom 4+'
+  })[mode] || 'Auto';
+}
+
+function applyPageComposition(mode) {
+  const effective = mode || getEffectiveComposition();
+
+  if (effective === 'one_page') {
+    paperOrder = [0];
+    papers[0].visible = true;
+    papers[1].visible = false;
+    papers[2].visible = false;
+    if (pdfPages.length > 0) papers[0].pageKey = 0;
+  } else if (effective === 'two_pages') {
+    paperOrder = [0, 1];
+    papers[0].visible = true;
+    papers[1].visible = true;
+    papers[2].visible = false;
+    if (pdfPages.length > 0) {
+      papers[1].pageKey = 0;
+      papers[0].pageKey = Math.min(1, pdfPages.length - 1);
+    }
+  } else {
+    papers[0].visible = true;
+    papers[1].visible = true;
+    papers[2].visible = true;
+    if (!paperOrder.includes(2)) paperOrder.push(2);
+    paperOrder = paperOrder.filter((id, index, all) => all.indexOf(id) === index);
+  }
+
+  renderPdfPageStrip();
+  syncPaperForm();
+}
+
+// Ink/logo stay on "auto" contrast until the designer deliberately picks one.
+let inkManuallySet = false;
+let logoManuallySet = false;
 
 const images = {};
 const pdfPages = [];
@@ -475,7 +711,21 @@ const historyStack = [];
 const redoStack = [];
 const MAX_HISTORY = 60;
 let isRestoringHistory = false;
+let suppressAutoHistory = false;
 let wheelHistoryTimer = null;
+
+// Groups several state-changing calls (each of which calls pushHistory internally)
+// into exactly one undo step, so "Make Poster" / auto-compose don't spam history.
+function withSingleHistoryEntry(fn) {
+  const wasSuppressed = suppressAutoHistory;
+  suppressAutoHistory = true;
+  try {
+    fn();
+  } finally {
+    suppressAutoHistory = wasSuppressed;
+  }
+  if (!wasSuppressed) pushHistory();
+}
 
 function getSnapshot() {
   return JSON.stringify({
@@ -496,7 +746,7 @@ function getSnapshot() {
 }
 
 function pushHistory() {
-  if (isRestoringHistory) return;
+  if (isRestoringHistory || suppressAutoHistory) return;
   const snap = getSnapshot();
   if (historyStack.length > 0 && historyStack[historyStack.length - 1] === snap) return;
   historyStack.push(snap);
@@ -514,6 +764,7 @@ function applySnapshot(snapStr) {
   document.getElementById('bg').value = S.bg;
   document.getElementById('bgHex').value = S.bg;
   document.getElementById('format').value = S.format;
+  document.getElementById('pageComposition').value = S.pageComposition || 'auto';
   document.getElementById('headerStyle').value = S.headerStyle;
   document.getElementById('title').value = S.title;
   document.getElementById('city').value = S.city;
@@ -521,6 +772,11 @@ function applySnapshot(snapStr) {
   document.getElementById('issue').value = S.issue;
   document.getElementById('ink').value = S.ink;
   document.getElementById('logoMode').value = S.logoMode;
+  document.getElementById('titleFont').value = S.titleFont;
+  document.getElementById('titleFontSize').value = S.titleFontSize;
+  document.getElementById('outTitleFontSize').value = formatFontPercent(S.titleFontSize);
+  document.getElementById('metaFontSize').value = S.metaFontSize;
+  document.getElementById('outMetaFontSize').value = formatFontPercent(S.metaFontSize);
   document.getElementById('showBgLogo').checked = S.showBgLogo;
   document.getElementById('logoScaleField').style.display = S.showBgLogo ? 'block' : 'none';
   document.getElementById('logoScale').value = S.logoScale;
@@ -533,6 +789,14 @@ function applySnapshot(snapStr) {
   canvas.width = 1080;
   canvas.height = S.format === 'portrait' ? 1350 : 1080;
   shell.classList.toggle('portrait', S.format === 'portrait');
+
+  document.querySelectorAll('[data-layout]').forEach(b => b.classList.toggle('active', b.dataset.layout === S.layout));
+  const restoredDirection = LAYOUT_TO_DIRECTION[S.layout];
+  if (restoredDirection) {
+    const directionSel = document.getElementById('visualDirection');
+    if (directionSel) directionSel.value = restoredDirection;
+  }
+  updateReadyPanel(restoredDirection);
 
   paperOrder = [...state.paperOrder];
   state.papers.forEach((sp, i) => {
@@ -614,10 +878,10 @@ function sanitizeFilename(name) {
 
 async function loadUserImageFile(file) {
   if (!file || !file.type.startsWith('image/')) {
-    throw new Error('Please choose a valid image file.');
+    throw new Error('Please choose a valid image file. Images max 15 MB and 6000 px longest side.');
   }
   if (file.size > MAX_IMAGE_BYTES) {
-    throw new Error(`Image is ${readableBytes(file.size)}. The maximum is ${readableBytes(MAX_IMAGE_BYTES)}.`);
+    throw new Error(`Image is too large (${readableBytes(file.size)}). Images max 15 MB and 6000 px longest side.`);
   }
 
   const url = URL.createObjectURL(file);
@@ -625,7 +889,7 @@ async function loadUserImageFile(file) {
     const img = await loadImage(url);
     const maxSide = Math.max(img.naturalWidth || 0, img.naturalHeight || 0);
     if (maxSide > MAX_IMAGE_DIMENSION) {
-      throw new Error(`Image is too large (${img.naturalWidth}×${img.naturalHeight}). Maximum side is ${MAX_IMAGE_DIMENSION}px.`);
+      throw new Error(`Image is too large (${img.naturalWidth}×${img.naturalHeight}px). Images max 15 MB and 6000 px longest side.`);
     }
     return img;
   } finally {
@@ -633,11 +897,34 @@ async function loadUserImageFile(file) {
   }
 }
 
-function setStatusText(message, isError = false) {
+function setStatusText(message, isError = false, details = '') {
   const status = document.getElementById('pdfStatus');
   if (!status) return;
-  status.textContent = message;
   status.classList.toggle('app-error', isError);
+  if (details) {
+    status.innerHTML = `
+      <div>${escapeHtml(message)}</div>
+      <details class="status-details">
+        <summary>Technical details</summary>
+        <pre>${escapeHtml(details)}</pre>
+      </details>
+    `;
+  } else {
+    status.textContent = message;
+  }
+}
+
+function setPdfEngineError(techDetail) {
+  const status = document.getElementById('pdfStatus');
+  if (!status) return;
+  status.classList.add('app-error');
+  status.innerHTML = `
+    <div>PDF tools are unavailable because required site files are missing.</div>
+    <details class="status-details">
+      <summary>Technical details</summary>
+      <pre>${escapeHtml(techDetail || `Missing file: ${PDFJS_MODULE_URL}`)}</pre>
+    </details>
+  `;
 }
 
 function hexRgb(h) {
@@ -672,6 +959,40 @@ function logoKey() {
   if (l > 0.65) return 'pink_black';
   if (l < 0.18) return 'pink_cream';
   return 'white_black';
+}
+
+function formatFontPercent(value) {
+  return `${(Number(value) * 100).toFixed(1)}%`;
+}
+
+function titleFontFamily() {
+  if (S.titleFont === 'blackletter') {
+    return '"Old English Text MT","UnifrakturCook","UnifrakturMaguntia","Blackletter","Times New Roman",serif';
+  }
+  return '"Times New Roman",Times,Georgia,serif';
+}
+
+function metaFontFamily() {
+  return '"Times New Roman",Times,Georgia,serif';
+}
+
+function titleFontWeight() {
+  return S.titleFont === 'blackletter' ? 700 : 900;
+}
+
+function setCanvasFont(c, weight, px, family) {
+  c.font = `${weight} ${Math.round(px)}px ${family}`;
+}
+
+function fillTextFit(c, text, x, y, maxWidth, basePx, minPx, weight, family) {
+  let size = basePx;
+  setCanvasFont(c, weight, size, family);
+  while (size > minPx && c.measureText(text).width > maxWidth) {
+    size -= 2;
+    setCanvasFont(c, weight, size, family);
+  }
+  c.fillText(text, x, y);
+  return size;
 }
 
 // Crisp physical paper path with subtle 2.5px corner radius
@@ -796,24 +1117,52 @@ function render() {
     ctx.fillStyle = ink;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
-    ctx.font = `900 ${Math.round(W * 0.088)}px "Times New Roman", Times, Georgia, serif`;
-    ctx.fillText(S.title, W * 0.5, H * (portrait ? 0.085 : 0.118));
+    fillTextFit(
+      ctx,
+      S.title,
+      W * 0.5,
+      H * (portrait ? 0.085 : 0.118),
+      W * 0.88,
+      W * S.titleFontSize,
+      W * 0.048,
+      titleFontWeight(),
+      titleFontFamily()
+    );
     ctx.restore();
 
     ctx.save();
     ctx.fillStyle = ink;
     ctx.globalAlpha = 0.95;
     ctx.textAlign = 'right';
-    ctx.font = `700 ${Math.round(W * 0.0165)}px "Times New Roman", Times, Georgia, serif`;
-    ctx.fillText(`${S.city}, ${S.date} | ${S.issue}`, W * 0.93, H * (portrait ? 0.118 : 0.152));
+    setCanvasFont(ctx, 700, W * S.metaFontSize, metaFontFamily());
+    fillTextFit(
+      ctx,
+      `${S.city}, ${S.date} | ${S.issue}`,
+      W * 0.93,
+      H * (portrait ? 0.118 : 0.152),
+      W * 0.62,
+      W * S.metaFontSize,
+      W * 0.010,
+      700,
+      metaFontFamily()
+    );
     ctx.restore();
   } else if (S.headerStyle === 'photo_ref') {
     ctx.save();
     ctx.fillStyle = ink;
     ctx.globalAlpha = 0.95;
     ctx.textAlign = 'right';
-    ctx.font = `700 ${Math.round(W * 0.020)}px "Times New Roman", Times, Georgia, serif`;
-    ctx.fillText(`${S.city}, ${S.date} | ${S.issue}`, W * 0.93, H * (portrait ? 0.055 : 0.065));
+    fillTextFit(
+      ctx,
+      `${S.city}, ${S.date} | ${S.issue}`,
+      W * 0.93,
+      H * (portrait ? 0.055 : 0.065),
+      W * 0.72,
+      W * Math.max(S.metaFontSize, 0.020),
+      W * 0.010,
+      700,
+      metaFontFamily()
+    );
     ctx.restore();
   }
 
@@ -891,6 +1240,7 @@ function setFormat(v) {
     papers[2].y = 0.575;
   }
   syncPaperForm();
+  updateReadyPanel();
   render();
   pushHistory();
 }
@@ -899,6 +1249,13 @@ function setFormat(v) {
 function applyLayout(name) {
   S.layout = name;
   document.querySelectorAll('[data-layout]').forEach(b => b.classList.toggle('active', b.dataset.layout === name));
+
+  const directionKey = LAYOUT_TO_DIRECTION[name];
+  if (directionKey) {
+    const directionSel = document.getElementById('visualDirection');
+    if (directionSel) directionSel.value = directionKey;
+    updateReadyPanel(directionKey);
+  }
 
   const portrait = S.format === 'portrait';
   if (name === 'photo_reference') {
@@ -1011,10 +1368,10 @@ function renderPdfPageStrip() {
     let tagText = '';
     if (matchingPapers.length > 0) {
       tagText = matchingPapers.map(p => {
-        if (p.id === 0) return 'Center';
-        if (p.id === 1) return 'Left';
-        if (p.id === 2) return 'Right';
-        return `P${p.id + 1}`;
+        if (p.id === 0) return 'Back / Center';
+        if (p.id === 1) return 'Front / Left';
+        if (p.id === 2) return 'Front / Right';
+        return p.name || `P${p.id + 1}`;
       }).join(', ');
     }
 
@@ -1153,6 +1510,59 @@ function applyIssuePreset(issue) {
   pushHistory();
 }
 
+function updateReadyPanel(directionKey) {
+  const key = directionKey || (document.getElementById('visualDirection') || {}).value;
+  const config = VISUAL_DIRECTIONS[key] || VISUAL_DIRECTIONS.editorial_stack;
+  const meta = document.getElementById('readyMeta');
+  if (!meta) return;
+  const dims = S.format === 'portrait' ? '1080×1350' : '1080×1080';
+  meta.textContent = `${dims} · ${compositionLabel(getEffectiveComposition())} · ${config.label}`;
+}
+
+// The single "do the work for me" action: assigns pages, applies the chosen
+// visual direction with tasteful defaults, and composes a ready-to-export
+// poster in one undo step. It preserves the designer's color, logo, and
+// typography choices.
+function composePoster(directionKey, statusHtml) {
+  const composition = getEffectiveComposition();
+  const resolvedDirection = directionForComposition(composition, directionKey);
+  const config = VISUAL_DIRECTIONS[resolvedDirection] || VISUAL_DIRECTIONS.editorial_stack;
+
+  withSingleHistoryEntry(() => {
+    if (pdfPages.length > 0) {
+      applyAutoPdfPages();
+    } else {
+      applyPhotoReferencePages();
+    }
+    applyLayout(config.layout);
+    applyPageComposition(composition);
+
+    S.headerStyle = 'full_masthead';
+    document.getElementById('headerStyle').value = 'full_masthead';
+
+    S.showBgLogo = true;
+    document.getElementById('showBgLogo').checked = true;
+    document.getElementById('logoScaleField').style.display = 'block';
+
+    S.logoScale = 1.05;
+    document.getElementById('logoScale').value = '1.05';
+    document.getElementById('outLogoScale').value = '1.05';
+
+    S.shadow = 1.05;
+    document.getElementById('shadow').value = '1.05';
+    document.getElementById('outShadow').value = '1.05';
+
+    render();
+  });
+
+  const status = document.getElementById('pdfStatus');
+  status.classList.remove('app-error');
+  status.innerHTML = statusHtml;
+  const pageStrip = document.getElementById('pdfStrip');
+  if (pageStrip && composition === 'custom_many') pageStrip.style.display = pdfPages.length > 0 ? 'block' : pageStrip.style.display;
+  updateReadyPanel(resolvedDirection);
+}
+
 // PDF.js Loader & Ingestion
 async function ensurePdfJs() {
   if (pdfjsLibModule) return true;
@@ -1182,21 +1592,41 @@ async function renderPdfPage(num, token) {
   return c;
 }
 
+let isPdfLoading = false;
+
+function setPdfLoadingState(loading) {
+  isPdfLoading = loading;
+  const input = document.getElementById('pdfInput');
+  const label = document.getElementById('pdfInputLabel');
+  
+  if (input) {
+    input.disabled = loading;
+  }
+  if (label) {
+    label.classList.toggle('disabled', loading);
+  }
+}
+
 async function loadPdf(source, filename) {
+  if (isPdfLoading) return;
+  setPdfLoadingState(true);
   const status = document.getElementById('pdfStatus');
   const name = filename || source.name || 'document.pdf';
   status.classList.remove('app-error');
   status.textContent = 'Loading PDF engine...';
-  if (source.size && source.size > MAX_PDF_BYTES) {
-    setStatusText(`PDF is ${readableBytes(source.size)}. The maximum is ${readableBytes(MAX_PDF_BYTES)}.`, true);
-    return;
-  }
-  const ok = await ensurePdfJs();
-  if (!ok) {
-    setStatusText(`Failed to load the PDF engine from ${PDFJS_MODULE_URL}. Make sure vendor/pdfjs/pdf.min.mjs and vendor/pdfjs/pdf.worker.min.mjs are committed and deployed with the GitHub Pages site.${pdfJsLoadError ? ` Browser error: ${pdfJsLoadError}` : ''}`, true);
-    return;
-  }
+
   try {
+    if (source.size && source.size > MAX_PDF_BYTES) {
+      setStatusText(`PDF is too large (${readableBytes(source.size)}). PDFs max 25 MB and 24 pages.`, true);
+      return;
+    }
+
+    const ok = await ensurePdfJs();
+    if (!ok) {
+      setPdfEngineError(`Missing module: ${PDFJS_MODULE_URL}\nWorker: ${PDFJS_WORKER_URL}${pdfJsLoadError ? `\nBrowser error: ${pdfJsLoadError}` : ''}`);
+      return;
+    }
+
     const arrayBuffer = (source instanceof ArrayBuffer) ? source : await source.arrayBuffer();
     const data = new Uint8Array(arrayBuffer);
     renderToken++;
@@ -1207,12 +1637,14 @@ async function loadPdf(source, filename) {
       isEvalSupported: false,
       stopAtErrors: true
     }).promise;
+
     if (pdfDoc.numPages > MAX_PDF_PAGES) {
       const pageCount = pdfDoc.numPages;
       await pdfDoc.destroy();
       pdfDoc = null;
-      throw new Error(`PDF has ${pageCount} pages. The maximum is ${MAX_PDF_PAGES}.`);
+      throw new Error(`PDF has ${pageCount} pages. PDFs max 25 MB and 24 pages.`);
     }
+
     status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> (${pdfDoc.numPages} pages) — Rendering…`;
     pdfPages.length = 0;
     
@@ -1220,8 +1652,9 @@ async function loadPdf(source, filename) {
     papers.forEach(p => p.customImage = null);
 
     for (let i = 1; i <= pdfDoc.numPages; i++) {
+      status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> · Rendering page ${i} of ${pdfDoc.numPages}…`;
       const im = await renderPdfPage(i, token);
-      if (!im) return;
+      if (!im || token !== renderToken) return;
       pdfPages.push(im);
       
       // As soon as page 1 is ready, immediately show it on the canvas!
@@ -1232,17 +1665,23 @@ async function loadPdf(source, filename) {
         populatePageSelect();
         render();
       }
-      status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> · ${i}/${pdfDoc.numPages} pages ready`;
     }
 
-    // Now automatically distribute pages across the 3 hero newspapers
-    applyAutoPdfPages();
+    // Automatically compose a ready poster: assign pages, pick a fitting
+    // visual direction for the page count, and apply tasteful defaults.
     document.getElementById('issuePreset').value = 'custom';
-    status.innerHTML = `✅ <strong>${escapeHtml(name)}</strong> — All ${pdfDoc.numPages} pages loaded & displayed automatically!`;
-    pushHistory();
+    const suggestedComposition = suggestCompositionForPageCount(pdfDoc.numPages);
+    if (S.pageComposition === 'auto') {
+      S.pageComposition = suggestedComposition;
+      document.getElementById('pageComposition').value = suggestedComposition;
+    }
+    const directionKey = directionForComposition(getEffectiveComposition(), suggestDirectionForPageCount(pdfDoc.numPages));
+    composePoster(directionKey, `✅ <strong>${escapeHtml(name)}</strong> — ${pdfDoc.numPages} page${pdfDoc.numPages === 1 ? '' : 's'} — Poster ready`);
   } catch (e) {
     console.error(e);
     setStatusText(e.message || 'Could not read PDF file. Please try another PDF.', true);
+  } finally {
+    setPdfLoadingState(false);
   }
 }
 
@@ -1257,15 +1696,29 @@ function setBg(v) {
 
 function applyTheme(p, btn) {
   setBg(p.bg);
-  document.getElementById('ink').value = p.t === '#171217' ? 'dark' : 'light';
-  if (p.t === '#D5459B') document.getElementById('ink').value = 'pink';
+  document.getElementById('ink').value = p.ink;
   document.getElementById('logoMode').value = p.logo;
   S.ink = document.getElementById('ink').value;
   S.logoMode = p.logo;
+  inkManuallySet = false;
+  logoManuallySet = false;
   document.querySelectorAll('.preset').forEach(x => x.classList.remove('active'));
   if (btn) btn.classList.add('active');
   render();
   pushHistory();
+  setStatusText(`${p.name} applied with ${LOGO_LABELS[p.logo] || p.logo} logo pairing.`);
+}
+
+function applyBestContrast() {
+  S.ink = 'auto';
+  S.logoMode = 'auto';
+  inkManuallySet = false;
+  logoManuallySet = false;
+  document.getElementById('ink').value = 'auto';
+  document.getElementById('logoMode').value = 'auto';
+  render();
+  pushHistory();
+  setStatusText('Best contrast applied.');
 }
 
 // Interactive Canvas Drag, Selection & Rotation
@@ -1439,6 +1892,17 @@ function initControls() {
   document.getElementById('btnRedo').addEventListener('click', redo);
   document.getElementById('btnQuickReset').addEventListener('click', () => applyLayout('photo_reference'));
 
+  document.getElementById('btnMakePoster').addEventListener('click', () => {
+    const direction = document.getElementById('visualDirection').value;
+    composePoster(direction, 'Poster composed');
+  });
+
+  document.getElementById('pageComposition').addEventListener('change', e => {
+    S.pageComposition = e.target.value;
+    const direction = document.getElementById('visualDirection').value;
+    composePoster(directionForComposition(getEffectiveComposition(), direction), `Poster composed — ${compositionLabel(getEffectiveComposition())}`);
+  });
+
   document.querySelectorAll('.paper-tab').forEach(btn => {
     btn.addEventListener('click', () => selectPaperTab(parseInt(btn.dataset.paper)));
   });
@@ -1550,6 +2014,7 @@ function initControls() {
     const el = document.getElementById(id);
     el.addEventListener(id === 'ink' || id === 'headerStyle' ? 'change' : 'input', () => {
       S[id] = el.value;
+      if (id === 'ink') inkManuallySet = true;
       render();
     });
     el.addEventListener('change', pushHistory);
@@ -1561,9 +2026,33 @@ function initControls() {
   
   document.getElementById('logoMode').addEventListener('change', e => {
     S.logoMode = e.target.value;
+    logoManuallySet = true;
     render();
     pushHistory();
   });
+
+  document.getElementById('titleFont').addEventListener('change', e => {
+    S.titleFont = e.target.value;
+    render();
+    pushHistory();
+  });
+
+  document.getElementById('titleFontSize').addEventListener('input', e => {
+    S.titleFontSize = parseFloat(e.target.value);
+    document.getElementById('outTitleFontSize').value = formatFontPercent(S.titleFontSize);
+    render();
+  });
+  document.getElementById('titleFontSize').addEventListener('change', pushHistory);
+
+  document.getElementById('metaFontSize').addEventListener('input', e => {
+    S.metaFontSize = parseFloat(e.target.value);
+    document.getElementById('outMetaFontSize').value = formatFontPercent(S.metaFontSize);
+    render();
+  });
+  document.getElementById('metaFontSize').addEventListener('change', pushHistory);
+
+  document.getElementById('btnAutoPairLogo').addEventListener('click', applyBestContrast);
+
   document.getElementById('showBgLogo').addEventListener('change', e => {
     S.showBgLogo = e.target.checked;
     document.getElementById('logoScaleField').style.display = S.showBgLogo ? 'block' : 'none';
@@ -1582,18 +2071,19 @@ function initControls() {
     if (f) loadPdf(f);
   });
 
-  // Sample PDF demo button
-  document.getElementById('btnLoadSamplePdf').addEventListener('click', async () => {
+  document.getElementById('btnUseSample').addEventListener('click', async () => {
+    if (isPdfLoading) return;
     const status = document.getElementById('pdfStatus');
-    status.innerHTML = '⏳ Fetching sample 4-page PDF edition…';
+    status.classList.remove('app-error');
+    status.textContent = 'Fetching sample 4-page PDF edition…';
     try {
-      const res = await fetch('assets/sample-edition.pdf');
+      const res = await fetch(new URL('assets/sample-edition.pdf', APP_BASE_URL).href);
       if (!res.ok) throw new Error('Could not fetch sample PDF');
       const blob = await res.blob();
       await loadPdf(blob, 'sample-edition.pdf');
     } catch (e) {
       console.error(e);
-      status.innerHTML = '❌ Failed to load sample PDF from assets/sample-edition.pdf';
+      setStatusText('Failed to load sample PDF from assets/sample-edition.pdf', true);
     }
   });
 
@@ -1628,6 +2118,8 @@ function initControls() {
     e.stopPropagation();
     dragCounter = 0;
     if (dropOverlay) dropOverlay.classList.remove('active');
+
+    if (isPdfLoading) return;
 
     const files = e.dataTransfer && e.dataTransfer.files;
     if (!files || files.length === 0) return;
@@ -1665,22 +2157,35 @@ function initControls() {
   document.getElementById('download').addEventListener('click', () => {
     isExporting = true;
     render();
-    canvas.toBlob(blob => {
+    try {
+      canvas.toBlob(blob => {
+        isExporting = false;
+        render();
+        if (!blob) {
+          setStatusText('Export failed. Try using a smaller PDF or fewer high-resolution images.', true);
+          return;
+        }
+        const filename = `flamingo-times-${sanitizeFilename(S.issue)}.png`;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.download = filename;
+        a.href = url;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setStatusText(`PNG exported: ${filename}`);
+      }, 'image/png');
+    } catch (err) {
       isExporting = false;
       render();
-      if (!blob) {
-        setStatusText('PNG export failed. Try reducing image/PDF complexity and export again.', true);
-        return;
-      }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.download = `flamingo-times-${sanitizeFilename(S.issue)}.png`;
-      a.href = url;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }, 'image/png');
+      console.error(err);
+      setStatusText('Export failed. Try using a smaller PDF or fewer high-resolution images.', true);
+    }
   });
-  document.getElementById('reset').addEventListener('click', () => location.reload());
+  document.getElementById('reset').addEventListener('click', () => {
+    if (confirm('Start over? This clears your uploaded PDF, custom images, and all edits.')) {
+      location.reload();
+    }
+  });
 }
 
 function showStartupError(err) {
@@ -1726,21 +2231,36 @@ async function init() {
     const wrap = document.getElementById('themePresets');
     themePresets.forEach((p, i) => {
       const b = document.createElement('button');
+      const sample = document.createElement('div');
+      const aa = document.createElement('span');
+      const logo = document.createElement('span');
       const label = document.createElement('span');
+      const mood = document.createElement('span');
       b.className = 'preset' + (i === 0 ? ' active' : '');
+      b.type = 'button';
+      b.dataset.theme = p.name;
       b.style.setProperty('--c', p.bg);
       b.style.setProperty('--t', p.t);
+      sample.className = 'preset-sample';
+      aa.className = 'preset-aa';
+      aa.textContent = 'Aa';
+      logo.className = 'preset-logo';
+      logo.textContent = LOGO_LABELS[p.logo] || p.logo;
+      label.className = 'preset-name';
       label.textContent = p.name;
+      mood.className = 'preset-mood';
+      mood.textContent = p.mood;
+      sample.appendChild(aa);
+      sample.appendChild(logo);
+      b.appendChild(sample);
       b.appendChild(label);
+      b.appendChild(mood);
       b.addEventListener('click', () => applyTheme(p, b));
       wrap.appendChild(b);
     });
 
     initControls();
-    applyLayout('photo_reference');
-    
-    // Initialize baseline snapshot for Undo/Redo
-    pushHistory();
+    composePoster('editorial_stack', 'Poster ready — Issue I (Zvërnec) is active with 3 full pages.');
   } catch (err) {
     showStartupError(err);
   }

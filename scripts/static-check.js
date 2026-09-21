@@ -65,6 +65,18 @@ if (!html.includes("new URL('vendor/pdfjs/pdf.min.mjs', APP_BASE_URL)")) {
   fail('PDF.js module URL should resolve from document.baseURI for GitHub Pages subpaths.');
 }
 
+if (!html.includes('PDF tools are unavailable because required site files are missing.')) {
+  fail('HTML should contain user-friendly PDF engine error message.');
+}
+
+if (!html.includes('Back / Center') || !html.includes('Front / Left') || !html.includes('Front / Right')) {
+  fail('User-facing paper names should use Back / Center, Front / Left, and Front / Right.');
+}
+
+if (!html.includes('class="workflow-guide"')) {
+  fail('HTML should contain the compact workflow-guide component.');
+}
+
 const indexHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 if (!indexHtml.includes('flamingo-times-template-v2.html')) {
   fail('index.html should link or redirect to the main studio HTML file.');
