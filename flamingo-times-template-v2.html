@@ -1697,12 +1697,18 @@ async function ensurePdfJs() {
 async function renderPdfPage(num, token) {
   const page = await pdfDoc.getPage(num);
   const base = page.getViewport({ scale: 1 });
-  const targetW = 1400;
-  const vp = page.getViewport({ scale: targetW / base.width });
+  // Ensure we get a high-resolution render regardless of the PDF's internal coordinate system
+  const scale = Math.max(4, 2800 / base.width);
+  const vp = page.getViewport({ scale });
   const c = document.createElement('canvas');
   c.width = Math.round(vp.width);
   c.height = Math.round(vp.height);
-  await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+  const pctx = c.getContext('2d');
+  
+  pctx.imageSmoothingEnabled = true;
+  pctx.imageSmoothingQuality = 'high';
+  
+  await page.render({ canvasContext: pctx, viewport: vp }).promise;
   if (token !== renderToken) return null;
   return c;
 }
