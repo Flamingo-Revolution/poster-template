@@ -13,6 +13,7 @@
   --border:#272b35;
   --text-main:#eef1f6;
   --text-sub:#939aa8;
+  --canvas-zoom:1;
 }
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg-dark);color:var(--text-main)}
@@ -43,10 +44,10 @@ input[type=color]{width:52px;height:38px;background:#20242d;border:1px solid #34
 input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 
 /* Presets */
-.presets{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.preset{min-height:62px;border:1px solid #ffffff1a;border-radius:8px;overflow:hidden;position:relative;background:var(--c);cursor:pointer;transition:transform .12s,outline .12s,border-color .12s;padding:7px;text-align:left;color:var(--t)}
-.preset:hover{transform:translateY(-1px);border-color:#ffffff55}
-.preset.active{outline:2px solid #fff;outline-offset:1px}
+.presets{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:260px;overflow-y:auto;padding-right:2px}
+.preset{border:1px solid #323745;border-radius:9px;padding:9px;background:var(--c);cursor:pointer;text-align:left;position:relative;transition:all .15s}
+.preset:hover{transform:translateY(-1px);box-shadow:0 6px 16px #00000066}
+.preset.active{border:2px solid var(--accent);box-shadow:0 0 0 2px #d85aa944}
 .preset-sample{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .preset-aa{font-family:"Times New Roman",Times,Georgia,serif;font-size:22px;font-weight:900;line-height:1;color:var(--t)}
 .preset-logo{font-size:9px;font-weight:900;letter-spacing:.06em;border:1px solid currentColor;border-radius:4px;padding:2px 4px;color:var(--t);background:#ffffff12}
@@ -80,12 +81,12 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .sub-hint{font-size:11px;color:var(--accent);margin-top:4px;font-weight:600}
 
 /* Workspace */
-.workspace{min-width:0;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 20%,#191c24 0,#0b0c10 70%);overflow:auto;min-height:100vh;position:relative}
-.stage-shell{width:min(85vh,calc(100vw - 440px));max-width:920px;min-width:400px;position:relative}
-.stage-shell.portrait{width:min(70vh,calc(100vw - 440px))}
+.workspace{min-width:0;padding:20px 20px 48px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:radial-gradient(circle at 50% 20%,#191c24 0,#0b0c10 70%);overflow:auto;min-height:100vh;position:relative}
+.stage-shell{width:calc(min(85vh,calc(100vw - 440px)) * var(--canvas-zoom, 1));max-width:none;min-width:260px;position:relative;margin:auto;display:flex;flex-direction:column;align-items:center;padding-bottom:32px;transition:width .08s ease-out}
+.stage-shell.portrait{width:calc(min(70vh,calc(100vw - 440px)) * var(--canvas-zoom, 1))}
 
-/* Canvas Top Toolbar (Undo / Redo / Reset) */
-.canvas-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;background:#181b22d9;backdrop-filter:blur(14px);border:1px solid #2e3442;padding:6px 10px;border-radius:10px;box-shadow:0 8px 24px #00000055}
+/* Canvas Top Toolbar (Undo / Redo / Zoom / Reset) */
+.canvas-bar{position:sticky;top:10px;z-index:80;width:100%;max-width:760px;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;background:#181b22d9;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #2e3442;padding:6px 10px;border-radius:10px;box-shadow:0 8px 24px #00000055}
 .canvas-bar-group{display:flex;align-items:center;gap:6px}
 .bar-btn{height:30px;padding:0 11px;display:inline-flex;align-items:center;gap:6px;background:#222631;border:1px solid #363d4e;color:#e1e5ee;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;user-select:none}
 .bar-btn:hover:not(:disabled){background:#2f3544;color:#fff;border-color:var(--accent)}
@@ -93,6 +94,15 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
 .bar-btn:disabled{opacity:.35;cursor:not-allowed;border-color:#2a2e3a;background:#1a1d25;color:#6b7280}
 .bar-btn svg{flex-shrink:0}
 
+/* Zoom Controls */
+.zoom-group{background:#13161e;border:1px solid #282f3d;padding:2px 6px;border-radius:8px;gap:4px}
+.zoom-slider-wrap{display:flex;align-items:center;width:86px;padding:0 3px}
+.zoom-slider{width:100%;height:4px;accent-color:var(--accent);cursor:pointer;background:#2a3140;border-radius:2px;outline:none;margin:0}
+.bar-btn.icon-btn{padding:0;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center}
+.bar-btn.zoom-val{min-width:44px;font-variant-numeric:tabular-nums;justify-content:center;padding:0 4px;height:26px;font-size:11px}
+
+/* Canvas Stage & Wrap */
+.poster-wrap{position:relative;width:100%;display:flex;flex-direction:column;align-items:center}
 canvas{display:block;width:100%;height:auto;background:#985885;box-shadow:0 35px 120px #000000bd;border-radius:2px;cursor:crosshair}
 .canvas-tip{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:11px;color:#8f96a4;white-space:nowrap;pointer-events:none}
 
@@ -158,7 +168,7 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
   .app{display:block}
   .panel{position:relative;max-height:none;border-right:0}
   .workspace{padding:18px 18px 45px;min-height:unset}
-  .stage-shell,.stage-shell.portrait{width:min(94vw,760px);min-width:0}
+  .stage-shell,.stage-shell.portrait{width:calc(min(94vw,760px) * var(--canvas-zoom, 1));min-width:0}
 }
 </style>
 </head>
@@ -265,6 +275,23 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <div class="rangegrid">
           <input id="metaFontSize" type="range" min="0.012" max="0.03" step="0.0005" value="0.0165">
           <output id="outMetaFontSize">1.7%</output>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Title Position (Y)</label>
+        <div class="rangegrid">
+          <input id="titleY" type="range" min="-100" max="160" step="1" value="0">
+          <output id="outTitleY">0 px</output>
+        </div>
+      </div>
+      <div id="logoYFieldWrapper">
+        <label>Logo Position (Y)</label>
+        <div class="rangegrid">
+          <input id="logoY" type="range" min="-260" max="80" step="1" value="0">
+          <output id="outLogoY">0 px</output>
         </div>
       </div>
     </div>
@@ -389,6 +416,16 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <div><label>Month / Year</label><input id="date" type="text" value="Korrik 2026"></div>
       </div>
       <div class="field"><label>Issue</label><input id="issue" type="text" value="Botimi I"></div>
+      <div class="field"><label>Newspaper Link (Optional)</label><input id="paperLink" type="text" value="" placeholder="e.g. flamingotimes.com"></div>
+      <div class="field" id="paperLinkStyleField">
+        <label>Link Style & Placement</label>
+        <select id="paperLinkStyle">
+          <option value="bottom_clean" selected>Bottom Text (Auto-spaced footer)</option>
+          <option value="bottom_pill">Bottom Pill Badge (Glass capsule)</option>
+          <option value="side_vertical">Side Trim Margin (Vertical editorial)</option>
+          <option value="top_header">Top Masthead Bar</option>
+        </select>
+      </div>
       <div class="field">
         <label>Text Ink Color</label>
         <select id="ink">
@@ -397,6 +434,13 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
           <option value="light">Light (White)</option>
           <option value="pink">Pink</option>
         </select>
+      </div>
+      <div class="field" id="fineTitleYField">
+        <label>Title Vertical Position (Y)</label>
+        <div class="rangegrid">
+          <input id="fineTitleY" type="range" min="-100" max="160" step="1" value="0">
+          <output id="outFineTitleY">0 px</output>
+        </div>
       </div>
     </div>
   </details>
@@ -416,6 +460,13 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
       <div class="field" id="logoScaleField">
         <label>Logo Scale</label>
         <div class="rangegrid"><input id="logoScale" type="range" min="0.65" max="1.45" step="0.01" value="1.05"><output id="outLogoScale">1.05</output></div>
+      </div>
+      <div class="field" id="fineLogoYField">
+        <label>Logo Vertical Position (Y)</label>
+        <div class="rangegrid">
+          <input id="fineLogoY" type="range" min="-260" max="80" step="1" value="0">
+          <output id="outFineLogoY">0 px</output>
+        </div>
       </div>
     </div>
   </details>
@@ -455,7 +506,7 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
 
 <main class="workspace">
   <div class="stage-shell portrait" id="shell">
-    <!-- Sleek Glassmorphic Floating Canvas Toolbar (Undo, Redo, Reset Layout) -->
+    <!-- Sleek Glassmorphic Floating Canvas Toolbar (Undo, Redo, Zoom Slider, Reset Layout) -->
     <div class="canvas-bar">
       <div class="canvas-bar-group">
         <button id="btnUndo" class="bar-btn" title="Undo (Ctrl+Z)" disabled>
@@ -467,6 +518,21 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
           <span>Redo</span>
         </button>
       </div>
+
+      <!-- Zoom Slider & Controls -->
+      <div class="canvas-bar-group zoom-group" title="Canvas Preview Zoom">
+        <button id="btnZoomOut" class="bar-btn icon-btn" type="button" title="Zoom Out (Ctrl+Minus)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="zoom-slider-wrap">
+          <input id="zoomSlider" type="range" min="40" max="220" value="100" step="5" class="zoom-slider" title="Canvas Zoom (40% - 220%)">
+        </div>
+        <button id="btnZoomIn" class="bar-btn icon-btn" type="button" title="Zoom In (Ctrl+Plus)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <button id="btnZoomFit" class="bar-btn zoom-val" type="button" title="Click to Reset Zoom to 100% (Fit)">100%</button>
+      </div>
+
       <div class="canvas-bar-group">
         <button id="btnQuickReset" class="bar-btn" title="Reset layout to reference">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
@@ -475,15 +541,17 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
       </div>
     </div>
 
-    <canvas id="poster" width="1080" height="1350" role="img" aria-label="Editable Flamingo Times poster preview"></canvas>
-    <div id="dropOverlay" class="drop-overlay">
-      <div class="drop-box">
-        <div style="font-size:36px;line-height:1">📄</div>
-        <div class="drop-title">Drop PDF to Load Pages</div>
-        <div class="drop-sub">Pages will be rendered and distributed automatically across the 3 newspapers</div>
+    <div class="poster-wrap" id="posterWrap">
+      <canvas id="poster" width="1080" height="1350" role="img" aria-label="Editable Flamingo Times poster preview"></canvas>
+      <div id="dropOverlay" class="drop-overlay">
+        <div class="drop-box">
+          <div style="font-size:36px;line-height:1">📄</div>
+          <div class="drop-title">Drop PDF to Load Pages</div>
+          <div class="drop-sub">Pages will be rendered and distributed automatically across the 3 newspapers</div>
+        </div>
       </div>
+      <div class="canvas-tip">💡 Drag newspapers, title or logo to move • Scroll wheel to rotate papers • Drop PDF anywhere • Ctrl+Scroll to zoom</div>
     </div>
-    <div class="canvas-tip">💡 Drag any newspaper to move • Scroll mouse wheel over a newspaper to rotate • Drop PDF anywhere to import</div>
   </div>
 </main>
 </div>
@@ -531,6 +599,8 @@ const S = {
   paperFeel: 1.15,
   showBgLogo: true,
   logoScale: 1.05,
+  titleY: 0,
+  logoY: 0,
   ink: 'dark',
   logoMode: 'white_black',
   titleFont: 'classic_serif',
@@ -539,7 +609,9 @@ const S = {
   title: 'FLAMINGO TIMES',
   city: 'Tiranë',
   date: 'Korrik 2026',
-  issue: 'Botimi I'
+  issue: 'Botimi I',
+  paperLink: '',
+  paperLinkStyle: 'bottom_clean'
 };
 
 // 3 Independent Configurable Papers matching reference layout:
@@ -791,6 +863,8 @@ function applySnapshot(snapStr) {
   document.getElementById('city').value = S.city;
   document.getElementById('date').value = S.date;
   document.getElementById('issue').value = S.issue;
+  if (document.getElementById('paperLink')) document.getElementById('paperLink').value = S.paperLink || '';
+  if (document.getElementById('paperLinkStyle')) document.getElementById('paperLinkStyle').value = S.paperLinkStyle || 'bottom_clean';
   document.getElementById('ink').value = S.ink;
   document.getElementById('logoMode').value = S.logoMode;
   document.getElementById('titleFont').value = S.titleFont;
@@ -800,8 +874,18 @@ function applySnapshot(snapStr) {
   document.getElementById('outMetaFontSize').value = formatFontPercent(S.metaFontSize);
   document.getElementById('showBgLogo').checked = S.showBgLogo;
   document.getElementById('logoScaleField').style.display = S.showBgLogo ? 'block' : 'none';
+  if (document.getElementById('fineLogoYField')) {
+    document.getElementById('fineLogoYField').style.display = S.showBgLogo ? 'block' : 'none';
+  }
+  if (document.getElementById('logoYFieldWrapper')) {
+    const logoInput = document.getElementById('logoY');
+    if (logoInput) logoInput.disabled = !S.showBgLogo;
+    document.getElementById('logoYFieldWrapper').style.opacity = S.showBgLogo ? '1' : '0.4';
+  }
   document.getElementById('logoScale').value = S.logoScale;
   document.getElementById('outLogoScale').value = S.logoScale.toFixed(2);
+  setTitleY(state.S.titleY ?? 0, true);
+  setLogoY(state.S.logoY ?? 0, true);
   document.getElementById('globalScale').value = S.globalScale;
   document.getElementById('outGlobalScale').value = S.globalScale.toFixed(2);
   document.getElementById('shadow').value = S.shadow;
@@ -986,6 +1070,40 @@ function logoKey() {
 
 function formatFontPercent(value) {
   return `${(Number(value) * 100).toFixed(1)}%`;
+}
+
+function formatOffsetPx(value) {
+  const n = Math.round(Number(value) || 0);
+  if (n === 0) return '0 px';
+  return (n > 0 ? `+${n}` : `${n}`) + ' px';
+}
+
+function setTitleY(val, skipRender = false) {
+  S.titleY = Math.round(Math.max(-100, Math.min(160, Number(val) || 0)));
+  const formatted = formatOffsetPx(S.titleY);
+  const el1 = document.getElementById('titleY');
+  const out1 = document.getElementById('outTitleY');
+  if (el1) el1.value = S.titleY;
+  if (out1) out1.value = formatted;
+  const el2 = document.getElementById('fineTitleY');
+  const out2 = document.getElementById('outFineTitleY');
+  if (el2) el2.value = S.titleY;
+  if (out2) out2.value = formatted;
+  if (!skipRender) render();
+}
+
+function setLogoY(val, skipRender = false) {
+  S.logoY = Math.round(Math.max(-260, Math.min(80, Number(val) || 0)));
+  const formatted = formatOffsetPx(S.logoY);
+  const el1 = document.getElementById('logoY');
+  const out1 = document.getElementById('outLogoY');
+  if (el1) el1.value = S.logoY;
+  if (out1) out1.value = formatted;
+  const el2 = document.getElementById('fineLogoY');
+  const out2 = document.getElementById('outFineLogoY');
+  if (el2) el2.value = S.logoY;
+  if (out2) out2.value = formatted;
+  if (!skipRender) render();
 }
 
 function titleFontFamily() {
@@ -1228,6 +1346,9 @@ function render() {
 
   // 1. Header / Typography Rendering (Large BOLD Masthead + Subtitle)
   if (S.headerStyle === 'full_masthead') {
+    const titleBaseY = H * (portrait ? 0.085 : 0.118) + (S.titleY || 0);
+    const metaBaseY = H * (portrait ? 0.118 : 0.152) + (S.titleY || 0);
+
     ctx.save();
     ctx.fillStyle = ink;
     ctx.textAlign = 'center';
@@ -1236,7 +1357,7 @@ function render() {
       ctx,
       S.title,
       W * 0.5,
-      H * (portrait ? 0.085 : 0.118),
+      titleBaseY,
       W * 0.88,
       W * S.titleFontSize,
       W * 0.048,
@@ -1254,7 +1375,7 @@ function render() {
       ctx,
       `${S.city}, ${S.date} | ${S.issue}`,
       W * 0.93,
-      H * (portrait ? 0.118 : 0.152),
+      metaBaseY,
       W * 0.62,
       W * S.metaFontSize,
       W * 0.010,
@@ -1263,6 +1384,7 @@ function render() {
     );
     ctx.restore();
   } else if (S.headerStyle === 'photo_ref') {
+    const metaBaseY = H * (portrait ? 0.055 : 0.065) + (S.titleY || 0);
     ctx.save();
     ctx.fillStyle = ink;
     ctx.globalAlpha = 0.95;
@@ -1271,7 +1393,7 @@ function render() {
       ctx,
       `${S.city}, ${S.date} | ${S.issue}`,
       W * 0.93,
-      H * (portrait ? 0.055 : 0.065),
+      metaBaseY,
       W * 0.72,
       W * Math.max(S.metaFontSize, 0.020),
       W * 0.010,
@@ -1290,7 +1412,12 @@ function render() {
     }
   }
 
-  // 3. Logo at Bottom Center (.eu)
+  // 3. Dynamic Coordinated Footer Layout (Logo & Link)
+  const hasLink = Boolean(S.paperLink && S.paperLink.trim() !== '');
+  const linkStyle = S.paperLinkStyle || 'bottom_clean';
+  const hasBottomLink = hasLink && (linkStyle === 'bottom_clean' || linkStyle === 'bottom_pill');
+
+  // Draw Logo with guaranteed spacing above any bottom link
   if (S.showBgLogo) {
     const lKey = logoKey();
     const logo = images[lKey] || images.white_black || images.white || images.pink_cream;
@@ -1302,13 +1429,140 @@ function render() {
       const scale = Math.min(maxW / logoW, maxH / logoH);
       const w = logoW * scale;
       const h = logoH * scale;
+
+      // Smart vertical anchoring:
+      // When a bottom link is present, anchor logo bottom higher (0.920) so there is generous breathing room (~45px)
+      // When no bottom link is present, anchor closer to bottom (0.958)
+      const logoBottom = (hasBottomLink
+        ? H * (portrait ? 0.920 : 0.910)
+        : H * (portrait ? 0.958 : 0.948)) + (S.logoY || 0);
+      const logoY = logoBottom - h;
+
       ctx.save();
       ctx.shadowColor = 'rgba(0,0,0,0.12)';
       ctx.shadowBlur = 16;
       ctx.shadowOffsetY = 8;
-      ctx.drawImage(logo, (W - w) / 2, H * (portrait ? 0.865 : 0.84), w, h);
+      ctx.drawImage(logo, (W - w) / 2, logoY, w, h);
       ctx.restore();
     }
+  }
+
+  // Draw Newspaper Link (Optional)
+  if (hasLink) {
+    const linkText = S.paperLink.trim();
+    ctx.save();
+
+    if (linkStyle === 'bottom_clean') {
+      ctx.fillStyle = ink;
+      ctx.globalAlpha = 0.85;
+      ctx.textAlign = 'center';
+      const linkSize = W * Math.min(S.metaFontSize * 0.90, 0.0145);
+      setCanvasFont(ctx, 700, linkSize, metaFontFamily());
+      fillTextFit(
+        ctx,
+        linkText,
+        W * 0.5,
+        H * (portrait ? 0.970 : 0.962),
+        W * 0.82,
+        linkSize,
+        W * 0.006,
+        700,
+        metaFontFamily()
+      );
+    } else if (linkStyle === 'bottom_pill') {
+      const linkSize = W * Math.min(S.metaFontSize * 0.88, 0.0135);
+      setCanvasFont(ctx, 700, linkSize, metaFontFamily());
+      const textMetrics = ctx.measureText(linkText);
+      const padX = linkSize * 1.5;
+      const padY = linkSize * 0.65;
+      const pillW = Math.min(W * 0.86, textMetrics.width + padX * 2);
+      const pillH = linkSize + padY * 2;
+      const pillX = (W - pillW) / 2;
+      const pillY = H * (portrait ? 0.968 : 0.960) - pillH / 2;
+
+      // Soft pill backdrop
+      const isDark = S.ink === 'light' || (S.ink === 'auto' && luminance(S.bg) < 0.45);
+      ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(0, 0, 0, 0.09)';
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.28)' : 'rgba(0, 0, 0, 0.16)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(pillX, pillY, pillW, pillH, pillH / 2);
+      } else {
+        ctx.rect(pillX, pillY, pillW, pillH);
+      }
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = ink;
+      ctx.globalAlpha = 0.92;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      fillTextFit(
+        ctx,
+        linkText,
+        W * 0.5,
+        pillY + pillH / 2,
+        pillW - padX * 1.2,
+        linkSize,
+        W * 0.005,
+        700,
+        metaFontFamily()
+      );
+    } else if (linkStyle === 'side_vertical') {
+      ctx.fillStyle = ink;
+      ctx.globalAlpha = 0.75;
+      ctx.textAlign = 'right';
+      const linkSize = W * Math.min(S.metaFontSize * 0.85, 0.013);
+      setCanvasFont(ctx, 700, linkSize, metaFontFamily());
+      ctx.translate(W * 0.976, H * (portrait ? 0.86 : 0.84));
+      ctx.rotate(-Math.PI / 2);
+      fillTextFit(
+        ctx,
+        linkText,
+        0,
+        0,
+        H * 0.55,
+        linkSize,
+        W * 0.005,
+        700,
+        metaFontFamily()
+      );
+    } else if (linkStyle === 'top_header') {
+      ctx.fillStyle = ink;
+      ctx.globalAlpha = 0.85;
+      const linkSize = W * Math.min(S.metaFontSize * 0.85, 0.013);
+      setCanvasFont(ctx, 700, linkSize, metaFontFamily());
+      if (S.headerStyle === 'photo_ref') {
+        ctx.textAlign = 'right';
+        fillTextFit(
+          ctx,
+          linkText,
+          W * 0.93,
+          H * (portrait ? 0.078 : 0.090),
+          W * 0.65,
+          linkSize,
+          W * 0.005,
+          700,
+          metaFontFamily()
+        );
+      } else {
+        ctx.textAlign = 'center';
+        fillTextFit(
+          ctx,
+          linkText,
+          W * 0.5,
+          H * (portrait ? 0.092 : 0.106),
+          W * 0.85,
+          linkSize,
+          W * 0.005,
+          700,
+          metaFontFamily()
+        );
+      }
+    }
+
+    ctx.restore();
   }
 }
 
@@ -1384,6 +1638,16 @@ function applyLayout(name) {
     S.showBgLogo = true;
     document.getElementById('showBgLogo').checked = true;
     document.getElementById('logoScaleField').style.display = 'block';
+    if (document.getElementById('fineLogoYField')) {
+      document.getElementById('fineLogoYField').style.display = 'block';
+    }
+    if (document.getElementById('logoYFieldWrapper')) {
+      const logoInput = document.getElementById('logoY');
+      if (logoInput) logoInput.disabled = false;
+      document.getElementById('logoYFieldWrapper').style.opacity = '1';
+    }
+    setTitleY(0, true);
+    setLogoY(0, true);
     S.globalScale = 1.0;
     S.shadow = 1.05;
   } else if (name === 'fan') {
@@ -1601,10 +1865,14 @@ function applyIssuePreset(issue) {
     S.city = 'Tiranë';
     S.date = 'Korrik 2026';
     S.issue = 'Botimi I';
+    S.paperLink = '';
+    S.paperLinkStyle = 'bottom_clean';
     document.getElementById('title').value = S.title;
     document.getElementById('city').value = S.city;
     document.getElementById('date').value = S.date;
     document.getElementById('issue').value = S.issue;
+    document.getElementById('paperLink').value = S.paperLink;
+    if (document.getElementById('paperLinkStyle')) document.getElementById('paperLinkStyle').value = S.paperLinkStyle;
   } else if (issue === 'student') {
     papers[0].pageKey = 'student_back';
     papers[1].pageKey = 'student_front';
@@ -1614,10 +1882,14 @@ function applyIssuePreset(issue) {
     S.city = 'Tiranë';
     S.date = 'Dhjetor 2026';
     S.issue = 'Botimi II';
+    S.paperLink = '';
+    S.paperLinkStyle = 'bottom_clean';
     document.getElementById('title').value = S.title;
     document.getElementById('city').value = S.city;
     document.getElementById('date').value = S.date;
     document.getElementById('issue').value = S.issue;
+    document.getElementById('paperLink').value = S.paperLink;
+    if (document.getElementById('paperLinkStyle')) document.getElementById('paperLinkStyle').value = S.paperLinkStyle;
   }
   applyLayout('photo_reference');
   syncPaperForm();
@@ -1658,10 +1930,21 @@ function composePoster(directionKey, statusHtml) {
     S.showBgLogo = true;
     document.getElementById('showBgLogo').checked = true;
     document.getElementById('logoScaleField').style.display = 'block';
+    if (document.getElementById('fineLogoYField')) {
+      document.getElementById('fineLogoYField').style.display = 'block';
+    }
+    if (document.getElementById('logoYFieldWrapper')) {
+      const logoInput = document.getElementById('logoY');
+      if (logoInput) logoInput.disabled = false;
+      document.getElementById('logoYFieldWrapper').style.opacity = '1';
+    }
 
     S.logoScale = 1.05;
     document.getElementById('logoScale').value = '1.05';
     document.getElementById('outLogoScale').value = '1.05';
+
+    setTitleY(0, true);
+    setLogoY(0, true);
 
     S.shadow = 1.05;
     document.getElementById('shadow').value = '1.05';
@@ -1846,9 +2129,12 @@ function applyBestContrast() {
 // Interactive Canvas Drag, Selection & Rotation
 let isDragging = false;
 let dragPaperIdx = -1;
+let dragMode = null; // 'paper' | 'title' | 'logo' | null
 let dragStartX = 0;
 let dragStartY = 0;
 let paperStartPos = { x: 0, y: 0 };
+let startTitleY = 0;
+let startLogoY = 0;
 let hasMovedDuringDrag = false;
 
 function getCanvasPoint(e) {
@@ -1893,12 +2179,64 @@ function hitTestPaper(px, py) {
   return -1;
 }
 
+function hitTestTitle(px, py) {
+  if (S.headerStyle === 'none') return false;
+  const W = canvas.width;
+  const H = canvas.height;
+  const portrait = S.format === 'portrait';
+  const titleY = S.titleY || 0;
+
+  if (S.headerStyle === 'full_masthead') {
+    const titleBaseY = H * (portrait ? 0.085 : 0.118) + titleY;
+    const fontH = W * S.titleFontSize;
+    const top = titleBaseY - fontH * 1.1;
+    const bottom = titleBaseY + fontH * 0.75;
+    return px >= W * 0.04 && px <= W * 0.96 && py >= top && py <= bottom;
+  } else if (S.headerStyle === 'photo_ref') {
+    const metaBaseY = H * (portrait ? 0.055 : 0.065) + titleY;
+    const fontH = W * Math.max(S.metaFontSize, 0.020);
+    return px >= W * 0.20 && px <= W * 0.96 && py >= metaBaseY - fontH * 1.2 && py <= metaBaseY + fontH * 0.6;
+  }
+  return false;
+}
+
+function hitTestLogo(px, py) {
+  if (!S.showBgLogo) return false;
+  const W = canvas.width;
+  const H = canvas.height;
+  const portrait = S.format === 'portrait';
+  const hasLink = Boolean(S.paperLink && S.paperLink.trim() !== '');
+  const linkStyle = S.paperLinkStyle || 'bottom_clean';
+  const hasBottomLink = hasLink && (linkStyle === 'bottom_clean' || linkStyle === 'bottom_pill');
+
+  const lKey = logoKey();
+  const logo = images[lKey] || images.white_black || images.white || images.pink_cream;
+  if (!logo || (!logo.naturalWidth && !logo.width)) return false;
+
+  const logoW = logo.naturalWidth || logo.width;
+  const logoH = logo.naturalHeight || logo.height;
+  const maxW = W * 0.42 * S.logoScale;
+  const maxH = H * (portrait ? 0.12 : 0.14) * S.logoScale;
+  const scale = Math.min(maxW / logoW, maxH / logoH);
+  const w = logoW * scale;
+  const h = logoH * scale;
+
+  const logoBottom = (hasBottomLink
+    ? H * (portrait ? 0.920 : 0.910)
+    : H * (portrait ? 0.958 : 0.948)) + (S.logoY || 0);
+  const logoY = logoBottom - h;
+  const logoX = (W - w) / 2;
+
+  return px >= logoX - 20 && px <= logoX + w + 20 && py >= logoY - 20 && py <= logoY + h + 20;
+}
+
 canvas.addEventListener('mousedown', e => {
   const pt = getCanvasPoint(e);
   const hitId = hitTestPaper(pt.x, pt.y);
   if (hitId !== -1) {
     isDragging = true;
     hasMovedDuringDrag = false;
+    dragMode = 'paper';
     dragPaperIdx = hitId;
     selectPaperTab(hitId);
     const p = papers[hitId];
@@ -1906,37 +2244,92 @@ canvas.addEventListener('mousedown', e => {
     dragStartY = pt.y;
     paperStartPos = { x: p.x, y: p.y };
     canvas.style.cursor = 'grabbing';
+  } else if (hitTestTitle(pt.x, pt.y)) {
+    isDragging = true;
+    hasMovedDuringDrag = false;
+    dragMode = 'title';
+    dragPaperIdx = -1;
+    dragStartX = pt.x;
+    dragStartY = pt.y;
+    startTitleY = S.titleY || 0;
+    canvas.style.cursor = 'ns-resize';
+  } else if (hitTestLogo(pt.x, pt.y)) {
+    isDragging = true;
+    hasMovedDuringDrag = false;
+    dragMode = 'logo';
+    dragPaperIdx = -1;
+    dragStartX = pt.x;
+    dragStartY = pt.y;
+    startLogoY = S.logoY || 0;
+    canvas.style.cursor = 'ns-resize';
   }
 });
 
 window.addEventListener('mousemove', e => {
-  if (!isDragging || dragPaperIdx === -1) {
+  if (!isDragging) {
     const pt = getCanvasPoint(e);
     const hitId = hitTestPaper(pt.x, pt.y);
-    canvas.style.cursor = hitId !== -1 ? 'grab' : 'crosshair';
+    if (hitId !== -1) {
+      canvas.style.cursor = 'grab';
+    } else if (hitTestTitle(pt.x, pt.y) || hitTestLogo(pt.x, pt.y)) {
+      canvas.style.cursor = 'ns-resize';
+    } else {
+      canvas.style.cursor = 'crosshair';
+    }
     return;
   }
   const pt = getCanvasPoint(e);
-  const dx = (pt.x - dragStartX) / canvas.width;
-  const dy = (pt.y - dragStartY) / canvas.height;
-  if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) hasMovedDuringDrag = true;
-  const p = papers[dragPaperIdx];
-  p.x = Math.max(0.05, Math.min(0.95, paperStartPos.x + dx));
-  p.y = Math.max(0.05, Math.min(0.95, paperStartPos.y + dy));
-  syncPaperForm();
-  render();
+  if (dragMode === 'paper' && dragPaperIdx !== -1) {
+    const dx = (pt.x - dragStartX) / canvas.width;
+    const dy = (pt.y - dragStartY) / canvas.height;
+    if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) hasMovedDuringDrag = true;
+    const p = papers[dragPaperIdx];
+    p.x = Math.max(0.05, Math.min(0.95, paperStartPos.x + dx));
+    p.y = Math.max(0.05, Math.min(0.95, paperStartPos.y + dy));
+    syncPaperForm();
+    render();
+  } else if (dragMode === 'title') {
+    const dy = pt.y - dragStartY;
+    if (Math.abs(dy) > 1) hasMovedDuringDrag = true;
+    setTitleY(startTitleY + dy);
+  } else if (dragMode === 'logo') {
+    const dy = pt.y - dragStartY;
+    if (Math.abs(dy) > 1) hasMovedDuringDrag = true;
+    setLogoY(startLogoY + dy);
+  }
 });
 
 window.addEventListener('mouseup', () => {
   if (isDragging) {
     if (hasMovedDuringDrag) pushHistory();
     isDragging = false;
+    dragMode = null;
     dragPaperIdx = -1;
     canvas.style.cursor = 'grab';
   }
 });
 
+// --- Canvas Preview Zoom Control ---
+let currentZoom = 100;
+
+function setZoom(val) {
+  currentZoom = Math.max(40, Math.min(220, Math.round(val)));
+  const slider = document.getElementById('zoomSlider');
+  const badge = document.getElementById('btnZoomFit');
+  if (slider) slider.value = currentZoom;
+  if (badge) badge.textContent = `${currentZoom}%`;
+  document.documentElement.style.setProperty('--canvas-zoom', (currentZoom / 100).toString());
+}
+
 canvas.addEventListener('wheel', e => {
+  // Ctrl + Mouse Wheel zooms preview canvas
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 10 : -10;
+    setZoom(currentZoom + delta);
+    return;
+  }
+
   const pt = getCanvasPoint(e);
   const hitId = hitTestPaper(pt.x, pt.y);
   const targetId = hitId !== -1 ? hitId : activePaperIdx;
@@ -1960,36 +2353,64 @@ canvas.addEventListener('touchstart', e => {
   if (hitId !== -1) {
     isDragging = true;
     hasMovedDuringDrag = false;
+    dragMode = 'paper';
     dragPaperIdx = hitId;
     selectPaperTab(hitId);
     const p = papers[hitId];
     dragStartX = pt.x;
     dragStartY = pt.y;
     paperStartPos = { x: p.x, y: p.y };
+  } else if (hitTestTitle(pt.x, pt.y)) {
+    isDragging = true;
+    hasMovedDuringDrag = false;
+    dragMode = 'title';
+    dragPaperIdx = -1;
+    dragStartX = pt.x;
+    dragStartY = pt.y;
+    startTitleY = S.titleY || 0;
+  } else if (hitTestLogo(pt.x, pt.y)) {
+    isDragging = true;
+    hasMovedDuringDrag = false;
+    dragMode = 'logo';
+    dragPaperIdx = -1;
+    dragStartX = pt.x;
+    dragStartY = pt.y;
+    startLogoY = S.logoY || 0;
   }
 }, { passive: false });
 
 canvas.addEventListener('touchmove', e => {
-  if (!isDragging || dragPaperIdx === -1) return;
+  if (!isDragging) return;
   e.preventDefault();
   const pt = getCanvasPoint(e);
-  const dx = (pt.x - dragStartX) / canvas.width;
-  const dy = (pt.y - dragStartY) / canvas.height;
-  if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) hasMovedDuringDrag = true;
-  const p = papers[dragPaperIdx];
-  p.x = Math.max(0.05, Math.min(0.95, paperStartPos.x + dx));
-  p.y = Math.max(0.05, Math.min(0.95, paperStartPos.y + dy));
-  syncPaperForm();
-  render();
+  if (dragMode === 'paper' && dragPaperIdx !== -1) {
+    const dx = (pt.x - dragStartX) / canvas.width;
+    const dy = (pt.y - dragStartY) / canvas.height;
+    if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) hasMovedDuringDrag = true;
+    const p = papers[dragPaperIdx];
+    p.x = Math.max(0.05, Math.min(0.95, paperStartPos.x + dx));
+    p.y = Math.max(0.05, Math.min(0.95, paperStartPos.y + dy));
+    syncPaperForm();
+    render();
+  } else if (dragMode === 'title') {
+    const dy = pt.y - dragStartY;
+    if (Math.abs(dy) > 1) hasMovedDuringDrag = true;
+    setTitleY(startTitleY + dy);
+  } else if (dragMode === 'logo') {
+    const dy = pt.y - dragStartY;
+    if (Math.abs(dy) > 1) hasMovedDuringDrag = true;
+    setLogoY(startLogoY + dy);
+  }
 }, { passive: false });
 
 window.addEventListener('touchend', () => {
   if (isDragging && hasMovedDuringDrag) pushHistory();
   isDragging = false;
+  dragMode = null;
   dragPaperIdx = -1;
 });
 
-// Keyboard Shortcuts: Ctrl+Z (Undo), Ctrl+Y or Ctrl+Shift+Z (Redo)
+// Keyboard Shortcuts: Ctrl+Z (Undo), Ctrl+Y (Redo), Zoom (+, -, 0)
 window.addEventListener('keydown', e => {
   const isTextInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName) && 
                        document.activeElement.type !== 'range' && 
@@ -2005,6 +2426,21 @@ window.addEventListener('keydown', e => {
       e.preventDefault();
       redo();
     }
+  } else if ((e.ctrlKey || e.metaKey) && (e.key === '=' || e.key === '+')) {
+    if (!isTextInput) {
+      e.preventDefault();
+      setZoom(currentZoom + 10);
+    }
+  } else if ((e.ctrlKey || e.metaKey) && (e.key === '-' || e.key === '_')) {
+    if (!isTextInput) {
+      e.preventDefault();
+      setZoom(currentZoom - 10);
+    }
+  } else if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+    if (!isTextInput) {
+      e.preventDefault();
+      setZoom(100);
+    }
   }
 });
 
@@ -2013,6 +2449,24 @@ function initControls() {
   document.getElementById('btnUndo').addEventListener('click', undo);
   document.getElementById('btnRedo').addEventListener('click', redo);
   document.getElementById('btnQuickReset').addEventListener('click', () => applyLayout('photo_reference'));
+
+  // Zoom controls
+  const zoomSlider = document.getElementById('zoomSlider');
+  if (zoomSlider) {
+    zoomSlider.addEventListener('input', e => setZoom(parseFloat(e.target.value)));
+  }
+  const btnZoomIn = document.getElementById('btnZoomIn');
+  if (btnZoomIn) {
+    btnZoomIn.addEventListener('click', () => setZoom(currentZoom + 10));
+  }
+  const btnZoomOut = document.getElementById('btnZoomOut');
+  if (btnZoomOut) {
+    btnZoomOut.addEventListener('click', () => setZoom(currentZoom - 10));
+  }
+  const btnZoomFit = document.getElementById('btnZoomFit');
+  if (btnZoomFit) {
+    btnZoomFit.addEventListener('click', () => setZoom(100));
+  }
 
   document.getElementById('btnMakePoster').addEventListener('click', () => {
     const direction = document.getElementById('visualDirection').value;
@@ -2146,9 +2600,10 @@ function initControls() {
   document.getElementById('format').addEventListener('change', e => setFormat(e.target.value));
   document.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => applyLayout(b.dataset.layout)));
 
-  ['title', 'city', 'date', 'issue', 'ink', 'headerStyle'].forEach(id => {
+  ['title', 'city', 'date', 'issue', 'paperLink', 'paperLinkStyle', 'ink', 'headerStyle'].forEach(id => {
     const el = document.getElementById(id);
-    el.addEventListener(id === 'ink' || id === 'headerStyle' ? 'change' : 'input', () => {
+    if (!el) return;
+    el.addEventListener(id === 'ink' || id === 'headerStyle' || id === 'paperLinkStyle' ? 'change' : 'input', () => {
       S[id] = el.value;
       if (id === 'ink') inkManuallySet = true;
       render();
@@ -2189,9 +2644,33 @@ function initControls() {
 
   document.getElementById('btnAutoPairLogo').addEventListener('click', applyBestContrast);
 
+  ['titleY', 'fineTitleY'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', e => setTitleY(e.target.value));
+      el.addEventListener('change', pushHistory);
+    }
+  });
+
+  ['logoY', 'fineLogoY'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', e => setLogoY(e.target.value));
+      el.addEventListener('change', pushHistory);
+    }
+  });
+
   document.getElementById('showBgLogo').addEventListener('change', e => {
     S.showBgLogo = e.target.checked;
     document.getElementById('logoScaleField').style.display = S.showBgLogo ? 'block' : 'none';
+    if (document.getElementById('fineLogoYField')) {
+      document.getElementById('fineLogoYField').style.display = S.showBgLogo ? 'block' : 'none';
+    }
+    if (document.getElementById('logoYFieldWrapper')) {
+      const logoInput = document.getElementById('logoY');
+      if (logoInput) logoInput.disabled = !S.showBgLogo;
+      document.getElementById('logoYFieldWrapper').style.opacity = S.showBgLogo ? '1' : '0.4';
+    }
     render();
     pushHistory();
   });

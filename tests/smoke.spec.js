@@ -104,3 +104,89 @@ test('auto-composes from the sample PDF, supports Make Poster, and exports PNG',
   // 7. No console errors throughout the flow.
   expect(consoleErrors).toEqual([]);
 });
+
+test('supports moving title and logo up and down with sliders, canvas dragging, and undo/redo', async ({ page }) => {
+  const consoleErrors = [];
+  page.on('console', msg => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  });
+  page.on('pageerror', error => consoleErrors.push(error.message));
+
+  await page.goto('/');
+  const canvas = page.locator('#poster');
+  await expect(canvas).toBeVisible();
+
+  // 1. Sliders exist with default 0 px
+  await expect(page.locator('#titleY')).toHaveValue('0');
+  await expect(page.locator('#outTitleY')).toHaveText('0 px');
+  await expect(page.locator('#logoY')).toHaveValue('0');
+  await expect(page.locator('#outLogoY')).toHaveText('0 px');
+
+  // Helper to read pixel color at canvas coordinates
+  const pixelAt = (x, y) => canvas.evaluate((node, coords) => {
+    const ctx = node.getContext('2d');
+    const d = ctx.getImageData(coords.x, coords.y, 1, 1).data;
+    return `${d[0]},${d[1]},${d[2]},${d[3]}`;
+  }, { x, y });
+
+  // 2. Adjust title position down
+  const initialTitlePixel = await pixelAt(540, 115);
+  await page.locator('#titleY').evaluate(node => {
+    node.value = '40';
+    node.dispatchEvent(new Event('input', { bubbles: true }));
+    node.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#outTitleY')).toHaveText('+40 px');
+  await expect(page.locator('#fineTitleY')).toHaveValue('40');
+  await expect(page.locator('#outFineTitleY')).toHaveText('+40 px');
+  expect(await pixelAt(540, 115)).not.toBe(initialTitlePixel);
+
+  // 3. Adjust logo position up
+  const initialLogoPixel = await pixelAt(540, 1260);
+  await page.locator('#logoY').evaluate(node => {
+    node.value = '-80';
+    node.dispatchEvent(new Event('input', { bubbles: true }));
+    node.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#outLogoY')).toHaveText('-80 px');
+  await expect(page.locator('#fineLogoY')).toHaveValue('-80');
+  await expect(page.locator('#outFineLogoY')).toHaveText('-80 px');
+  expect(await pixelAt(540, 1260)).not.toBe(initialLogoPixel);
+
+  // 4. Test Undo and Redo
+  await page.keyboard.press('Control+z');
+  await expect(page.locator('#logoY')).toHaveValue('0');
+  await expect(page.locator('#outLogoY')).toHaveText('0 px');
+
+  await page.keyboard.press('Control+y');
+  await expect(page.locator('#logoY')).toHaveValue('-80');
+  await expect(page.locator('#outLogoY')).toHaveText('-80 px');
+
+  // 5. Test Reset Layout
+  await page.locator('#btnQuickReset').click();
+  await expect(page.locator('#titleY')).toHaveValue('0');
+  await expect(page.locator('#outTitleY')).toHaveText('0 px');
+  await expect(page.locator('#logoY')).toHaveValue('0');
+  await expect(page.locator('#outLogoY')).toHaveText('0 px');
+
+  // 6. Test Canvas Dragging for Title
+  const box = await canvas.boundingBox();
+  expect(box).not.toBeNull();
+  // Drag near the top center (title area)
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.085);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.085 + 30, { steps: 5 });
+  await page.mouse.up();
+  const titleYAfterDrag = parseInt(await page.locator('#titleY').inputValue(), 10);
+  expect(titleYAfterDrag).not.toBe(0);
+
+  // 7. Toggle showBgLogo disables/hides logo controls
+  await page.locator('#fineTuneColors summary').click();
+  await page.locator('#showBgLogo').uncheck();
+  await expect(page.locator('#logoY')).toBeDisabled();
+  await page.locator('#showBgLogo').check();
+  await expect(page.locator('#logoY')).toBeEnabled();
+
+  expect(consoleErrors).toEqual([]);
+});
+
