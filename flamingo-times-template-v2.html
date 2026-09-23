@@ -1805,7 +1805,7 @@ function render() {
       ctx.globalAlpha = 0.88;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      const linkSize = W * Math.min(S.metaFontSize * 0.92, 0.014);
+      const linkSize = W * Math.min(S.metaFontSize * 1.35, 0.021);
       setCanvasFont(ctx, 700, linkSize, metaFontFamily());
       ctx.translate(W * 0.958, H * (portrait ? 0.56 : 0.55));
       ctx.rotate(-Math.PI / 2);
