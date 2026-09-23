@@ -767,6 +767,8 @@ function syncCompositionForDirection(direction) {
     S.pageComposition = 'one_page';
   } else if (direction === 'two_cover_compare') {
     S.pageComposition = 'two_pages';
+  } else if (direction === 'dynamic_scatter') {
+    S.pageComposition = galleryPages.length >= 4 || papers.length >= 4 ? 'custom_many' : 'three_pages';
   } else if (['editorial_stack', 'campaign_fan', 'clean_feature'].includes(direction)) {
     const current = S.pageComposition || 'auto';
     if (current === 'auto' || current === 'one_page' || current === 'two_pages') {
@@ -784,20 +786,121 @@ function compositionLabel(mode) {
     one_page: '1 Page',
     two_pages: '2 Pages',
     three_pages: '3 Pages',
-    custom_many: 'Custom 4+'
+    custom_many: 'All Pages 4+'
   })[mode] || 'Auto';
+}
+
+function paperTemplate(index) {
+  return {
+    id: index,
+    name: `Paper ${index + 1}`,
+    x: 0.5,
+    y: 0.5,
+    rot: 0,
+    scale: 1.0,
+    pageKey: Math.max(0, index),
+    customImage: null,
+    visible: true
+  };
+}
+
+function ensurePaperCount(count) {
+  const target = Math.max(1, Math.min(10, count));
+  while (papers.length < target) {
+    papers.push(paperTemplate(papers.length));
+  }
+  papers.forEach((p, i) => {
+    p.id = i;
+    p.name = i < 3 ? p.name : `Paper ${i + 1}`;
+  });
+  paperOrder = papers.slice(0, target).map(p => p.id);
+  if (activePaperIdx >= target) activePaperIdx = target - 1;
+  syncPaperTabs();
+}
+
+function multiPageSlots(count, layoutName, portrait) {
+  const n = Math.max(4, Math.min(10, count));
+  const arcSlots = Array.from({ length: n }, (_, i) => {
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    const centered = t - 0.5;
+    return {
+      x: 0.50 + centered * 0.66,
+      y: (portrait ? 0.57 : 0.54) - Math.cos(centered * Math.PI) * (portrait ? 0.11 : 0.08),
+      rot: centered * 38,
+      scale: Math.max(0.58, 0.88 - n * 0.018)
+    };
+  });
+
+  if (layoutName === 'fan') return arcSlots;
+
+  if (layoutName === 'clean') {
+    const cols = n <= 4 ? 2 : n <= 6 ? 3 : 3;
+    const rows = Math.ceil(n / cols);
+    const xStep = cols === 2 ? 0.25 : 0.21;
+    const yStep = rows <= 2 ? 0.20 : 0.155;
+    const startX = 0.5 - ((cols - 1) * xStep) / 2;
+    const startY = (portrait ? 0.48 : 0.45) - ((rows - 1) * yStep) / 2;
+    return Array.from({ length: n }, (_, i) => ({
+      x: startX + (i % cols) * xStep,
+      y: startY + Math.floor(i / cols) * yStep,
+      rot: [-5, 3, -2, 4, -4, 2, -3, 5, -1, 3][i],
+      scale: Math.max(0.52, 0.80 - n * 0.015)
+    }));
+  }
+
+  const cascade = [
+    { x: 0.50, y: portrait ? 0.40 : 0.38, rot: -4, scale: 0.78 },
+    { x: 0.31, y: portrait ? 0.48 : 0.46, rot: -17, scale: 0.72 },
+    { x: 0.69, y: portrait ? 0.49 : 0.47, rot: 15, scale: 0.72 },
+    { x: 0.42, y: portrait ? 0.58 : 0.55, rot: -8, scale: 0.76 },
+    { x: 0.58, y: portrait ? 0.59 : 0.56, rot: 8, scale: 0.76 },
+    { x: 0.24, y: portrait ? 0.61 : 0.58, rot: -20, scale: 0.66 },
+    { x: 0.76, y: portrait ? 0.61 : 0.58, rot: 19, scale: 0.66 },
+    { x: 0.36, y: portrait ? 0.69 : 0.65, rot: -11, scale: 0.68 },
+    { x: 0.64, y: portrait ? 0.69 : 0.65, rot: 11, scale: 0.68 },
+    { x: 0.50, y: portrait ? 0.73 : 0.69, rot: 0, scale: 0.66 }
+  ];
+  return cascade.slice(0, n);
+}
+
+function arrangeManyPages(layoutName) {
+  const count = Math.max(4, Math.min(10, galleryPages.length || papers.length));
+  ensurePaperCount(count);
+  const portrait = S.format === 'portrait';
+  const slots = multiPageSlots(count, layoutName, portrait);
+
+  papers.forEach((p, i) => {
+    if (i >= count) {
+      p.visible = false;
+      return;
+    }
+    const slot = slots[i];
+    p.x = slot.x;
+    p.y = slot.y;
+    p.rot = slot.rot;
+    p.scale = slot.scale;
+    p.pageKey = galleryPages.length ? Math.min(i, galleryPages.length - 1) : p.pageKey;
+    p.customImage = null;
+    p.visible = true;
+  });
+
+  paperOrder = papers.slice(0, count).map(p => p.id);
+  activePaperIdx = Math.min(activePaperIdx, count - 1);
+  S.globalScale = layoutName === 'clean' ? 0.96 : 1.0;
 }
 
 function applyPageComposition(mode) {
   const effective = mode || getEffectiveComposition();
 
   if (effective === 'one_page') {
+    ensurePaperCount(3);
     paperOrder = [0];
     papers[0].visible = true;
     papers[1].visible = false;
     papers[2].visible = false;
     if (galleryPages.length > 0) papers[0].pageKey = 0;
   } else if (effective === 'two_pages') {
+    ensurePaperCount(3);
     paperOrder = [0, 1];
     papers[0].visible = true;
     papers[1].visible = true;
@@ -806,7 +909,10 @@ function applyPageComposition(mode) {
       papers[1].pageKey = 0;
       papers[0].pageKey = Math.min(1, galleryPages.length - 1);
     }
+  } else if (effective === 'custom_many') {
+    arrangeManyPages(S.layout || 'photo_reference');
   } else {
+    ensurePaperCount(3);
     papers[0].visible = true;
     papers[1].visible = true;
     papers[2].visible = true;
@@ -1718,15 +1824,7 @@ function applyLayout(name) {
     if (papers[1]) papers[1].visible = false;
     if (papers[2]) papers[2].visible = false;
   } else if (name === 'scatter') {
-    paperOrder = papers.map(p => p.id);
-    papers.forEach((p, i) => {
-      p.x = 0.50 + (Math.random() * 0.4 - 0.2);
-      p.y = portrait ? (0.50 + (Math.random() * 0.4 - 0.2)) : (0.50 + (Math.random() * 0.3 - 0.15));
-      p.rot = (Math.random() * 40 - 20);
-      p.scale = Math.max(0.7, 1.0 - (papers.length * 0.03));
-      p.visible = true;
-    });
-    S.globalScale = 1.0;
+    arrangeManyPages('photo_reference');
   }
 
   // Ensure papers beyond 3 are hidden if a strict layout was selected
@@ -2593,6 +2691,10 @@ function renderMiniGallery() {
 // Bind UI Inputs
 function initControls() {
   syncPaperTabs();
+  const spreadOption = document.querySelector('#visualDirection option[value="dynamic_scatter"]');
+  if (spreadOption) spreadOption.textContent = 'Multi-page Spread - arranged 4+ pages';
+  const manyOption = document.querySelector('#pageComposition option[value="custom_many"]');
+  if (manyOption) manyOption.textContent = 'Custom 4+ - auto-arrange all uploaded pages';
   const btnClearGallery = document.getElementById('btnClearGallery');
   if (btnClearGallery) {
     btnClearGallery.addEventListener('click', () => {
