@@ -28,7 +28,10 @@ test('auto-composes from the sample PDF, supports Make Poster, and exports PNG',
   await expect(page.locator('#pageComposition')).toContainText('1 Page');
   await expect(page.locator('#pageComposition')).toContainText('2 Pages');
   await expect(page.locator('#pageComposition')).toContainText('3 Pages');
-  await expect(page.locator('#pageComposition')).toContainText('Custom 4+');
+  await expect(page.locator('#pageComposition')).toContainText('4 Pages');
+  await expect(page.locator('#pageComposition')).toContainText('6 Pages');
+  await expect(page.locator('#pageComposition')).toContainText('8 Pages');
+  await expect(page.locator('#pageComposition')).toContainText('All Pages');
   await expect(page.locator('#themePresets .preset')).toHaveCount(18);
 
   // Visual Direction applies immediately without changing Featured Pages.
@@ -74,11 +77,13 @@ test('auto-composes from the sample PDF, supports Make Poster, and exports PNG',
   await page.getByRole('button', { name: /Use Sample/i }).click();
   await expect(page.locator('#pdfStatus')).toContainText(/Poster ready/i, { timeout: 15000 });
   await expect(page.locator('#pdfInput')).toBeEnabled();
-  await expect(page.locator('#pageComposition')).toHaveValue('custom_many');
+  await expect(page.locator('#pageComposition')).toHaveValue('auto');
   expect(await hasPaintedPixels()).toBe(true);
 
   await page.locator('#pageComposition').selectOption('one_page');
   await expect(page.locator('#pdfStatus')).toContainText(/1 Page/);
+  await page.locator('#pageComposition').selectOption('pages_4');
+  await expect(page.locator('#pdfStatus')).toContainText(/4 Pages/);
   await page.locator('#pageComposition').selectOption('three_pages');
   await expect(page.locator('#pdfStatus')).toContainText(/3 Pages/);
 
@@ -233,6 +238,67 @@ test('supports multiple PDF uploads, mini gallery, and adding up to 10 pages', a
   // 5. Clear gallery
   await page.locator('#btnClearGallery').click();
   await expect(page.locator('#miniGalleryWrap')).toBeHidden();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('supports structured self-organizing layouts (grid, fan, cascade) and auto-organize button', async ({ page }) => {
+  const consoleErrors = [];
+  page.on('console', msg => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  });
+  page.on('pageerror', error => consoleErrors.push(error.message));
+
+  await page.goto('/');
+
+  // 1. Upload sample PDF (4 pages)
+  const fileChooserPromise1 = page.waitForEvent('filechooser');
+  await page.locator('#pdfInputLabel').click();
+  const fileChooser1 = await fileChooserPromise1;
+  await fileChooser1.setFiles('assets/sample-edition.pdf');
+  await expect(page.locator('#pdfStatus')).toContainText('Poster ready', { timeout: 10000 });
+
+  // 2. Visual Direction options for structured multi-page layouts
+  const dirSelect = page.locator('#visualDirection');
+  await expect(dirSelect.locator('option[value="dynamic_grid"]')).toHaveText(/Dynamic Grid/);
+  await expect(dirSelect.locator('option[value="dynamic_fan"]')).toHaveText(/Dynamic Fan/);
+  await expect(dirSelect.locator('option[value="dynamic_cascade"]')).toHaveText(/Dynamic Cascade/);
+
+  // 3. Test Dynamic Grid
+  await dirSelect.selectOption('dynamic_grid');
+  await expect(page.locator('#readyMeta')).toContainText('Dynamic Grid');
+
+  // 4. Test Dynamic Fan
+  await dirSelect.selectOption('dynamic_fan');
+  await expect(page.locator('#readyMeta')).toContainText('Dynamic Fan');
+
+  // 5. Test Dynamic Cascade
+  await dirSelect.selectOption('dynamic_cascade');
+  await expect(page.locator('#readyMeta')).toContainText('Dynamic Cascade');
+
+  // 6. Upload second PDF to have 8 gallery pages
+  const fileChooserPromise2 = page.waitForEvent('filechooser');
+  await page.locator('#pdfInputLabel').click();
+  const fileChooser2 = await fileChooserPromise2;
+  await fileChooser2.setFiles('assets/sample-edition.pdf');
+  await expect(page.locator('#pdfStatus')).toContainText('appended to gallery', { timeout: 10000 });
+
+  // 7. Add pages up to 10
+  for (let i = 4; i < 10; i++) {
+    await page.locator('.gallery-item').nth(i % 8).locator('.add-btn').click({ force: true });
+  }
+  await expect(page.locator('.paper-tab')).toHaveCount(10);
+
+  // 8. Test Self-Organize button
+  await page.locator('#fineTuneSelectedPaper summary').click();
+  await expect(page.locator('#btnAutoOrganize')).toBeVisible();
+  await page.locator('#btnAutoOrganize').click();
+
+  // 9. Remove papers using Remove Paper button
+  await page.locator('#btnRemovePaper').click();
+  await expect(page.locator('.paper-tab')).toHaveCount(9);
+  await page.locator('#btnRemovePaper').click();
+  await expect(page.locator('.paper-tab')).toHaveCount(8);
 
   expect(consoleErrors).toEqual([]);
 });

@@ -25,8 +25,8 @@ The studio is designed so the designer does as little manual work as possible: u
   1. **Upload PDF** — ingest any newspaper edition.
   2. **Use Sample** — loads the built-in 4-page sample edition instantly.
   3. **Format** — Instagram 4:5 (portrait) or 1:1 (square).
-  4. **Visual Direction** — *Editorial Stack*, *Campaign Fan*, *Clean Feature*, *Hero Cover*, or *Two-Cover Compare*.
-  5. **Featured Pages** — *Auto from PDF*, *1 Page*, *2 Pages*, *3 Pages*, or *Custom 4+*. A longer PDF uses *Custom 4+* so the designer can choose which pages to feature in the 3-paper poster.
+  4. **Visual Direction** - *Editorial Stack*, *Campaign Fan*, *Clean Feature*, *Dynamic Grid*, *Dynamic Fan*, or *Dynamic Cascade*.
+  5. **Featured Pages** - *Auto from PDF*, *1 Page*, *2 Pages*, *3 Pages*, *4 Pages*, *6 Pages*, *8 Pages*, or *All Pages*. A longer PDF uses ready page-count options so the designer can organize more pages without manual placement.
   6. **Color Combination** — compact swatches for curated poster palettes such as *Flamingo Mauve*, *Protest Red*, *Paper Cream*, *Night Edition*, *Coastal Blue*, *Black & Red*, *Rose Paper*, *Civic Teal*, *Signal Yellow*, and more. Each swatch sets background, ink, and a recommended logo pairing.
   7. **Logo Pairing** — designer-friendly logo choices, including *Auto Best Pairing*, *White + Black*, *Pink + Cream*, *Red + White*, and single-color logo modes.
   8. **Masthead Font** — *Classic Serif* or *Blackletter*.
@@ -34,7 +34,7 @@ The studio is designed so the designer does as little manual work as possible: u
   10. **Apply Best Contrast** — returns text/logo pairing to automatic contrast.
   11. **Make Poster** — the "do the work for me" button. Runs page assignment, applies the chosen direction's tasteful paper positions/rotation/scale, sets a good shadow depth, and preserves the chosen color/logo/type direction.
   12. **Download PNG** — full-resolution export, shown in a compact "ready" panel with the current dimensions and direction.
-- **Auto-compose on upload**: as soon as a PDF finishes loading (uploaded or sampled), the app assigns pages, picks a fitting visual direction for the page count (1 page → Hero Cover, 2 → Two-Cover Compare, 3+ → Editorial Stack), and renders a finished-looking poster automatically — no extra clicks required. Status reads **"Poster ready"**; clicking **Make Poster** afterwards reads **"Poster composed"**.
+- **Auto-compose on upload**: as soon as a PDF finishes loading (uploaded or sampled), the app assigns pages, keeps **Auto from PDF** selected, resolves the right page count in the ready panel, and renders a finished-looking poster automatically. Status reads **"Poster ready"**; clicking **Make Poster** afterwards reads **"Poster composed"**.
 - **Fine Tune (collapsed by default)**: detailed manual controls live in four collapsible sections so they don't overwhelm the default view — *Selected Paper* (drag/position/rotation/scale, page reassignment), *Text & Masthead*, *Colors & Logo*, and *Advanced* (explicit layout presets, global scale, shadow, Start Over). Direct canvas manipulation (drag to move, scroll wheel to rotate) still works at any time.
 - **Descriptive Paper Naming**: Replaced generic labels across the UI with clear spatial roles — no array indexes:
   - `Back / Center` (background layer, rot `-5.5°`)
@@ -56,7 +56,7 @@ The studio is designed so the designer does as little manual work as possible: u
 ## Designer Flow
 
 1. Upload a PDF or click **Use Sample**.
-2. Choose how many pages to feature: 1, 2, 3, or Custom 4+ for longer PDFs.
+2. Choose how many pages to feature: 1, 2, 3, 4, 6, 8, or All Pages for longer PDFs.
 3. Choose a color combination.
 4. Choose a logo pairing and masthead style, including **Blackletter** when the poster needs a more historic/editorial tone.
 5. Adjust masthead or metadata size if needed.

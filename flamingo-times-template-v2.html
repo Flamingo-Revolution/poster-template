@@ -244,7 +244,9 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <option value="editorial_stack" selected>Editorial Stack — 3-paper reference layout</option>
         <option value="campaign_fan">Campaign Fan — symmetrical spread</option>
         <option value="clean_feature">Clean Feature — minimal, tight rotation</option>
-        <option value="dynamic_scatter">Dynamic Scatter — organically arrange 4+ pages</option>
+        <option value="dynamic_grid">Dynamic Grid — clean multi-page grid</option>
+        <option value="dynamic_fan">Dynamic Fan — symmetrical spread</option>
+        <option value="dynamic_cascade">Dynamic Cascade — layered diagonal stack</option>
       </select>
     </div>
 
@@ -255,7 +257,10 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <option value="one_page">1 Page — hero cover</option>
         <option value="two_pages">2 Pages — compare covers</option>
         <option value="three_pages">3 Pages — full poster stack</option>
-        <option value="custom_many">Custom 4+ — choose pages manually</option>
+        <option value="pages_4">4 Pages - clean feature set</option>
+        <option value="pages_6">6 Pages - balanced spread</option>
+        <option value="pages_8">8 Pages - full campaign spread</option>
+        <option value="custom_many">All Pages - max 10</option>
       </select>
     </div>
 
@@ -390,7 +395,10 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
             🖼️ Upload image for this paper<input id="curPaperCustomFile" type="file" accept="image/*">
           </label>
           <button class="chip" id="btnClearCustomImage" style="display:none;width:100%;margin-top:5px;height:28px">Remove custom image</button>
-          <button class="chip" id="btnRemovePaper" style="width:100%;margin-top:5px;height:28px;color:#e153a6;border-color:#e153a655">Remove Paper</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+            <button class="chip" id="btnAutoOrganize" style="height:28px;font-size:11px" title="Automatically organize papers into current layout">✨ Self-Organize</button>
+            <button class="chip" id="btnRemovePaper" style="height:28px;font-size:11px;color:#e153a6;border-color:#e153a655">Remove Paper</button>
+          </div>
         </div>
         <div class="field">
           <label>Horizontal Position (X)</label>
@@ -717,7 +725,10 @@ const VISUAL_DIRECTIONS = {
   clean_feature: { label: 'Clean Feature', layout: 'clean' },
   hero_cover: { label: 'Hero Cover', layout: 'single' },
   two_cover_compare: { label: 'Two-Cover Compare', layout: 'two_papers' },
-  dynamic_scatter: { label: 'Layered Spread', layout: 'scatter' }
+  dynamic_grid: { label: 'Dynamic Grid', layout: 'grid' },
+  dynamic_fan: { label: 'Dynamic Fan', layout: 'dynamic_fan' },
+  dynamic_cascade: { label: 'Dynamic Cascade', layout: 'cascade' },
+  dynamic_scatter: { label: 'Dynamic Grid', layout: 'grid' }
 };
 const LAYOUT_TO_DIRECTION = {
   photo_reference: 'editorial_stack',
@@ -725,32 +736,61 @@ const LAYOUT_TO_DIRECTION = {
   clean: 'clean_feature',
   single: 'hero_cover',
   two_papers: 'two_cover_compare',
-  scatter: 'dynamic_scatter'
+  grid: 'dynamic_grid',
+  dynamic_fan: 'dynamic_fan',
+  cascade: 'dynamic_cascade',
+  scatter: 'dynamic_grid'
 };
 
 function suggestDirectionForPageCount(count) {
   if (count <= 1) return 'hero_cover';
   if (count === 2) return 'two_cover_compare';
   if (count === 3) return 'editorial_stack';
-  return 'dynamic_scatter';
+  return 'dynamic_grid';
 }
 
 function suggestCompositionForPageCount(count) {
   if (count <= 1) return 'one_page';
   if (count === 2) return 'two_pages';
   if (count === 3) return 'three_pages';
+  if (count <= 4) return 'pages_4';
+  if (count <= 6) return 'pages_6';
+  if (count <= 8) return 'pages_8';
   return 'custom_many';
 }
 
 function getEffectiveComposition() {
   const mode = S.pageComposition || 'auto';
   if (mode !== 'auto') return mode;
-  return suggestCompositionForPageCount(galleryPages.length || 3);
+  return suggestCompositionForPageCount(Math.max(papers.length, galleryPages.length) || 3);
+}
+
+function maxAvailablePosterPages() {
+  return Math.max(1, Math.min(10, galleryPages.length || papers.length || 3));
+}
+
+function targetCountForComposition(mode) {
+  const available = maxAvailablePosterPages();
+  const requested = ({
+    one_page: 1,
+    two_pages: 2,
+    three_pages: 3,
+    pages_4: 4,
+    pages_6: 6,
+    pages_8: 8,
+    custom_many: available
+  })[mode] || available;
+  return Math.max(1, Math.min(10, galleryPages.length ? Math.min(requested, available) : requested));
 }
 
 function directionForComposition(mode, selectedDirection) {
   if (selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare') {
     return mode === 'one_page' ? 'hero_cover' : mode === 'two_pages' ? 'two_cover_compare' : 'editorial_stack';
+  }
+  if (targetCountForComposition(mode) >= 4) {
+    return (selectedDirection && ['dynamic_grid', 'dynamic_fan', 'dynamic_cascade'].includes(selectedDirection))
+      ? selectedDirection
+      : 'dynamic_grid';
   }
   if (selectedDirection) return selectedDirection;
   return selectedDirection || suggestDirectionForPageCount(galleryPages.length || 3);
@@ -767,7 +807,10 @@ function compositionLabel(mode) {
     one_page: '1 Page',
     two_pages: '2 Pages',
     three_pages: '3 Pages',
-    custom_many: 'All Pages 4+'
+    pages_4: '4 Pages',
+    pages_6: '6 Pages',
+    pages_8: '8 Pages',
+    custom_many: 'All Pages'
   })[mode] || 'Auto';
 }
 
@@ -799,56 +842,119 @@ function ensurePaperCount(count) {
   syncPaperTabs();
 }
 
-function multiPageSlots(count, layoutName, portrait) {
-  const n = Math.max(4, Math.min(10, count));
-  const arcSlots = Array.from({ length: n }, (_, i) => {
-    const t = n === 1 ? 0.5 : i / (n - 1);
-    const centered = t - 0.5;
-    return {
-      x: 0.50 + centered * 0.66,
-      y: (portrait ? 0.57 : 0.54) - Math.cos(centered * Math.PI) * (portrait ? 0.11 : 0.08),
-      rot: centered * 38,
-      scale: Math.max(0.58, 0.88 - n * 0.018)
-    };
-  });
-
-  if (layoutName === 'fan') return arcSlots;
-
-  if (layoutName === 'clean') {
-    const cols = n <= 4 ? 2 : n <= 6 ? 3 : 3;
-    const rows = Math.ceil(n / cols);
-    const xStep = cols === 2 ? 0.25 : 0.21;
-    const yStep = rows <= 2 ? 0.20 : 0.155;
-    const startX = 0.5 - ((cols - 1) * xStep) / 2;
-    const startY = (portrait ? 0.48 : 0.45) - ((rows - 1) * yStep) / 2;
-    return Array.from({ length: n }, (_, i) => ({
-      x: startX + (i % cols) * xStep,
-      y: startY + Math.floor(i / cols) * yStep,
-      rot: [-5, 3, -2, 4, -4, 2, -3, 5, -1, 3][i],
-      scale: Math.max(0.52, 0.80 - n * 0.015)
-    }));
+function getFanOrder(n) {
+  const order = [];
+  let l = 0, r = n - 1;
+  while (l <= r) {
+    if (l === r) {
+      order.push(l);
+      break;
+    }
+    order.push(l++);
+    order.push(r--);
   }
-
-  const cascade = [
-    { x: 0.50, y: portrait ? 0.40 : 0.38, rot: -4, scale: 0.78 },
-    { x: 0.31, y: portrait ? 0.48 : 0.46, rot: -17, scale: 0.72 },
-    { x: 0.69, y: portrait ? 0.49 : 0.47, rot: 15, scale: 0.72 },
-    { x: 0.42, y: portrait ? 0.58 : 0.55, rot: -8, scale: 0.76 },
-    { x: 0.58, y: portrait ? 0.59 : 0.56, rot: 8, scale: 0.76 },
-    { x: 0.24, y: portrait ? 0.61 : 0.58, rot: -20, scale: 0.66 },
-    { x: 0.76, y: portrait ? 0.61 : 0.58, rot: 19, scale: 0.66 },
-    { x: 0.36, y: portrait ? 0.69 : 0.65, rot: -11, scale: 0.68 },
-    { x: 0.64, y: portrait ? 0.69 : 0.65, rot: 11, scale: 0.68 },
-    { x: 0.50, y: portrait ? 0.73 : 0.69, rot: 0, scale: 0.66 }
-  ];
-  return cascade.slice(0, n);
+  return order;
 }
 
-function arrangeManyPages(layoutName) {
-  const count = Math.max(4, Math.min(10, galleryPages.length || papers.length));
+function multiPageSlots(count, layoutName, portrait) {
+  const n = Math.max(1, Math.min(10, count));
+
+  if (layoutName === 'dynamic_fan' || layoutName === 'fan') {
+    const arcSpan = Math.min(0.72, 0.44 + n * 0.032);
+    const rotSpan = Math.min(48, 22 + n * 2.8);
+    const scale = Math.max(0.50, 0.86 - n * 0.034);
+    const baseCenterY = portrait ? 0.52 : 0.49;
+    const arcDrop = portrait ? 0.08 : 0.06;
+
+    return Array.from({ length: n }, (_, i) => {
+      const t = n <= 1 ? 0.5 : i / (n - 1);
+      const centered = t - 0.5;
+      const x = 0.50 + centered * arcSpan;
+      const y = baseCenterY + Math.pow(Math.abs(centered) * 2, 1.8) * arcDrop;
+      const rot = centered * rotSpan;
+      return {
+        x: +x.toFixed(3),
+        y: +y.toFixed(3),
+        rot: +rot.toFixed(1),
+        scale: +scale.toFixed(2)
+      };
+    });
+  }
+
+  if (layoutName === 'cascade') {
+    const startX = portrait ? 0.30 : 0.28;
+    const endX = portrait ? 0.70 : 0.72;
+    const startY = portrait ? 0.38 : 0.36;
+    const endY = portrait ? 0.68 : 0.66;
+    const scale = Math.max(0.56, 0.82 - n * 0.026);
+    const rotPattern = [-5, 4, -3, 6, -4, 3, -6, 5, -2, 4];
+
+    return Array.from({ length: n }, (_, i) => {
+      const t = n <= 1 ? 0.5 : i / (n - 1);
+      const x = startX + t * (endX - startX);
+      const y = startY + t * (endY - startY);
+      return {
+        x: +x.toFixed(3),
+        y: +y.toFixed(3),
+        rot: rotPattern[i % 10],
+        scale: +scale.toFixed(2)
+      };
+    });
+  }
+
+  // Default: 'grid' (Dynamic Grid)
+  let cols, rows;
+  if (n <= 1) { cols = 1; rows = 1; }
+  else if (n <= 3) { cols = 3; rows = 1; }
+  else if (n <= 4) { cols = 2; rows = 2; }
+  else if (n <= 6) { cols = 3; rows = 2; }
+  else if (n <= 8) { cols = 4; rows = 2; }
+  else if (n === 9) { cols = 3; rows = 3; }
+  else { cols = 4; rows = 3; }
+
+  const scale = rows === 1
+    ? (portrait ? (cols === 3 ? 0.68 : 0.85) : (cols === 3 ? 0.64 : 0.80))
+    : rows === 2 
+      ? (cols === 2 ? (portrait ? 0.72 : 0.66) : (cols === 3 ? (portrait ? 0.56 : 0.52) : (portrait ? 0.44 : 0.40)))
+      : (portrait ? 0.38 : 0.34);
+
+  const yStep = rows === 1 ? 0 : (rows === 2 ? (portrait ? 0.23 : 0.22) : (portrait ? 0.18 : 0.17));
+  const startY = (portrait ? 0.53 : 0.51) - ((rows - 1) * yStep) / 2;
+  const xStep = cols === 1 ? 0 : (cols === 2 ? 0.32 : cols === 3 ? 0.27 : 0.21);
+
+  const itemsInRow = [];
+  let remaining = n;
+  for (let r = 0; r < rows; r++) {
+    const rowsLeft = rows - r;
+    const countThisRow = Math.ceil(remaining / rowsLeft);
+    itemsInRow.push(countThisRow);
+    remaining -= countThisRow;
+  }
+
+  const slots = [];
+  for (let r = 0; r < rows; r++) {
+    const countThisRow = itemsInRow[r];
+    const rowY = +(startY + r * yStep).toFixed(3);
+    const startX = +(0.50 - ((countThisRow - 1) * xStep) / 2).toFixed(3);
+    for (let c = 0; c < countThisRow; c++) {
+      slots.push({
+        x: +(startX + c * xStep).toFixed(3),
+        y: rowY,
+        rot: 0,
+        scale: scale
+      });
+    }
+  }
+  return slots;
+}
+
+function arrangeManyPages(layoutName, targetCount) {
+  const fallbackCount = papers.length > 3 ? papers.length : (galleryPages.length || papers.length);
+  const count = Math.max(1, Math.min(10, targetCount || fallbackCount));
   ensurePaperCount(count);
   const portrait = S.format === 'portrait';
-  const slots = multiPageSlots(count, layoutName, portrait);
+  const effectiveLayout = ['grid', 'dynamic_fan', 'cascade'].includes(layoutName) ? layoutName : 'grid';
+  const slots = multiPageSlots(count, effectiveLayout, portrait);
 
   papers.forEach((p, i) => {
     if (i >= count) {
@@ -865,9 +971,13 @@ function arrangeManyPages(layoutName) {
     p.visible = true;
   });
 
-  paperOrder = papers.slice(0, count).map(p => p.id);
+  if (effectiveLayout === 'dynamic_fan') {
+    paperOrder = getFanOrder(count);
+  } else {
+    paperOrder = papers.slice(0, count).map(p => p.id);
+  }
   activePaperIdx = Math.min(activePaperIdx, count - 1);
-  S.globalScale = layoutName === 'clean' ? 0.96 : 1.0;
+  S.globalScale = 1.0;
 }
 
 function applyPageComposition(mode) {
@@ -890,15 +1000,19 @@ function applyPageComposition(mode) {
       papers[1].pageKey = 0;
       papers[0].pageKey = Math.min(1, galleryPages.length - 1);
     }
-  } else if (effective === 'custom_many') {
-    arrangeManyPages(S.layout || 'photo_reference');
+  } else if (targetCountForComposition(effective) >= 4) {
+    arrangeManyPages(S.layout || 'grid', targetCountForComposition(effective));
   } else {
-    ensurePaperCount(3);
-    papers[0].visible = true;
-    papers[1].visible = true;
-    papers[2].visible = true;
-    if (!paperOrder.includes(2)) paperOrder.push(2);
-    paperOrder = paperOrder.filter((id, index, all) => all.indexOf(id) === index);
+    if (['grid', 'dynamic_fan', 'cascade'].includes(S.layout)) {
+      arrangeManyPages(S.layout, targetCountForComposition(effective));
+    } else {
+      ensurePaperCount(3);
+      papers[0].visible = true;
+      papers[1].visible = true;
+      papers[2].visible = true;
+      if (!paperOrder.includes(2)) paperOrder.push(2);
+      paperOrder = paperOrder.filter((id, index, all) => all.indexOf(id) === index);
+    }
   }
 
   renderPdfPageStrip();
@@ -1804,12 +1918,12 @@ function applyLayout(name) {
     papers[0] = { ...papers[0], x: 0.50, y: portrait ? 0.52 : 0.50, rot: -3.0, scale: 1.15, visible: true };
     if (papers[1]) papers[1].visible = false;
     if (papers[2]) papers[2].visible = false;
-  } else if (name === 'scatter') {
-    arrangeManyPages('photo_reference');
+  } else if (['grid', 'dynamic_fan', 'cascade', 'scatter'].includes(name)) {
+    arrangeManyPages(name === 'scatter' ? 'grid' : name);
   }
 
   // Ensure papers beyond 3 are hidden if a strict layout was selected
-  if (name !== 'scatter' && papers.length > 3) {
+  if (!['grid', 'dynamic_fan', 'cascade', 'scatter'].includes(name) && papers.length > 3) {
     papers.forEach((p, i) => {
       if (i >= 3) p.visible = false;
     });
@@ -2098,7 +2212,7 @@ function composePoster(directionKey, statusHtml) {
   status.classList.remove('app-error');
   status.innerHTML = statusHtml;
   const pageStrip = document.getElementById('pdfStrip');
-  if (pageStrip && composition === 'custom_many') pageStrip.style.display = galleryPages.length > 0 ? 'block' : pageStrip.style.display;
+  if (pageStrip && targetCountForComposition(composition) >= 4) pageStrip.style.display = galleryPages.length > 0 ? 'block' : pageStrip.style.display;
   updateReadyPanel(resolvedDirection);
 }
 
@@ -2215,11 +2329,6 @@ async function loadPdf(source, filename) {
     // Compose poster automatically only for the first uploaded batch
     if (isFirstPdf) {
       document.getElementById('issuePreset').value = 'custom';
-      const suggestedComposition = suggestCompositionForPageCount(pdfDoc.numPages);
-      if (S.pageComposition === 'auto') {
-        S.pageComposition = suggestedComposition;
-        document.getElementById('pageComposition').value = suggestedComposition;
-      }
       const selectedDirection = (document.getElementById('visualDirection') || {}).value || suggestDirectionForPageCount(pdfDoc.numPages);
       const directionKey = directionForComposition(getEffectiveComposition(), selectedDirection);
       composePoster(directionKey, `✅ <strong>${escapeHtml(name)}</strong> — ${pdfDoc.numPages} page${pdfDoc.numPages === 1 ? '' : 's'} — Poster ready`);
@@ -2595,9 +2704,9 @@ function addGalleryPageToPoster(idx) {
     papers.push({
       id: newId,
       name: `Paper ${newId + 1}`,
-      x: 0.5 + (Math.random() * 0.1 - 0.05),
-      y: 0.5 + (Math.random() * 0.1 - 0.05),
-      rot: (Math.random() * 20 - 10),
+      x: 0.5,
+      y: 0.5,
+      rot: 0,
       scale: 1.0,
       pageKey: idx,
       customImage: null,
@@ -2605,6 +2714,13 @@ function addGalleryPageToPoster(idx) {
     });
     paperOrder.push(newId);
     activePaperIdx = newId;
+
+    if (['grid', 'dynamic_fan', 'cascade'].includes(S.layout)) {
+      arrangeManyPages(S.layout);
+    } else if (papers.length >= 4) {
+      applyLayout('grid');
+    }
+
     syncPaperTabs();
     syncPaperForm();
     render();
@@ -2672,15 +2788,20 @@ function renderMiniGallery() {
 // Bind UI Inputs
 function initControls() {
   syncPaperTabs();
-  const spreadOption = document.querySelector('#visualDirection option[value="dynamic_scatter"]');
-  if (spreadOption) spreadOption.textContent = 'Layered Spread - balanced cascade';
   const manyOption = document.querySelector('#pageComposition option[value="custom_many"]');
-  if (manyOption) manyOption.textContent = 'Custom 4+ - auto-arrange all uploaded pages';
+  if (manyOption) manyOption.textContent = 'All Pages - max 10';
   const btnClearGallery = document.getElementById('btnClearGallery');
   if (btnClearGallery) {
     btnClearGallery.addEventListener('click', () => {
       galleryPages.length = 0;
       renderMiniGallery();
+    });
+  }
+  const btnAutoOrganize = document.getElementById('btnAutoOrganize');
+  if (btnAutoOrganize) {
+    btnAutoOrganize.addEventListener('click', () => {
+      const layoutToUse = ['grid', 'dynamic_fan', 'cascade'].includes(S.layout) ? S.layout : 'grid';
+      applyLayout(layoutToUse);
     });
   }
   const btnRemovePaper = document.getElementById('btnRemovePaper');
@@ -2689,9 +2810,15 @@ function initControls() {
       if (papers.length <= 1) return; // Must have at least 1 paper
       papers.splice(activePaperIdx, 1);
       // Re-assign IDs to prevent indexing issues
-      papers.forEach((p, i) => p.id = i);
+      papers.forEach((p, i) => {
+        p.id = i;
+        p.name = i < 3 ? ['Back / Center', 'Front / Left', 'Front / Right'][i] : `Paper ${i + 1}`;
+      });
       paperOrder = paperOrder.filter(id => id !== activePaperIdx).map(id => id > activePaperIdx ? id - 1 : id);
       activePaperIdx = Math.max(0, activePaperIdx - 1);
+      if (['grid', 'dynamic_fan', 'cascade'].includes(S.layout) || papers.length >= 4) {
+        arrangeManyPages(['grid', 'dynamic_fan', 'cascade'].includes(S.layout) ? S.layout : 'grid', targetCountForComposition(getEffectiveComposition()));
+      }
       syncPaperTabs();
       syncPaperForm();
       render();
