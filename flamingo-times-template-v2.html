@@ -246,6 +246,7 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <option value="clean_feature">Clean Feature — minimal, tight rotation</option>
         <option value="hero_cover">Hero Cover — single featured paper</option>
         <option value="two_cover_compare">Two-Cover Compare — dual paper layout</option>
+        <option value="dynamic_scatter">Dynamic Scatter — organically arrange 4+ pages</option>
       </select>
     </div>
 
@@ -391,6 +392,7 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
             🖼️ Upload image for this paper<input id="curPaperCustomFile" type="file" accept="image/*">
           </label>
           <button class="chip" id="btnClearCustomImage" style="display:none;width:100%;margin-top:5px;height:28px">Remove custom image</button>
+          <button class="chip" id="btnRemovePaper" style="width:100%;margin-top:5px;height:28px;color:#e153a6;border-color:#e153a655">Remove Paper</button>
         </div>
         <div class="field">
           <label>Horizontal Position (X)</label>
@@ -716,20 +718,23 @@ const VISUAL_DIRECTIONS = {
   campaign_fan: { label: 'Campaign Fan', layout: 'fan' },
   clean_feature: { label: 'Clean Feature', layout: 'clean' },
   hero_cover: { label: 'Hero Cover', layout: 'single' },
-  two_cover_compare: { label: 'Two-Cover Compare', layout: 'two_papers' }
+  two_cover_compare: { label: 'Two-Cover Compare', layout: 'two_papers' },
+  dynamic_scatter: { label: 'Dynamic Scatter', layout: 'scatter' }
 };
 const LAYOUT_TO_DIRECTION = {
   photo_reference: 'editorial_stack',
   fan: 'campaign_fan',
   clean: 'clean_feature',
   single: 'hero_cover',
-  two_papers: 'two_cover_compare'
+  two_papers: 'two_cover_compare',
+  scatter: 'dynamic_scatter'
 };
 
 function suggestDirectionForPageCount(count) {
   if (count <= 1) return 'hero_cover';
   if (count === 2) return 'two_cover_compare';
-  return 'editorial_stack';
+  if (count === 3) return 'editorial_stack';
+  return 'dynamic_scatter';
 }
 
 function suggestCompositionForPageCount(count) {
@@ -1710,8 +1715,25 @@ function applyLayout(name) {
   } else if (name === 'single') {
     paperOrder = [0];
     papers[0] = { ...papers[0], x: 0.50, y: portrait ? 0.52 : 0.50, rot: -3.0, scale: 1.15, visible: true };
-    papers[1].visible = false;
-    papers[2].visible = false;
+    if (papers[1]) papers[1].visible = false;
+    if (papers[2]) papers[2].visible = false;
+  } else if (name === 'scatter') {
+    paperOrder = papers.map(p => p.id);
+    papers.forEach((p, i) => {
+      p.x = 0.50 + (Math.random() * 0.4 - 0.2);
+      p.y = portrait ? (0.50 + (Math.random() * 0.4 - 0.2)) : (0.50 + (Math.random() * 0.3 - 0.15));
+      p.rot = (Math.random() * 40 - 20);
+      p.scale = Math.max(0.7, 1.0 - (papers.length * 0.03));
+      p.visible = true;
+    });
+    S.globalScale = 1.0;
+  }
+
+  // Ensure papers beyond 3 are hidden if a strict layout was selected
+  if (name !== 'scatter' && papers.length > 3) {
+    papers.forEach((p, i) => {
+      if (i >= 3) p.visible = false;
+    });
   }
 
   syncPaperForm();
@@ -2576,6 +2598,21 @@ function initControls() {
     btnClearGallery.addEventListener('click', () => {
       galleryPages.length = 0;
       renderMiniGallery();
+    });
+  }
+  const btnRemovePaper = document.getElementById('btnRemovePaper');
+  if (btnRemovePaper) {
+    btnRemovePaper.addEventListener('click', () => {
+      if (papers.length <= 1) return; // Must have at least 1 paper
+      papers.splice(activePaperIdx, 1);
+      // Re-assign IDs to prevent indexing issues
+      papers.forEach((p, i) => p.id = i);
+      paperOrder = paperOrder.filter(id => id !== activePaperIdx).map(id => id > activePaperIdx ? id - 1 : id);
+      activePaperIdx = Math.max(0, activePaperIdx - 1);
+      syncPaperTabs();
+      syncPaperForm();
+      render();
+      pushHistory();
     });
   }
   document.getElementById('btnUndo').addEventListener('click', undo);
