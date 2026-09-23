@@ -190,3 +190,49 @@ test('supports moving title and logo up and down with sliders, canvas dragging, 
   expect(consoleErrors).toEqual([]);
 });
 
+
+test('supports multiple PDF uploads, mini gallery, and adding up to 10 pages', async ({ page }) => {
+  const consoleErrors = [];
+  page.on('console', msg => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  });
+
+  await page.goto('/');
+
+  // 1. Initially, mini gallery should be hidden
+  await expect(page.locator('#miniGalleryWrap')).toBeHidden();
+
+  // 2. Upload first PDF
+  const fileChooserPromise1 = page.waitForEvent('filechooser');
+  await page.locator('#pdfInputLabel').click();
+  const fileChooser1 = await fileChooserPromise1;
+  await fileChooser1.setFiles('assets/sample-edition.pdf');
+
+  await expect(page.locator('#pdfStatus')).toContainText('Poster ready', { timeout: 10000 });
+  await expect(page.locator('#miniGalleryWrap')).toBeVisible();
+  await expect(page.locator('#galleryCount')).toHaveText('4');
+  await expect(page.locator('.gallery-item')).toHaveCount(4);
+
+  // 3. Upload second PDF
+  const fileChooserPromise2 = page.waitForEvent('filechooser');
+  await page.locator('#pdfInputLabel').click();
+  const fileChooser2 = await fileChooserPromise2;
+  await fileChooser2.setFiles('assets/sample-edition.pdf');
+
+  await expect(page.locator('#pdfStatus')).toContainText('appended to gallery', { timeout: 10000 });
+  await expect(page.locator('#galleryCount')).toHaveText('8');
+  await expect(page.locator('.gallery-item')).toHaveCount(8);
+
+  // 4. Click a gallery item to add to poster
+  const initialTabs = await page.locator('.paper-tab').count();
+  await page.locator('.gallery-item').nth(4).locator('.add-btn').click({ force: true });
+  const newTabs = await page.locator('.paper-tab').count();
+  expect(newTabs).toBe(initialTabs + 1);
+
+  // 5. Clear gallery
+  await page.locator('#btnClearGallery').click();
+  await expect(page.locator('#miniGalleryWrap')).toBeHidden();
+
+  expect(consoleErrors).toEqual([]);
+});
+

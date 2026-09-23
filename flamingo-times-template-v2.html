@@ -190,8 +190,44 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
     </div>
 
     <div class="row">
-      <label class="file-btn" id="pdfInputLabel">📄 Upload PDF<input id="pdfInput" type="file" accept="application/pdf,.pdf"></label>
+      <label class="file-btn" id="pdfInputLabel">📄 Upload PDF<input id="pdfInput" type="file" accept="application/pdf,.pdf" multiple></label>
       <button class="btn compose" id="btnUseSample" type="button" title="Load the built-in 4-page sample edition">⚡ Use Sample</button>
+    </div>
+
+    <!-- Mini Gallery UI -->
+    <style>
+      .mini-gallery-wrap {
+        background: #1d2028; border: 1px solid #2d3340; border-radius: 10px;
+        padding: 12px; margin-top: 12px;
+      }
+      .mini-gallery-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px; font-size: 13px; font-weight: 800; color: #eef1f6;
+      }
+      .mini-gallery {
+        display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
+      }
+      .gallery-item {
+        width: 60px; height: 80px; flex-shrink: 0; background: #fff;
+        border-radius: 4px; border: 2px solid transparent; cursor: pointer;
+        background-size: cover; background-position: center; transition: 0.2s;
+        display: flex; align-items: flex-end; justify-content: flex-end;
+      }
+      .gallery-item:hover { border-color: var(--accent); }
+      .gallery-item .add-btn {
+        background: var(--accent); color: white; border: none; font-size: 16px; 
+        font-weight: bold; width: 24px; height: 24px; border-radius: 4px;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        opacity: 0; transition: opacity 0.2s; pointer-events: none;
+      }
+      .gallery-item:hover .add-btn { opacity: 1; }
+    </style>
+    <div class="mini-gallery-wrap" id="miniGalleryWrap" style="display: none;">
+      <div class="mini-gallery-header">
+        <span>Uploaded Pages (<span id="galleryCount">0</span>)</span>
+        <button class="btn" id="btnClearGallery" style="padding: 2px 8px; font-size: 11px;">Clear All</button>
+      </div>
+      <div class="mini-gallery" id="miniGallery"></div>
     </div>
 
     <div class="field">
@@ -341,9 +377,7 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
 
       <!-- Paper selector tabs -->
       <div class="paper-tabs" id="paperTabs" style="margin-top:8px">
-        <button class="paper-tab active" data-paper="0">Back / Center</button>
-        <button class="paper-tab" data-paper="1">Front / Left</button>
-        <button class="paper-tab" data-paper="2">Front / Right</button>
+        <!-- Rendered dynamically -->
       </div>
 
       <!-- Individual paper editor card -->
@@ -616,7 +650,7 @@ const S = {
 
 // 3 Independent Configurable Papers matching reference layout:
 // Center paper in back (rot -5.5°), Left paper in front (rot -17.5°), Right paper in front (rot 19.0°)
-const papers = [
+let papers = [
   { id: 0, name: 'Back / Center', x: 0.50, y: 0.435, rot: -5.5, scale: 1.00, pageKey: 'zvernec_back', customImage: null, visible: true },
   { id: 1, name: 'Front / Left', x: 0.290, y: 0.575, rot: -17.5, scale: 1.00, pageKey: 'zvernec_front', customImage: null, visible: true },
   { id: 2, name: 'Front / Right', x: 0.715, y: 0.575, rot: 19.0, scale: 1.00, pageKey: 'zvernec_inside', customImage: null, visible: true }
@@ -708,7 +742,7 @@ function suggestCompositionForPageCount(count) {
 function getEffectiveComposition() {
   const mode = S.pageComposition || 'auto';
   if (mode !== 'auto') return mode;
-  return suggestCompositionForPageCount(pdfPages.length || 3);
+  return suggestCompositionForPageCount(galleryPages.length || 3);
 }
 
 function directionForComposition(mode, selectedDirection) {
@@ -720,7 +754,7 @@ function directionForComposition(mode, selectedDirection) {
   if (mode === 'custom_many') return selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare'
     ? 'editorial_stack'
     : selectedDirection;
-  return selectedDirection || suggestDirectionForPageCount(pdfPages.length || 3);
+  return selectedDirection || suggestDirectionForPageCount(galleryPages.length || 3);
 }
 
 function syncCompositionForDirection(direction) {
@@ -757,15 +791,15 @@ function applyPageComposition(mode) {
     papers[0].visible = true;
     papers[1].visible = false;
     papers[2].visible = false;
-    if (pdfPages.length > 0) papers[0].pageKey = 0;
+    if (galleryPages.length > 0) papers[0].pageKey = 0;
   } else if (effective === 'two_pages') {
     paperOrder = [0, 1];
     papers[0].visible = true;
     papers[1].visible = true;
     papers[2].visible = false;
-    if (pdfPages.length > 0) {
+    if (galleryPages.length > 0) {
       papers[1].pageKey = 0;
-      papers[0].pageKey = Math.min(1, pdfPages.length - 1);
+      papers[0].pageKey = Math.min(1, galleryPages.length - 1);
     }
   } else {
     papers[0].visible = true;
@@ -784,7 +818,7 @@ let inkManuallySet = false;
 let logoManuallySet = false;
 
 const images = {};
-const pdfPages = [];
+const galleryPages = [];
 let pdfDoc = null;
 let pdfjsLibModule = null;
 let pdfJsLoadError = '';
@@ -906,13 +940,19 @@ function applySnapshot(snapStr) {
   updateReadyPanel(restoredDirection);
 
   paperOrder = [...state.paperOrder];
+  while (papers.length > state.papers.length) papers.pop();
   state.papers.forEach((sp, i) => {
     if (papers[i]) {
       const custom = papers[i].customImage;
       Object.assign(papers[i], sp);
       papers[i].customImage = custom;
+    } else {
+      papers.push({ ...sp, customImage: null });
     }
   });
+  
+  // Also we need to sync paper tabs if the number of papers changed during undo/redo
+  syncPaperTabs();
 
   activePaperIdx = state.activePaperIdx ?? 0;
   document.querySelectorAll('.paper-tab').forEach((t, i) => t.classList.toggle('active', i === activePaperIdx));
@@ -1570,11 +1610,11 @@ function getPaperImage(paper) {
   if (paper.customImage) return paper.customImage;
 
   // If PDF pages are loaded and paper has numeric page index
-  if (pdfPages.length > 0) {
+  if (galleryPages.length > 0) {
     const num = Number(paper.pageKey);
     if (!isNaN(num) && Number.isInteger(num)) {
-      const idx = Math.max(0, Math.min(pdfPages.length - 1, num));
-      return pdfPages[idx];
+      const idx = Math.max(0, Math.min(galleryPages.length - 1, num));
+      return galleryPages[idx];
     }
   }
 
@@ -1585,8 +1625,8 @@ function getPaperImage(paper) {
   }
 
   // Fallback to first PDF page if PDF is active, otherwise default image
-  if (pdfPages.length > 0) {
-    return pdfPages[0];
+  if (galleryPages.length > 0) {
+    return galleryPages[0];
   }
 
   return images.zvernec_back || images.cover;
@@ -1703,8 +1743,8 @@ function populatePageSelect() {
   const sel = document.getElementById('curPaperPage');
   sel.innerHTML = '';
 
-  if (pdfPages.length > 0) {
-    pdfPages.forEach((_, i) => {
+  if (galleryPages.length > 0) {
+    galleryPages.forEach((_, i) => {
       const opt = document.createElement('option');
       opt.value = i;
       opt.textContent = `PDF: Page ${i + 1}`;
@@ -1726,16 +1766,16 @@ function renderPdfPageStrip() {
   const badge = document.getElementById('pdfPageBadge');
   if (!strip || !list) return;
 
-  if (pdfPages.length === 0) {
+  if (galleryPages.length === 0) {
     strip.style.display = 'none';
     return;
   }
 
   strip.style.display = 'block';
-  badge.textContent = `${pdfPages.length} ${pdfPages.length === 1 ? 'page' : 'pages'}`;
+  badge.textContent = `${galleryPages.length} ${galleryPages.length === 1 ? 'page' : 'pages'}`;
   list.innerHTML = '';
 
-  pdfPages.forEach((_, i) => {
+  galleryPages.forEach((_, i) => {
     const chip = document.createElement('div');
     chip.className = 'pdf-chip';
     
@@ -1795,7 +1835,7 @@ function syncPaperForm() {
 
 // Automatic distribution of PDF pages across the 3 newspapers
 function applyAutoPdfPages() {
-  if (!pdfPages || pdfPages.length === 0) return;
+  if (!galleryPages || galleryPages.length === 0) return;
 
   // Clear any per-paper custom images so PDF takes immediate effect
   papers.forEach(p => p.customImage = null);
@@ -1804,16 +1844,16 @@ function applyAutoPdfPages() {
   // papers[0]: Center paper (placed behind in reference photo)
   // papers[1]: Left paper (front layer)
   // papers[2]: Right paper (front layer)
-  if (pdfPages.length >= 4) {
+  if (galleryPages.length >= 4) {
     // 4-page newspaper: Left = Front Cover (Page 1), Right = Inside Spread (Page 2), Center = Back Page (Page 4, matching reference layout!)
     papers[1].pageKey = 0; // Page 1 (Front)
     papers[2].pageKey = 1; // Page 2 (Inside)
     papers[0].pageKey = 3; // Page 4 (Back Cover)
-  } else if (pdfPages.length === 3) {
+  } else if (galleryPages.length === 3) {
     papers[1].pageKey = 0; // Page 1
     papers[2].pageKey = 1; // Page 2
     papers[0].pageKey = 2; // Page 3 (Back)
-  } else if (pdfPages.length === 2) {
+  } else if (galleryPages.length === 2) {
     papers[1].pageKey = 0; // Page 1
     papers[0].pageKey = 1; // Page 2
     papers[2].pageKey = 0; // Page 1
@@ -1827,7 +1867,7 @@ function applyAutoPdfPages() {
   // Ensure papers are visible
   papers[0].visible = true;
   papers[1].visible = true;
-  papers[2].visible = (pdfPages.length > 1);
+  papers[2].visible = (galleryPages.length > 1);
 
   // Set reference overlap order: Center in back, Left and Right in front
   paperOrder = [0, 1, 2];
@@ -1841,7 +1881,7 @@ function applyAutoPdfPages() {
 
 // Apply Reference Page assignment
 function applyPhotoReferencePages() {
-  if (pdfPages.length > 0) {
+  if (galleryPages.length > 0) {
     applyAutoPdfPages();
     return;
   }
@@ -1916,7 +1956,7 @@ function composePoster(directionKey, statusHtml) {
   const config = VISUAL_DIRECTIONS[resolvedDirection] || VISUAL_DIRECTIONS.editorial_stack;
 
   withSingleHistoryEntry(() => {
-    if (pdfPages.length > 0) {
+    if (galleryPages.length > 0) {
       applyAutoPdfPages();
     } else {
       applyPhotoReferencePages();
@@ -1957,7 +1997,7 @@ function composePoster(directionKey, statusHtml) {
   status.classList.remove('app-error');
   status.innerHTML = statusHtml;
   const pageStrip = document.getElementById('pdfStrip');
-  if (pageStrip && composition === 'custom_many') pageStrip.style.display = pdfPages.length > 0 ? 'block' : pageStrip.style.display;
+  if (pageStrip && composition === 'custom_many') pageStrip.style.display = galleryPages.length > 0 ? 'block' : pageStrip.style.display;
   updateReadyPanel(resolvedDirection);
 }
 
@@ -2050,38 +2090,41 @@ async function loadPdf(source, filename) {
     }
 
     status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> (${pdfDoc.numPages} pages) — Rendering…`;
-    pdfPages.length = 0;
-    
-    // Clear any previous custom images so PDF takes immediate effect
-    papers.forEach(p => p.customImage = null);
+    const startIdx = galleryPages.length;
+    const isFirstPdf = startIdx === 0;
 
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       status.innerHTML = `📄 <strong>${escapeHtml(name)}</strong> · Rendering page ${i} of ${pdfDoc.numPages}…`;
       const im = await renderPdfPage(i, token);
       if (!im || token !== renderToken) return;
-      pdfPages.push(im);
+      galleryPages.push(im);
       
-      // As soon as page 1 is ready, immediately show it on the canvas!
-      if (i === 1) {
+      // If it's the very first PDF, show it on canvas immediately
+      if (isFirstPdf && i === 1) {
+        papers.forEach(p => p.customImage = null);
         papers[0].pageKey = 0;
-        papers[1].pageKey = 0;
-        papers[2].pageKey = 0;
+        if (papers.length > 1) papers[1].pageKey = 0;
+        if (papers.length > 2) papers[2].pageKey = 0;
         populatePageSelect();
         render();
       }
+      renderMiniGallery();
     }
 
-    // Automatically compose a ready poster: assign pages, pick a fitting
-    // visual direction for the page count, and apply tasteful defaults.
-    document.getElementById('issuePreset').value = 'custom';
-    const suggestedComposition = suggestCompositionForPageCount(pdfDoc.numPages);
-    if (S.pageComposition === 'auto') {
-      S.pageComposition = suggestedComposition;
-      document.getElementById('pageComposition').value = suggestedComposition;
+    // Compose poster automatically only for the first uploaded batch
+    if (isFirstPdf) {
+      document.getElementById('issuePreset').value = 'custom';
+      const suggestedComposition = suggestCompositionForPageCount(pdfDoc.numPages);
+      if (S.pageComposition === 'auto') {
+        S.pageComposition = suggestedComposition;
+        document.getElementById('pageComposition').value = suggestedComposition;
+      }
+      const selectedDirection = (document.getElementById('visualDirection') || {}).value || suggestDirectionForPageCount(pdfDoc.numPages);
+      const directionKey = directionForComposition(getEffectiveComposition(), selectedDirection);
+      composePoster(directionKey, `✅ <strong>${escapeHtml(name)}</strong> — ${pdfDoc.numPages} page${pdfDoc.numPages === 1 ? '' : 's'} — Poster ready`);
+    } else {
+      status.innerHTML = `✅ <strong>${escapeHtml(name)}</strong> appended to gallery.`;
     }
-    const selectedDirection = (document.getElementById('visualDirection') || {}).value || suggestDirectionForPageCount(pdfDoc.numPages);
-    const directionKey = directionForComposition(getEffectiveComposition(), selectedDirection);
-    composePoster(directionKey, `✅ <strong>${escapeHtml(name)}</strong> — ${pdfDoc.numPages} page${pdfDoc.numPages === 1 ? '' : 's'} — Poster ready`);
   } catch (e) {
     console.error(e);
     setStatusText(e.message || 'Could not read PDF file. Please try another PDF.', true);
@@ -2444,8 +2487,97 @@ window.addEventListener('keydown', e => {
   }
 });
 
+// Gallery & Dynamic Paper Logic
+function addGalleryPageToPoster(idx) {
+  if (papers.length < 10) {
+    const newId = papers.length;
+    papers.push({
+      id: newId,
+      name: `Paper ${newId + 1}`,
+      x: 0.5 + (Math.random() * 0.1 - 0.05),
+      y: 0.5 + (Math.random() * 0.1 - 0.05),
+      rot: (Math.random() * 20 - 10),
+      scale: 1.0,
+      pageKey: idx,
+      customImage: null,
+      visible: true
+    });
+    paperOrder.push(newId);
+    activePaperIdx = newId;
+    syncPaperTabs();
+    syncPaperForm();
+    render();
+    pushHistory();
+  } else {
+    papers[activePaperIdx].pageKey = idx;
+    papers[activePaperIdx].customImage = null;
+    syncPaperForm();
+    render();
+    pushHistory();
+  }
+}
+
+function syncPaperTabs() {
+  const tabsContainer = document.getElementById('paperTabs');
+  if (!tabsContainer) return;
+  tabsContainer.innerHTML = '';
+  papers.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = `paper-tab ${i === activePaperIdx ? 'active' : ''}`;
+    btn.textContent = p.name || `Paper ${i + 1}`;
+    btn.onclick = () => selectPaperTab(i);
+    tabsContainer.appendChild(btn);
+  });
+}
+
+function renderMiniGallery() {
+  const wrap = document.getElementById('miniGalleryWrap');
+  const container = document.getElementById('miniGallery');
+  const countSpan = document.getElementById('galleryCount');
+  
+  if (!wrap || !container) return;
+  
+  if (galleryPages.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+  
+  wrap.style.display = 'block';
+  if(countSpan) countSpan.textContent = galleryPages.length;
+  container.innerHTML = '';
+  
+  galleryPages.forEach((canvas, idx) => {
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.style.backgroundImage = `url(${canvas.toDataURL('image/jpeg', 0.5)})`;
+    item.title = `Page ${idx + 1}`;
+    
+    const btn = document.createElement('button');
+    btn.className = 'add-btn';
+    btn.innerHTML = '+';
+    btn.title = 'Add to Poster';
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      addGalleryPageToPoster(idx);
+    };
+    
+    item.appendChild(btn);
+    item.onclick = () => addGalleryPageToPoster(idx);
+    
+    container.appendChild(item);
+  });
+}
+
 // Bind UI Inputs
 function initControls() {
+  syncPaperTabs();
+  const btnClearGallery = document.getElementById('btnClearGallery');
+  if (btnClearGallery) {
+    btnClearGallery.addEventListener('click', () => {
+      galleryPages.length = 0;
+      renderMiniGallery();
+    });
+  }
   document.getElementById('btnUndo').addEventListener('click', undo);
   document.getElementById('btnRedo').addEventListener('click', redo);
   document.getElementById('btnQuickReset').addEventListener('click', () => applyLayout('photo_reference'));
@@ -2484,10 +2616,6 @@ function initControls() {
     S.pageComposition = e.target.value;
     const direction = document.getElementById('visualDirection').value;
     composePoster(directionForComposition(getEffectiveComposition(), direction), `Poster composed — ${compositionLabel(getEffectiveComposition())}`);
-  });
-
-  document.querySelectorAll('.paper-tab').forEach(btn => {
-    btn.addEventListener('click', () => selectPaperTab(parseInt(btn.dataset.paper)));
   });
 
   document.getElementById('issuePreset').addEventListener('change', e => {
@@ -2681,9 +2809,14 @@ function initControls() {
   });
   document.getElementById('logoScale').addEventListener('change', pushHistory);
 
-  document.getElementById('pdfInput').addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if (f) loadPdf(f);
+  document.getElementById('pdfInput').addEventListener('change', async e => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        await loadPdf(files[i]);
+      }
+    }
+    e.target.value = ''; // Reset input to allow selecting same files again
   });
 
   document.getElementById('btnUseSample').addEventListener('click', async () => {
@@ -2757,7 +2890,7 @@ function initControls() {
 
   document.getElementById('btnPresetRefPages').addEventListener('click', applyPhotoReferencePages);
   document.getElementById('btnAutoPages').addEventListener('click', () => {
-    if (pdfPages.length > 0) {
+    if (galleryPages.length > 0) {
       applyAutoPdfPages();
     } else {
       papers[0].pageKey = 'zvernec_back';
