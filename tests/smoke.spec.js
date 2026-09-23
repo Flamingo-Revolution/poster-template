@@ -263,6 +263,7 @@ test('supports structured self-organizing layouts (grid, fan, cascade) and auto-
   await expect(dirSelect.locator('option[value="dynamic_grid"]')).toHaveText(/Dynamic Grid/);
   await expect(dirSelect.locator('option[value="dynamic_fan"]')).toHaveText(/Dynamic Fan/);
   await expect(dirSelect.locator('option[value="dynamic_cascade"]')).toHaveText(/Dynamic Cascade/);
+  await expect(dirSelect.locator('option[value="organized_chaos"]')).toHaveText(/Organized Chaos/);
 
   // 3. Test Dynamic Grid
   await dirSelect.selectOption('dynamic_grid');
@@ -276,25 +277,32 @@ test('supports structured self-organizing layouts (grid, fan, cascade) and auto-
   await dirSelect.selectOption('dynamic_cascade');
   await expect(page.locator('#readyMeta')).toContainText('Dynamic Cascade');
 
-  // 6. Upload second PDF to have 8 gallery pages
+  // 6. Test Organized Chaos and vertical link placement render path
+  await page.locator('#fineTuneText summary').click();
+  await page.locator('#paperLink').fill('edition.flamingo-times.al/arkivu');
+  await page.locator('#paperLinkStyle').selectOption('side_vertical');
+  await dirSelect.selectOption('organized_chaos');
+  await expect(page.locator('#readyMeta')).toContainText('Organized Chaos');
+
+  // 7. Upload second PDF to have 8 gallery pages
   const fileChooserPromise2 = page.waitForEvent('filechooser');
   await page.locator('#pdfInputLabel').click();
   const fileChooser2 = await fileChooserPromise2;
   await fileChooser2.setFiles('assets/sample-edition.pdf');
   await expect(page.locator('#pdfStatus')).toContainText('appended to gallery', { timeout: 10000 });
 
-  // 7. Add pages up to 10
+  // 8. Add pages up to 10
   for (let i = 4; i < 10; i++) {
     await page.locator('.gallery-item').nth(i % 8).locator('.add-btn').click({ force: true });
   }
   await expect(page.locator('.paper-tab')).toHaveCount(10);
 
-  // 8. Test Self-Organize button
+  // 9. Test Self-Organize button
   await page.locator('#fineTuneSelectedPaper summary').click();
   await expect(page.locator('#btnAutoOrganize')).toBeVisible();
   await page.locator('#btnAutoOrganize').click();
 
-  // 9. Remove papers using Remove Paper button
+  // 10. Remove papers using Remove Paper button
   await page.locator('#btnRemovePaper').click();
   await expect(page.locator('.paper-tab')).toHaveCount(9);
   await page.locator('#btnRemovePaper').click();
