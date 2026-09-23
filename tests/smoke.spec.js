@@ -31,13 +31,14 @@ test('auto-composes from the sample PDF, supports Make Poster, and exports PNG',
   await expect(page.locator('#pageComposition')).toContainText('Custom 4+');
   await expect(page.locator('#themePresets .preset')).toHaveCount(18);
 
-  // Visual Direction applies immediately and keeps Featured Pages in sync.
+  // Visual Direction applies immediately without changing Featured Pages.
   await page.locator('#visualDirection').selectOption('campaign_fan');
   await expect(page.locator('#pdfStatus')).toContainText(/Campaign Fan/);
   await expect(page.locator('#readyMeta')).toContainText(/Campaign Fan/);
-  await expect(page.locator('#pageComposition')).toHaveValue('three_pages');
-  await page.locator('#visualDirection').selectOption('hero_cover');
-  await expect(page.locator('#readyMeta')).toContainText(/Hero Cover/);
+  await expect(page.locator('#pageComposition')).toHaveValue('auto');
+  await page.locator('#pageComposition').selectOption('one_page');
+  await page.locator('#visualDirection').selectOption('clean_feature');
+  await expect(page.locator('#readyMeta')).toContainText(/Clean Feature/);
   await expect(page.locator('#pageComposition')).toHaveValue('one_page');
   await page.locator('#pageComposition').selectOption('auto');
 

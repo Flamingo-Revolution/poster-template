@@ -244,8 +244,6 @@ details.fine-tune > .fine-tune-body > .field:first-child{margin-top:0}
         <option value="editorial_stack" selected>Editorial Stack — 3-paper reference layout</option>
         <option value="campaign_fan">Campaign Fan — symmetrical spread</option>
         <option value="clean_feature">Clean Feature — minimal, tight rotation</option>
-        <option value="hero_cover">Hero Cover — single featured paper</option>
-        <option value="two_cover_compare">Two-Cover Compare — dual paper layout</option>
         <option value="dynamic_scatter">Dynamic Scatter — organically arrange 4+ pages</option>
       </select>
     </div>
@@ -719,7 +717,7 @@ const VISUAL_DIRECTIONS = {
   clean_feature: { label: 'Clean Feature', layout: 'clean' },
   hero_cover: { label: 'Hero Cover', layout: 'single' },
   two_cover_compare: { label: 'Two-Cover Compare', layout: 'two_papers' },
-  dynamic_scatter: { label: 'Dynamic Scatter', layout: 'scatter' }
+  dynamic_scatter: { label: 'Layered Spread', layout: 'scatter' }
 };
 const LAYOUT_TO_DIRECTION = {
   photo_reference: 'editorial_stack',
@@ -751,31 +749,14 @@ function getEffectiveComposition() {
 }
 
 function directionForComposition(mode, selectedDirection) {
-  if (mode === 'one_page') return 'hero_cover';
-  if (mode === 'two_pages') return 'two_cover_compare';
-  if (mode === 'three_pages') return selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare'
-    ? 'editorial_stack'
-    : selectedDirection;
-  if (mode === 'custom_many') return selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare'
-    ? 'editorial_stack'
-    : selectedDirection;
+  if (selectedDirection === 'hero_cover' || selectedDirection === 'two_cover_compare') {
+    return mode === 'one_page' ? 'hero_cover' : mode === 'two_pages' ? 'two_cover_compare' : 'editorial_stack';
+  }
+  if (selectedDirection) return selectedDirection;
   return selectedDirection || suggestDirectionForPageCount(galleryPages.length || 3);
 }
 
 function syncCompositionForDirection(direction) {
-  if (direction === 'hero_cover') {
-    S.pageComposition = 'one_page';
-  } else if (direction === 'two_cover_compare') {
-    S.pageComposition = 'two_pages';
-  } else if (direction === 'dynamic_scatter') {
-    S.pageComposition = galleryPages.length >= 4 || papers.length >= 4 ? 'custom_many' : 'three_pages';
-  } else if (['editorial_stack', 'campaign_fan', 'clean_feature'].includes(direction)) {
-    const current = S.pageComposition || 'auto';
-    if (current === 'auto' || current === 'one_page' || current === 'two_pages') {
-      S.pageComposition = 'three_pages';
-    }
-  }
-
   const pageComposition = document.getElementById('pageComposition');
   if (pageComposition) pageComposition.value = S.pageComposition || 'auto';
 }
@@ -1773,7 +1754,7 @@ function applyLayout(name) {
   const directionKey = LAYOUT_TO_DIRECTION[name];
   if (directionKey) {
     const directionSel = document.getElementById('visualDirection');
-    if (directionSel) directionSel.value = directionKey;
+    if (directionSel && directionSel.querySelector(`option[value="${directionKey}"]`)) directionSel.value = directionKey;
     updateReadyPanel(directionKey);
   }
 
@@ -2692,7 +2673,7 @@ function renderMiniGallery() {
 function initControls() {
   syncPaperTabs();
   const spreadOption = document.querySelector('#visualDirection option[value="dynamic_scatter"]');
-  if (spreadOption) spreadOption.textContent = 'Multi-page Spread - arranged 4+ pages';
+  if (spreadOption) spreadOption.textContent = 'Layered Spread - balanced cascade';
   const manyOption = document.querySelector('#pageComposition option[value="custom_many"]');
   if (manyOption) manyOption.textContent = 'Custom 4+ - auto-arrange all uploaded pages';
   const btnClearGallery = document.getElementById('btnClearGallery');
@@ -2741,13 +2722,11 @@ function initControls() {
 
   document.getElementById('btnMakePoster').addEventListener('click', () => {
     const direction = document.getElementById('visualDirection').value;
-    syncCompositionForDirection(direction);
     composePoster(direction, 'Poster composed');
   });
 
   document.getElementById('visualDirection').addEventListener('change', e => {
     const direction = e.target.value;
-    syncCompositionForDirection(direction);
     composePoster(direction, `Poster composed — ${VISUAL_DIRECTIONS[direction].label}`);
   });
 
